@@ -1,0 +1,243 @@
+/* KICKSLAB - Centralized Authentication System Styles */
+
+/* 1. Modal Styles */
+.auth-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.auth-modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.auth-modal {
+    background: #ffffff;
+    width: 90%;
+    max-width: 400px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    position: relative;
+    text-align: center;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.auth-modal-overlay.active .auth-modal {
+    transform: translateY(0);
+}
+
+.auth-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 20px;
+    color: #666;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 5px;
+    transition: color 0.3s;
+}
+
+.auth-close-btn:hover {
+    color: #000;
+}
+
+.auth-modal h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 24px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    color: #000;
+}
+
+.auth-modal p {
+    font-family: 'Inter', sans-serif;
+    color: #666;
+    margin-bottom: 25px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.auth-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.auth-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    border: none;
+    font-family: 'Inter', sans-serif;
+}
+
+.auth-btn-primary {
+    background-color: #4285F4;
+    color: #fff;
+}
+
+.auth-btn-primary:hover {
+    background-color: #3367d6;
+}
+
+.auth-btn-secondary {
+    background-color: #f4f4f4;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.auth-btn-secondary:hover {
+    background-color: #e0e0e0;
+}
+
+/* 2. Account Dropdown Styles */
+.account-dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.account-dropdown {
+    position: absolute;
+    top: 150%;
+    right: 0;
+    width: 210px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    z-index: 1500;
+    padding: 10px 0;
+}
+
+.account-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.account-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 15px;
+    width: 12px;
+    height: 12px;
+    background: #ffffff;
+    transform: rotate(45deg);
+    border-left: 1px solid #e0e0e0;
+    border-top: 1px solid #e0e0e0;
+}
+
+.account-dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.account-dropdown li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none !important;
+    transition: background 0.2s;
+    font-family: 'Inter', sans-serif;
+    text-transform: none;
+    font-weight: 500;
+}
+
+.account-dropdown li a i {
+    width: 16px;
+    text-align: center;
+    color: #666;
+}
+
+.account-dropdown li a:hover {
+    background-color: #f9f9f9;
+    color: #4285F4;
+}
+
+.account-dropdown li a.logout-btn {
+    border-top: 1px solid #eee;
+    color: #d32f2f;
+}
+
+.account-dropdown li a.logout-btn:hover {
+    background-color: #ffebee;
+}
+
+/* 3. Navbar Badge Styles */
+.nav-icons a {
+    position: relative;
+    display: inline-flex;
+}
+
+.badge-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background-color: #ef4444;
+    /* KICKSLAB Red */
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: scale(0);
+    opacity: 0;
+}
+
+.badge-count.visible {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Adjust for mobile menu if needed */
+.mobile-nav-links a {
+    position: relative;
+    display: inline-block;
+}
+
+.mobile-nav-links .badge-count {
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%) scale(0);
+}
+
+.mobile-nav-links .badge-count.visible {
+    transform: translateY(-50%) scale(1);
+}

@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KICKSLAB - Order Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet" href="admin-modal.css">
+
+    <link rel="stylesheet" href="admin-sidebar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-blue: #4e73df;
+            --primary-bg: #f5f7fb;
+            --white: #ffffff;
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --sidebar-width: 260px;
+            --success-green: #1cc88a;
+            --danger-red: #e74a3b;
+            --warning-yellow: #f6c23e;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            margin-left: 260px;
+            transition: margin-left 0.3s;
+        }
+
+        @media (max-width: 1199px) {
+            .main-content {
+                margin-left: 260px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        .hamburger-menu {
+            display: none;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        @media (max-width: 767px) {
+            .hamburger-menu {
+                display: block;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .search-container {
+                display: none;
+            }
+        }
+
+        /* Top Navbar */
+        .top-navbar {
+            background-color: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .search-container {
+            flex: 0 1 400px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid transparent;
+            background-color: #f3f4f6;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            background-color: #fff;
+            border-color: var(--primary-blue);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-gray);
+            pointer-events: none;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .action-icon {
+            color: var(--text-gray);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--danger-red);
+            border-radius: 50%;
+            border: 2px solid var(--white);
+        }
+
+        .avatar-top {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Order List Container */
+        .order-list-container {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .list-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .list-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .date-select {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            background-color: var(--white);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .search-orders {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            width: 250px;
+            outline: none;
+        }
+
+        .search-orders:focus {
+            border-color: var(--primary-blue);
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 900px;
+            /* Ensure table doesn't squash too much */
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem 0;
+            color: #9ca3af;
+            /* Light gray text for headers */
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        td {
+            padding: 1.25rem 0;
+            color: #1f2937;
+            font-weight: 600;
+            vertical-align: middle;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        /* Column Specifics */
+        .col-id {
+            color: #374151;
+        }
+
+        .customer-info h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.1rem;
+        }
+
+        .customer-info p {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        .date-text {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .total-text {
+            font-weight: 700;
+            color: #111827;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Payment Badges */
+        .payment-cod {
+            background-color: #fee2e2;
+            color: #ef4444;
+        }
+
+        .payment-online {
+            background-color: #dcfce7;
+            color: #10b981;
+        }
+
+        .payment-wallet {
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+
+        .payment-wallet-green {
+            background-color: #dcfce7;
+            color: #10b981;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: #fff7ed;
+            /* Very light orange */
+            color: #f59e0b;
+            /* Orange text */
+        }
+
+        .status-completed {
+            background-color: #dcfce7;
+            /* Very light green */
+            color: #10b981;
+            /* Green text */
+        }
+
+        .status-cancelled {
+            background-color: #fee2e2;
+            /* Very light red */
+            color: #ef4444;
+            /* Red text */
+        }
+
+        /* Actions */
+        .actions-cell {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+        }
+
+        .btn-view {
+            background-color: #dbeafe;
+            color: #3b82f6;
+        }
+
+        .btn-view:hover {
+            background-color: #bfdbfe;
+        }
+
+        .btn-delete {
+            background-color: #fee2e2;
+            color: #ef4444;
+        }
+
+        .btn-delete:hover {
+            background-color: #fecaca;
+        }
+
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .pagination-info {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            background-color: var(--white);
+            color: var(--text-gray);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .page-btn:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .page-btn.active {
+            background-color: #3b82f6;
+            color: var(--white);
+            border-color: #3b82f6;
+        }
+
+        .page-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        @media (max-width: 640px) {
+            .pagination {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .list-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .list-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .search-orders {
+                width: 100%;
+            }
+
+            .date-select {
+                width: 100%;
+            }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            z-index: 10;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-gray);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .close-modal:hover {
+            background-color: #f3f4f6;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-card {
+            background-color: #f8faff;
+            /* Light blue tint matching screenshot */
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .detail-card h4 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .detail-card p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #374151;
+            line-height: 1.5;
+        }
+
+        .text-green {
+            color: var(--success-green);
+            font-weight: 600;
+        }
+
+        .items-section {
+            margin-bottom: 2rem;
+        }
+
+        .items-section h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .item-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
+        /* Confirmation Modal Specifics */
+        .confirm-modal-content {
+            max-width: 450px;
+            text-align: center;
+            padding: 3rem 2rem;
+            border-radius: 16px;
+        }
+
+        .confirm-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background-color: #fff7ed;
+            color: #f59e0b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+        }
+
+        .confirm-modal-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .confirm-modal-text {
+            color: var(--text-gray);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        .confirm-modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-modal-confirm {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 10px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-modal-confirm:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-modal-cancel {
+            background-color: #f3f4f6;
+            color: #4b5563;
+            padding: 0.875rem 2rem;
+            border-radius: 10px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-modal-cancel:hover {
+            background-color: #e5e7eb;
+            color: #1f2937;
+        }
+
+
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-info h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .item-info p {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .badge-size {
+            background-color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .btn-cancel-item {
+            padding: 0.5rem 1rem;
+            border: 1px solid #fee2e2;
+            color: var(--danger-red);
+            background: #fff;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .order-summary {
+            background-color: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .summary-row.text-red {
+            color: var(--danger-red);
+        }
+
+        .total-row {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 0;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn-close-modal-main {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-close-modal-main:hover {
+            background-color: #2563eb;
+        }
+
+        @media (max-width: 640px) {
+            .modal-details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="dashboard.html" class="logo">
+            <img src="assets/kickslab-logo.png" alt="KICKSLAB">
+        </a>
+
+        <div class="menu-category">Main menu</div>
+        <a href="dashboard.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </div>
+            Dashboard
+        </a>
+        <a href="orders.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </div>
+            Order Management
+        </a>
+        <a href="customers.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            Customers
+        </a>
+        <a href="coupons.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+            Coupon Code
+        </a>
+        <a href="sales.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+            </div>
+            Offers
+        </a>
+        <a href="categories.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
+            Categories
+        </a>
+        <a href="transactions.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+            </div>
+            Transaction
+        </a>
+        <a href="brand.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polygon
+                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                    </polygon>
+                </svg>
+            </div>
+            Brand
+        </a>
+
+        <div class="menu-category">Product</div>
+        <a href="add-product.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+            </div>
+            Add Products
+        </a>
+        <a href="product-list.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
+            Product List
+        </a>
+        <a href="reviews.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path
+                        d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                    </path>
+                </svg>
+            </div>
+            Product Reviews
+        </a>
+        <a href="returns.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polyline points="1 4 1 10 7 10"></polyline>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+            </div>
+            Product Returns
+        </a>
+
+        <a href="analytics.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            </div>
+            Analytics & Reports
+        </a>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn">
+                Logout
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <!-- Navbar -->
+
+
+        <div class="content-wrapper">
+
+            <h1 class="header-title">Order Management</h1>
+
+            <div class="order-list-container">
+                <div class="list-header">
+                    <h2 class="list-title">Order List</h2>
+                    <div class="list-actions">
+                        <select class="date-select">
+                            <option>All Dates</option>
+                            <option>Today</option>
+                            <option>Last 7 Days</option>
+                            <option>Last 1 Month</option>
+                            <option>Last 6 Months</option>
+                            <option>Last 1 Year</option>
+                        </select>
+                        <input type="text" class="search-orders" placeholder="Search orders...">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <!-- Rows will be dynamically rendered here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <div class="pagination-info" id="pagination-info">Showing orders</div>
+                    <div class="pagination-controls">
+                        <!-- Pagination controls omitted for now -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Details Modal -->
+            <div class="modal-overlay" id="orderDetailsModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Order Details</h3>
+                        <button class="close-modal" onclick="closeModal()">&times;</button>
+                    </div>
+                    <div class="modal-body" id="modal-details-container">
+                        Loading...
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-close-modal-main" onclick="closeModal()">Close</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const modal = document.getElementById('orderDetailsModal');
+        let allOrders = [];
+        let currentPage = 1;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAdminOrders(currentPage);
+
+            // Search Debounce Event Listener
+            const searchInput = document.querySelector('.search-orders');
+            let debounceTimer;
+            if (searchInput) {
+                searchInput.addEventListener("input", (e) => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        currentPage = 1;
+                        fetchAdminOrders(currentPage);
+                    }, 400);
+                });
+            }
+
+            // Date Select listener
+            const dateSelect = document.querySelector('.date-select');
+            if (dateSelect) {
+                dateSelect.addEventListener('change', () => {
+                    currentPage = 1;
+                    fetchAdminOrders(currentPage);
+                });
+            }
+        });
+
+        async function fetchAdminOrders(page = 1) {
+            const tbody = document.getElementById('orders-table-body');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px;">Loading orders...</td></tr>';
+
+            try {
+                const searchInput = document.querySelector('.search-orders');
+                const dateSelect = document.querySelector('.date-select');
+
+                const search = searchInput ? searchInput.value : '';
+                const date = dateSelect ? dateSelect.value : 'All Dates';
+
+                const res = await fetch(`/api/orders/admin/all?page=${page}&limit=20&search=${encodeURIComponent(search)}&date=${encodeURIComponent(date)}`, {
+                    credentials: 'include'
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) throw new Error(data.error || 'Failed to fetch orders');
+
+                allOrders = data.orders || data.data; // Using logical OR to handle both responses
+                renderOrders(allOrders);
+                renderPagination(data.totalRecords, data.totalPages, data.currentPage);
+
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color: red;">Failed to load orders.</td></tr>';
+            }
+        }
+
+        function renderPagination(totalRecords, totalPages, currentPageNum) {
+            currentPage = currentPageNum;
+            const paginationInfo = document.getElementById('pagination-info');
+            const paginationControls = document.querySelector('.pagination-controls');
+
+            if (!paginationInfo || !paginationControls) return;
+
+            const limit = 20;
+            const startRecord = totalRecords === 0 ? 0 : ((currentPage - 1) * limit) + 1;
+            const endRecord = Math.min(currentPage * limit, totalRecords);
+
+            paginationInfo.textContent = `Showing ${startRecord}–${endRecord} of ${totalRecords} results`;
+
+            let controlsHtml = '';
+
+            // Prev Button
+            controlsHtml += `<button class="page-btn ${currentPage === 1 ? 'disabled' : ''}" onclick="${currentPage === 1 ? 'return false;' : `fetchAdminOrders(${currentPage - 1})`}">« Prev</button>`;
+
+            // Page Numbers
+            for (let i = 1; i <= totalPages; i++) {
+                // simple logic: show a few pages around current, or all if small
+                if (totalPages > 7) {
+                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                        controlsHtml += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="fetchAdminOrders(${i})">${i}</button>`;
+                    } else if (i === currentPage - 2 || i === currentPage + 2) {
+                        controlsHtml += `<span style="margin: 0 5px; align-self: center;">...</span>`;
+                    }
+                } else {
+                    controlsHtml += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="fetchAdminOrders(${i})">${i}</button>`;
+                }
+            }
+
+            // Next Button
+            controlsHtml += `<button class="page-btn ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}" onclick="${currentPage === totalPages || totalPages === 0 ? 'return false;' : `fetchAdminOrders(${currentPage + 1})`}">Next »</button>`;
+
+            paginationControls.innerHTML = controlsHtml;
+        }
+
+        function renderOrders(orders) {
+            const tbody = document.getElementById('orders-table-body');
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No orders found.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            orders.forEach(order => {
+                const date = new Date(order.createdAt).toLocaleDateString("en-GB");
+                const idShort = '#' + order._id.substring(order._id.length - 6).toUpperCase();
+
+                // User info extract
+                let userName = 'User';
+                let userEmail = '';
+                if (order.userId && order.userId.name) {
+                    userName = order.userId.name;
+                    userEmail = order.userId.email || '';
+                } else if (order.shippingAddress) {
+                    userName = order.shippingAddress.name || 'User';
+                }
+
+                // Payment badge
+                let paymentBadge = 'payment-wallet';
+                if (order.paymentMethod === 'cod') paymentBadge = 'payment-cod';
+                if (order.paymentMethod === 'online' || order.paymentMethod === 'card') paymentBadge = 'payment-online';
+
+                // Status badge and dropdown
+                let statusBadge = 'status-pending';
+                if (order.orderStatus === 'Completed' || order.orderStatus === 'Delivered') statusBadge = 'status-completed';
+                if (order.orderStatus === 'Cancelled') statusBadge = 'status-cancelled';
+
+                // Create select dropdown for status update
+                let statusSelectHTML = '';
+                if (order.orderStatus === 'Cancelled' || order.orderStatus === 'Delivered') {
+                    statusSelectHTML = `<span class="status-badge ${statusBadge}">${order.orderStatus}</span>`;
+
+                    // Manual refund button removed (now automated)
+                } else {
+                    const statusOptions = ['Pending', 'Processing', 'Shipped', 'Delivered'].map(s => {
+                        return `<option value="${s}" ${order.orderStatus === s ? 'selected' : ''}>${s}</option>`;
+                    }).join('');
+
+                    statusSelectHTML = `
+                <select onchange="updateOrderStatus('${order._id}', this.value, '${order.orderStatus}')" style="padding:4px; border-radius:4px; font-size:12px; border:1px solid #ddd; outline:none; cursor:pointer;" class="status-badge ${statusBadge}">
+                    ${statusOptions}
+                </select>
+                `;
+                }
+
+                html += `
+                <tr>
+                        <td class="col-id">${idShort}</td>
+                        <td class="customer-info">
+                            <h4>${userName}</h4>
+                            <p>${userEmail}</p>
+                        </td>
+                        <td class="date-text">${date}</td>
+                        <td class="total-text">₹${(order.totalAmount || 0).toFixed(2)}</td>
+                        <td>
+                            ${order.paymentStatus === 'Refunded' ?
+                        `<span class="badge payment-wallet-green"><i class="fas fa-wallet"></i> REFUNDED</span>` :
+                        `<span class="badge ${paymentBadge}">${(order.paymentMethod || 'Wallet').toUpperCase()} • ${order.paymentStatus}</span>`
+                    }
+                        </td>
+                        <td>${statusSelectHTML}</td>
+                        <td>
+                            <div class="actions-cell">
+                                <button class="action-btn btn-view" onclick="viewOrderDetails('${order._id}')" title="View Details">
+                                    <svg style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        async function updateOrderStatus(orderId, newStatus, currentStatus) {
+            // All updates now require confirmation as requested
+            let confirmMsg = `Are you sure you want to change the status of this order from ${currentStatus} to ${newStatus}?`;
+
+            // Special warnings for sensitive changes
+            if (newStatus === 'Delivered') {
+                confirmMsg = "Are you sure you want to mark this order as Delivered? This will set the payment status to 'Paid' and is usually final.";
+            } else if (currentStatus === 'Delivered') {
+                confirmMsg = "This order is already Delivered. Changing it back might affect payment records and customer expectations. Continue?";
+            }
+
+            const confirmed = await AdminModal.confirm(confirmMsg);
+            if (!confirmed) {
+                fetchAdminOrders(); // Revert selection
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/orders/admin/${orderId}/status`, {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || "Failed to update status");
+
+                await AdminModal.alert("Order status updated successfully.", "success");
+                fetchAdminOrders(); // Refresh table
+            } catch (err) {
+                console.error(err);
+                AdminModal.alert("Update Failed: " + err.message, "error");
+                fetchAdminOrders(); // Revert selection
+            }
+        }
+
+        // refundToWallet function removed (logic moved to backend automation)
+
+        async function viewOrderDetails(orderId) {
+            try {
+                // Fetch fresh data from API to see latest status/returns
+                const res = await fetch(`/api/orders/${orderId}`, { credentials: 'include' });
+                const data = await res.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || "Failed to fetch details");
+                }
+
+                const order = data.order;
+                const container = document.getElementById('modal-details-container');
+                if (!container) return;
+
+                const date = new Date(order.createdAt).toLocaleDateString("en-GB");
+
+                let addr = order.shippingAddress || {};
+                let itemsHtml = (order.items || []).map(item => `
+                    <div class="order-item">
+                        <img src="${item.productImage || 'https://placehold.co/60x60'}" alt="${item.productName}" class="item-img" onerror="this.src='https://placehold.co/60x60'">
+                        <div class="item-info">
+                            <h5>${item.productName || 'Unknown Product'}</h5>
+                            <p>Qty: ${item.quantity || 0} x ₹${(item.price || 0).toFixed(2)} <span class="badge-size">Size: ${item.size || 'N/A'}</span></p>
+                        </div>
+                    </div>
+                `).join('');
+
+                const isCancelled = order.orderStatus === 'Cancelled';
+                const isRefunded = order.paymentStatus === 'Refunded';
+
+                // Get appropriate status badge class
+                let modalStatusClass = 'status-pending';
+                if (order.orderStatus === 'Completed' || order.orderStatus === 'Delivered') modalStatusClass = 'status-completed';
+                if (order.orderStatus === 'Cancelled') modalStatusClass = 'status-cancelled';
+
+                container.innerHTML = `
+                    <div class="modal-details-grid">
+                        <div class="detail-card">
+                            <h4>Shipping Details</h4>
+                            <p><strong>${addr.name || 'N/A'}</strong></p>
+                            <p>${addr.address || 'N/A'}</p>
+                            <p>${addr.city || ''}, ${addr.state || ''}</p>
+                            <p>Pin: ${addr.zipCode || 'N/A'}</p>
+                            <p>Phone: ${addr.phone || 'N/A'}</p>
+                        </div>
+                        <div class="detail-card">
+                            <h4>Order Info</h4>
+                            <p><strong>Status:</strong> <span class="status-badge ${modalStatusClass}" style="padding: 2px 8px; font-size: 11px;">${order.orderStatus}</span></p>
+                            <p><strong>Payment Method:</strong> <span style="text-transform: uppercase;">${order.paymentMethod || 'Unknown'}</span></p>
+                            <p><strong>Payment Status:</strong> 
+                                <span style="${isRefunded ? 'color: #ef4444; font-weight: 800;' : 'color: var(--success-green); font-weight: 600;'}">
+                                    ${isRefunded ? '<i class="fas fa-wallet"></i> Refunded to Wallet' : (order.paymentStatus || 'Pending')}
+                                </span>
+                            </p>
+                            <p><strong>Order Date:</strong> ${date}</p>
+                        </div>
+                    </div>
+
+                    ${order.returnRequest ? `
+                    <div class="detail-card" style="grid-column: span 2; border-left: 4px solid #3b82f6; background-color: #eff6ff; margin-top: -1rem; margin-bottom: 2rem;">
+                        <h4 style="color: #1e40af;"><i class="fas fa-undo"></i> Return Request Found</h4>
+                        <p><strong>Reason:</strong> ${order.returnRequest.reason}</p>
+                        <p><strong>Status:</strong> <span class="status-badge status-approved" style="padding: 1px 6px; font-size: 10px;">${order.returnRequest.status === 'Approved' ? 'Refunded to Wallet' : order.returnRequest.status}</span></p>
+                        <p style="font-size: 11px; margin-top: 5px;"><a href="returns.html" style="color: #3b82f6; text-decoration: none;">View in Return Management →</a></p>
+                    </div>` : ''}
+
+                    <div class="items-section">
+                        <h4>Items Ordered</h4>
+                        ${itemsHtml}
+                    </div>
+
+                    <div class="order-summary">
+                        <div class="summary-row">
+                            <span>Price (${(order.items || []).length} items):</span>
+                            <span>₹${(order.totalMRP || 0).toFixed(2)}</span>
+                        </div>
+                        ${(order.productDiscount || 0) > 0 ? `
+                        <div class="summary-row text-red">
+                            <span>Product Discount:</span>
+                            <span>-₹${order.productDiscount.toFixed(2)}</span>
+                        </div>` : ''}
+                        ${(order.couponDiscount || 0) > 0 ? `
+                        <div class="summary-row text-red">
+                            <span>Coupon (${order.couponCode || 'None'}):</span>
+                            <span>-₹${order.couponDiscount.toFixed(2)}</span>
+                        </div>` : ''}
+                        <div class="summary-row">
+                            <span>Shipping:</span>
+                            <span style="color: var(--success-green); font-weight: 600;">FREE</span>
+                        </div>
+                        ${(order.totalSaved || 0) > 0 ? `
+                        <div class="summary-row" style="color: var(--success-green); font-weight: 600; margin-top: 10px; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+                            <span>Total Saved:</span>
+                            <span>₹${order.totalSaved.toFixed(2)}</span>
+                        </div>` : ''}
+                        <div class="summary-row total-row">
+                            <span>Net Payable:</span>
+                            <span>₹${(order.totalAmount || 0).toFixed(2)}</span>
+                        </div>
+                    </div>
+                `;
+
+                openModal();
+            } catch (error) {
+                console.error("Error in viewOrderDetails:", error);
+                AdminModal.alert("An error occurred while displaying order details.", "error");
+            }
+        }
+
+        function openModal() {
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal() {
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+    <script src="admin-profile-helper.js"></script>
+    <script src="admin-modal-helper.js"></script>
+
+    <script src="admin-sidebar.js"></script>
+    <script src="admin-inactivity.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KICKSLAB - Coupons</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin-modal.css">
+    <link rel="stylesheet" href="admin-sidebar.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-indigo: #4f46e5;
+            --primary-bg: #f3f4f6;
+            --white: #ffffff;
+            --text-dark: #111827;
+            --text-gray: #6b7280;
+            --border-color: #e5e7eb;
+            --danger-red: #ef4444;
+            --success-green: #10b981;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            margin-left: 260px;
+            padding: 2.5rem;
+            transition: margin-left 0.3s;
+        }
+
+        @media (max-width: 1199px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        .content-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .page-header-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 2.5rem;
+            color: var(--text-dark);
+            letter-spacing: -0.03em;
+        }
+
+
+        /* Card Container */
+        .coupons-card {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .card-title-group h2 {
+            font-size: 1.75rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            letter-spacing: -0.04em;
+        }
+
+        .card-title-group p {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: flex-end;
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-gray);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 320px;
+            padding: 0.875rem 1rem;
+            padding-left: 2.75rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 14px;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-indigo);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 0.875rem 2rem;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.9375rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            white-space: nowrap;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+            filter: brightness(1.05);
+        }
+
+        .icon-sm {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Table Styles */
+        .table-responsive {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead th {
+            background: #f9fafb;
+            padding: 1rem 1rem;
+            text-align: left;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-gray);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tbody td {
+            padding: 0.875rem 0.75rem;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .code-pill {
+            background: #f1f5f9;
+            color: #334155;
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: inherit;
+            letter-spacing: 0.05em;
+            border: 1.5px solid #e2e8f0;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .code-pill:hover {
+            border-color: var(--primary-indigo);
+            color: var(--primary-indigo);
+            background: #eef2ff;
+        }
+
+        .status-select {
+            padding: 0.375rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1.5px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.4rem center;
+            background-size: 1rem;
+            padding-right: 1.75rem;
+            text-align: center;
+        }
+
+        .status-select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .status-select.active-state {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-select.inactive-state {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-select:hover {
+            filter: brightness(0.96);
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* Action Buttons */
+        .action-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-edit {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-edit:hover {
+            background: #fde68a;
+        }
+
+        .btn-delete:hover {
+            background: #fecaca;
+        }
+
+        /* XL Modal Design */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            width: 95%;
+            max-width: 900px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.95);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .close-modal {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #f3f4f6;
+            color: var(--text-gray);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 2.5rem;
+        }
+
+        .modal-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-gray);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-indigo);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        textarea.form-control {
+            resize: none;
+        }
+
+        .modal-footer {
+            padding: 1.5rem 2rem;
+            background: #f9fafb;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn-cancel {
+            background: white;
+            color: #374151;
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background: var(--primary-indigo);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.75rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .row-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .switch-group {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .switch-input {
+            width: 1.2rem;
+            height: 1.2rem;
+            accent-color: var(--primary-indigo);
+            margin-top: 0.1rem;
+        }
+
+        .switch-info p {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+
+        .switch-info span {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            line-height: 1.4;
+        }
+
+        /* Detail View Modal Styles */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .detail-item label {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .detail-item p {
+            font-size: 0.9375rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .detail-divider {
+            grid-column: span 2;
+            height: 1px;
+            background: var(--border-color);
+            margin: 0.5rem 0;
+        }
+
+        .detail-description {
+            grid-column: span 2;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-left: 4px solid var(--primary-indigo);
+        }
+
+        /* Pagination Styles */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .pagination-info {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            color: var(--text-gray);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            border-color: var(--primary-indigo);
+            color: var(--primary-indigo);
+        }
+
+        .page-btn.active {
+            background-color: var(--primary-indigo);
+            color: #fff;
+            border-color: var(--primary-indigo);
+        }
+
+        .page-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="dashboard.html" class="logo">
+            <img src="assets/kickslab-logo.png" alt="KICKSLAB">
+        </a>
+
+        <div class="menu-category">Main menu</div>
+        <a href="dashboard.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </div>
+            Dashboard
+        </a>
+        <a href="orders.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </div>
+            Order Management
+        </a>
+        <a href="customers.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            Customers
+        </a>
+        <a href="coupons.html" class="nav-item active">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+            Coupon Code
+        </a>
+        <a href="sales.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+            </div>
+            Offers
+        </a>
+        <a href="categories.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
+            Categories
+        </a>
+        <a href="transactions.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+            </div>
+            Transaction
+        </a>
+        <a href="brand.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polygon
+                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                    </polygon>
+                </svg>
+            </div>
+            Brand
+        </a>
+
+        <div class="menu-category">Product</div>
+        <a href="add-product.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+            </div>
+            Add Products
+        </a>
+        <a href="product-list.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
+            Product List
+        </a>
+        <a href="reviews.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path
+                        d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                    </path>
+                </svg>
+            </div>
+            Product Reviews
+        </a>
+        <a href="returns.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polyline points="1 4 1 10 7 10"></polyline>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+            </div>
+            Product Returns
+        </a>
+
+        <a href="analytics.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            </div>
+            Analytics & Reports
+        </a>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn">
+                Logout
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            <h1 class="page-header-title">Coupon Management</h1>
+
+
+            <div class="coupons-card">
+                <div class="card-header">
+                    <div class="card-title-group">
+                        <h2>All Coupons</h2>
+                        <p>Manage and track your promotional campaign performance</p>
+                    </div>
+                    <div class="card-actions">
+                        <div class="search-container">
+                            <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <input type="text" placeholder="Search campaign code..." class="search-input"
+                                id="couponSearch">
+                        </div>
+                        <button class="add-btn" onclick="openAddModal()">
+                            <svg class="icon-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Create New Coupon
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="couponsTable">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th>Usage</th>
+                                <th>Min Purchase</th>
+                                <th>Target</th>
+                                <th>Expiry</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="couponsBody">
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <div class="pagination-info" id="pagination-info">Showing campaigns</div>
+                    <div class="pagination-controls" id="pagination-controls">
+                        <!-- Pagination controls here -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Redesigned XL Coupon Modal -->
+    <div class="modal-overlay" id="couponModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Create New Coupon</h3>
+                <button class="close-modal" onclick="closeModal()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="couponForm">
+                    <input type="hidden" id="couponId">
+
+                    <div class="modal-grid">
+                        <!-- Left Column: Primary Info -->
+                        <div class="modal-column">
+                            <div class="modal-section">
+                                <div class="section-title">General Information</div>
+                                <div class="form-group">
+                                    <label>Coupon Title</label>
+                                    <input type="text" id="title" class="form-control"
+                                        placeholder="E.g. Summer Kick-off Sale" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Coupon Code</label>
+                                    <input type="text" id="code" class="form-control" placeholder="E.g. SUMMER2024"
+                                        required
+                                        style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Campaign Description</label>
+                                    <textarea id="description" class="form-control" rows="4"
+                                        placeholder="Briefly describe this campaign for internal tracking and user visibility..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="modal-section">
+                                <div class="section-title">Targeting & Visibility</div>
+                                <div class="row-grid">
+                                    <div class="form-group">
+                                        <label>Applicable On</label>
+                                        <select id="applicableOn" class="form-control"
+                                            onchange="handleTargetingChange()">
+                                            <option value="all">Everywhere</option>
+                                            <option value="category">Specific Category</option>
+                                            <option value="brand">Specific Brand</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" id="targetingTargetGroup" style="display:none;">
+                                        <label id="targetingLabel">Select Target</label>
+                                        <select id="applicableId" class="form-control"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <select id="status" class="form-control">
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive / Expired</option>
+                                    </select>
+                                </div>
+                                <div class="switch-group">
+                                    <input type="checkbox" id="isVisibleToUsers" class="switch-input" checked>
+                                    <div class="switch-info">
+                                        <p>Visible to Users?</p>
+                                        <span>If enabled, this coupon will appear in the "Available Coupons" list in
+                                            User Account & Checkout.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Rules & Limits -->
+                        <div class="modal-column">
+                            <div class="modal-section">
+                                <div class="section-title">Reward Rules</div>
+                                <div class="row-grid">
+                                    <div class="form-group">
+                                        <label>Value Type</label>
+                                        <select id="discountType" class="form-control">
+                                            <option value="percent">Percentage (%)</option>
+                                            <option value="fixed">Flat Amount (₹)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Discount Value</label>
+                                        <input type="number" id="discountValue" class="form-control" min="1" required>
+                                    </div>
+                                </div>
+                                <div class="row-grid">
+                                    <div class="form-group">
+                                        <label>Min. Purchase (₹)</label>
+                                        <input type="number" id="minPurchaseAmount" class="form-control" min="0"
+                                            value="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Max. Cap (₹)</label>
+                                        <input type="number" id="maxDiscountAmount" class="form-control" min="0"
+                                            placeholder="Optional">
+                                    </div>
+                                </div>
+
+                                <div class="switch-group">
+                                    <input type="checkbox" id="isStackable" class="switch-input">
+                                    <div class="switch-info">
+                                        <p>Allow on sale products?</p>
+                                        <span>If enabled, this coupon can be stacked on items already carrying a product
+                                            discount.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-section">
+                                <div class="section-title">Usage Limits & Schedule</div>
+                                <div class="row-grid">
+                                    <div class="form-group">
+                                        <label>Total Limit</label>
+                                        <input type="number" id="usageLimit" class="form-control" min="1" value="100">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Per User Limit</label>
+                                        <input type="number" id="usageLimitPerUser" class="form-control" min="1"
+                                            value="1">
+                                    </div>
+                                </div>
+                                <div class="row-grid">
+                                    <div class="form-group">
+                                        <label>Start Date</label>
+                                        <input type="date" id="startDate" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Expiry Date</label>
+                                        <input type="date" id="expiryDate" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Discard Changes</button>
+                <button type="button" class="btn-save" onclick="saveCoupon()">Confirm & Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail View Modal -->
+    <div id="detailModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <div>
+                    <h3 id="detailCode" style="font-size: 1.5rem; color: var(--primary-indigo); font-weight: 900;">
+                        COUPON CODE</h3>
+                    <p id="detailTitle" style="color: var(--text-gray); font-size: 0.875rem; margin-top: 0.25rem;">
+                        Campaign Title Here</p>
+                </div>
+                <button class="close-modal" onclick="closeDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-grid" id="detailContent">
+                    <!-- Loaded dynamically via showDetails() -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeDetailModal()">Close View</button>
+                <button type="button" class="btn-save" id="detailEditBtn">Edit Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-profile-helper.js"></script>
+    <script src="admin-modal-helper.js"></script>
+
+    <script src="admin-sidebar.js"></script>
+    <script>
+        let allCoupons = [];
+        let currentPage = 1;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCoupons(currentPage);
+            fetchCategoriesAndBrands();
+
+            // Search Debounce Event Listener
+            const searchInput = document.getElementById('couponSearch');
+            let debounceTimer;
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        currentPage = 1;
+                        fetchCoupons(currentPage, e.target.value);
+                    }, 400);
+                });
+            }
+        });
+
+        let categories = [];
+        let brands = [];
+
+        async function fetchCategoriesAndBrands() {
+            try {
+                const [catRes, brandRes] = await Promise.all([
+                    fetch('/api/admin/categories', { credentials: 'include' }),
+                    fetch('/api/admin/brands', { credentials: 'include' })
+                ]);
+                const catData = await catRes.json();
+                const brandData = await brandRes.json();
+
+                categories = Array.isArray(catData) ? catData : (catData.categories || catData.data || []);
+                brands = Array.isArray(brandData) ? brandData : (brandData.brands || brandData.data || []);
+            } catch (error) {
+                console.error('Error fetching categories/brands:', error);
+            }
+        }
+
+        function handleTargetingChange() {
+            const type = document.getElementById('applicableOn').value;
+            const group = document.getElementById('targetingTargetGroup');
+            const label = document.getElementById('targetingLabel');
+            const select = document.getElementById('applicableId');
+
+            if (type === 'all') {
+                group.style.display = 'none';
+                return;
+            }
+
+            group.style.display = 'block';
+            select.innerHTML = '<option value="">Select Target...</option>';
+
+            if (type === 'category') {
+                label.innerText = 'Target Category';
+                categories.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c._id;
+                    opt.innerText = c.name;
+                    select.appendChild(opt);
+                });
+            } else if (type === 'brand') {
+                label.innerText = 'Target Brand';
+                brands.forEach(b => {
+                    const opt = document.createElement('option');
+                    opt.value = b._id;
+                    opt.innerText = b.name;
+                    select.appendChild(opt);
+                });
+            }
+        }
+
+        async function fetchCoupons(page = 1, searchQuery = '') {
+            const tbody = document.getElementById('couponsBody');
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 20px;">Loading campaigns...</td></tr>';
+
+            try {
+                const searchInput = document.getElementById('couponSearch');
+                const search = searchQuery || (searchInput ? searchInput.value : '');
+
+                const response = await fetch(`/api/coupons/admin?page=${page}&limit=20&search=${encodeURIComponent(search)}`, { credentials: 'include' });
+                const data = await response.json();
+
+                if (data.success) {
+                    allCoupons = data.coupons || data.data; // Store for quick lookup
+                    renderCoupons(allCoupons);
+                    renderPagination(data.totalRecords || allCoupons.length, data.totalPages || 1, data.currentPage || 1);
+                } else {
+                    throw new Error(data.message || 'Failed to fetch coupons');
+                }
+            } catch (error) {
+                console.error('Error fetching coupons:', error);
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: red;">Frontend Error: ${error.message} <br/> <small>${error.stack}</small></td></tr>`;
+            }
+        }
+
+        function renderPagination(totalRecords, totalPages, currentPageNum) {
+            currentPage = currentPageNum;
+            const paginationInfo = document.getElementById('pagination-info');
+            const paginationControls = document.getElementById('pagination-controls');
+
+            if (!paginationInfo || !paginationControls) return;
+
+            const limit = 20;
+            const startRecord = totalRecords === 0 ? 0 : ((currentPage - 1) * limit) + 1;
+            const endRecord = Math.min(currentPage * limit, totalRecords);
+
+            paginationInfo.textContent = `Showing ${startRecord}–${endRecord} of ${totalRecords} campaigns`;
+
+            let controlsHtml = '';
+
+            // Prev Button
+            controlsHtml += `<button class="page-btn ${currentPage === 1 ? 'disabled' : ''}" onclick="${currentPage === 1 ? 'return false;' : `fetchCoupons(${currentPage - 1})`}">« Prev</button>`;
+
+            // Page Numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (totalPages > 7) {
+                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                        controlsHtml += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="fetchCoupons(${i})">${i}</button>`;
+                    } else if (i === currentPage - 2 || i === currentPage + 2) {
+                        controlsHtml += `<span style="margin: 0 5px; align-self: center;">...</span>`;
+                    }
+                } else {
+                    controlsHtml += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="fetchCoupons(${i})">${i}</button>`;
+                }
+            }
+
+            // Next Button
+            controlsHtml += `<button class="page-btn ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}" onclick="${currentPage === totalPages || totalPages === 0 ? 'return false;' : `fetchCoupons(${currentPage + 1})`}">Next »</button>`;
+
+            paginationControls.innerHTML = controlsHtml;
+        }
+
+        async function handleStatusChange(id, newStatus, expiryDate) {
+            const coupon = allCoupons.find(c => c._id === id);
+            const selectElement = document.getElementById(`status-select-${id}`);
+            const originalStatus = coupon.status;
+
+            // If changing to Inactive and it hasn't expired yet
+            if (newStatus === 'Inactive' && new Date(expiryDate) > new Date()) {
+                const confirmed = await AdminModal.confirm("expiry not exceeded are you sure you want to deactivate?");
+
+                if (!confirmed) {
+                    selectElement.value = originalStatus;
+                    return;
+                }
+            }
+
+            try {
+                const response = await fetch(`/api/coupons/admin/${id}`, {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    await AdminModal.alert(`Status changed to ${newStatus}`, "success");
+
+                    // Update the visual class
+                    selectElement.className = `status-select ${newStatus === 'Active' ? 'active-state' : 'inactive-state'}`;
+                    coupon.status = newStatus; // Update local store
+                } else {
+                    selectElement.value = originalStatus;
+                    AdminModal.alert(data.message || 'Failed to update status', 'error');
+                }
+            } catch (error) {
+                console.error('Error toggling status:', error);
+                selectElement.value = originalStatus;
+            }
+        }
+
+        async function showDetails(id) {
+            const coupon = allCoupons.find(c => c._id === id);
+            if (!coupon) return;
+
+            document.getElementById('detailCode').innerText = coupon.code;
+            document.getElementById('detailTitle').innerText = coupon.title || 'Untitled Campaign';
+
+            let targetLabel = 'Global';
+            if (coupon.applicableOn === 'category') {
+                const cat = categories.find(c => c._id === coupon.applicableId);
+                targetLabel = cat ? `Category: ${cat.name}` : 'Specific Category';
+            } else if (coupon.applicableOn === 'brand') {
+                const brand = brands.find(b => b._id === coupon.applicableId);
+                targetLabel = brand ? `Brand: ${brand.name}` : 'Specific Brand';
+            }
+
+            const content = `
+                <div class="detail-item">
+                    <label>Discount Type</label>
+                    <p>${coupon.discountType === 'percent' ? 'Percentage (%)' : 'Flat Amount (₹)'}</p>
+                </div>
+                <div class="detail-item">
+                    <label>Value</label>
+                    <p style="font-weight:700;">${coupon.discountType === 'percent' ? coupon.discountValue + '%' : '₹' + coupon.discountValue}</p>
+                </div>
+                <div class="detail-item">
+                    <label>Min. Purchase</label>
+                    <p>₹${coupon.minPurchaseAmount}</p>
+                </div>
+                <div class="detail-item">
+                    <label>Max. Cap</label>
+                    <p>${coupon.maxDiscountAmount ? '₹' + coupon.maxDiscountAmount : 'No Limit'}</p>
+                </div>
+                <div class="detail-divider"></div>
+                <div class="detail-item">
+                    <label>Target Audience</label>
+                    <p>${targetLabel}</p>
+                </div>
+                <div class="detail-item">
+                    <label>Stackable?</label>
+                    <p>${coupon.isStackable ? 'Yes (With sale items)' : 'No (Standard only)'}</p>
+                </div>
+                <div class="detail-divider"></div>
+                <div class="detail-item">
+                    <label>Redemption Limit</label>
+                    <p>${coupon.usageLimit} Total</p>
+                </div>
+                <div class="detail-item">
+                    <label>Per User Limit</label>
+                    <p>${coupon.usageLimitPerUser || 1} Times</p>
+                </div>
+                <div class="detail-item">
+                    <label>Valid From</label>
+                    <p>${coupon.startDate ? new Date(coupon.startDate).toLocaleDateString() : 'Immediate'}</p>
+                </div>
+                <div class="detail-item">
+                    <label>Valid Until</label>
+                    <p>${new Date(coupon.expiryDate).toLocaleDateString()}</p>
+                </div>
+                <div class="detail-divider"></div>
+                <div class="detail-description">
+                    <label style="color:var(--primary-indigo)">Description</label>
+                    <p style="margin-top:0.25rem; font-style:italic;">${coupon.description || 'No campaign description provided.'}</p>
+                </div>
+            `;
+
+            document.getElementById('detailContent').innerHTML = content;
+            document.getElementById('detailEditBtn').onclick = () => {
+                closeDetailModal();
+                openEditModal(id);
+            };
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+
+        function renderCoupons(coupons) {
+            const body = document.getElementById('couponsBody');
+            body.innerHTML = coupons.map(c => `
+                <tr>
+                    <td><span class="code-pill" onclick="showDetails('${c._id}')">${c.code}</span></td>
+                    <td>${c.discountType === 'percent' ? 'Percentage' : 'Fixed'}</td>
+                    <td style="font-weight: 700;">${c.discountType === 'percent' ? c.discountValue + '%' : '₹' + c.discountValue}</td>
+                    <td><span style="font-weight: 600;">${c.usedCount || 0}</span> / <span style="color: #6b7280;">${c.usageLimit || 0}</span></td>
+                    <td>₹${c.minPurchaseAmount || 0}</td>
+                    <td><span style="font-size: 0.75rem; color: #6b7280;">${(c.applicableOn || 'all').toUpperCase()}</span></td>
+                    <td>${c.expiryDate ? new Date(c.expiryDate).toLocaleDateString() : 'N/A'}</td>
+                    <td>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <select class="status-select ${c.status === 'Active' ? 'active-state' : 'inactive-state'}" 
+                                    id="status-select-${c._id}"
+                                    onchange="handleStatusChange('${c._id}', this.value, '${c.expiryDate || new Date()}')">
+                                <option value="Active" ${c.status === 'Active' ? 'selected' : ''}>Active</option>
+                                <option value="Inactive" ${c.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+                            </select>
+                            <span style="font-size: 10px; color: ${c.isVisibleToUsers !== false ? '#10b981' : '#6b7280'}; font-weight: 600; text-align: center;">
+                                ${c.isVisibleToUsers !== false ? '<i class="fas fa-eye"></i> Visible' : '<i class="fas fa-eye-slash"></i> Hidden'}
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-group">
+                            <button class="action-btn btn-edit" onclick="openEditModal('${c._id}')" title="Edit Campaign">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button class="action-btn btn-delete" onclick="deleteCoupon('${c._id}')" title="Remove Campaign">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').innerText = 'Create New Campaign';
+            document.getElementById('couponForm').reset();
+            document.getElementById('couponId').value = '';
+            document.getElementById('applicableOn').value = 'all';
+            handleTargetingChange();
+            document.getElementById('couponModal').classList.add('active');
+        }
+
+        async function openEditModal(id) {
+            try {
+                const coupon = allCoupons.find(c => c._id === id);
+
+                if (coupon) {
+                    document.getElementById('modalTitle').innerText = 'Edit Campaign Settings';
+                    document.getElementById('couponId').value = id;
+                    document.getElementById('title').value = coupon.title || '';
+                    document.getElementById('code').value = coupon.code;
+                    document.getElementById('description').value = coupon.description || '';
+                    document.getElementById('discountType').value = coupon.discountType;
+                    document.getElementById('discountValue').value = coupon.discountValue;
+                    document.getElementById('minPurchaseAmount').value = coupon.minPurchaseAmount;
+                    document.getElementById('maxDiscountAmount').value = coupon.maxDiscountAmount || '';
+                    document.getElementById('usageLimit').value = coupon.usageLimit;
+                    document.getElementById('usageLimitPerUser').value = coupon.usageLimitPerUser || 1;
+                    document.getElementById('startDate').value = coupon.startDate ? coupon.startDate.split('T')[0] : '';
+                    document.getElementById('expiryDate').value = coupon.expiryDate ? coupon.expiryDate.split('T')[0] : '';
+                    document.getElementById('status').value = coupon.status;
+                    document.getElementById('isStackable').checked = coupon.isStackable;
+                    document.getElementById('applicableOn').value = coupon.applicableOn || 'all';
+                    document.getElementById('isVisibleToUsers').checked = coupon.isVisibleToUsers !== false;
+
+                    handleTargetingChange();
+                    if (coupon.applicableId) {
+                        document.getElementById('applicableId').value = coupon.applicableId;
+                    }
+
+                    document.getElementById('couponModal').classList.add('active');
+                }
+            } catch (error) {
+                console.error('Error opening edit modal:', error);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('couponModal').classList.remove('active');
+        }
+
+        async function saveCoupon() {
+            const form = document.getElementById('couponForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const id = document.getElementById('couponId').value;
+            const payload = {
+                title: document.getElementById('title').value,
+                code: document.getElementById('code').value.toUpperCase(),
+                description: document.getElementById('description').value,
+                discountType: document.getElementById('discountType').value,
+                discountValue: Number(document.getElementById('discountValue').value),
+                minPurchaseAmount: Number(document.getElementById('minPurchaseAmount').value),
+                maxDiscountAmount: Number(document.getElementById('maxDiscountAmount').value) || 0,
+                usageLimit: Number(document.getElementById('usageLimit').value),
+                usageLimitPerUser: Number(document.getElementById('usageLimitPerUser').value),
+                startDate: document.getElementById('startDate').value,
+                expiryDate: document.getElementById('expiryDate').value,
+                status: document.getElementById('status').value,
+                isStackable: document.getElementById('isStackable').checked,
+                isVisibleToUsers: document.getElementById('isVisibleToUsers').checked,
+                applicableOn: document.getElementById('applicableOn').value,
+                applicableId: document.getElementById('applicableId').value || null
+            };
+
+            const url = id ? `/api/coupons/admin/${id}` : '/api/coupons/admin';
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    await AdminModal.alert(`Coupon ${id ? 'updated' : 'created'} successfully`, "success");
+                    closeModal();
+                    fetchCoupons();
+                } else {
+                    AdminModal.alert(data.message, "error");
+                }
+            } catch (error) {
+                AdminModal.alert("Something went wrong", "error");
+            }
+        }
+
+        async function deleteCoupon(id) {
+            const confirmed = await AdminModal.confirm("Deleting this campaign is permanent. Archived orders will retain historical coupon data. Are you sure you want to remove it?");
+
+            if (confirmed) {
+                try {
+                    const response = await fetch(`/api/coupons/admin/${id}`, { method: 'DELETE', credentials: 'include' });
+                    const data = await response.json();
+                    if (data.success) {
+                        await AdminModal.alert("Campaign has been deleted.", "success");
+                        fetchCoupons();
+                    } else {
+                        AdminModal.alert(data.message, "error");
+                    }
+                } catch (error) {
+                    AdminModal.alert("Something went wrong", "error");
+                }
+            }
+        }
+
+        // Note: Old client-side search logic removed as search is now handled server-side
+    </script>
+    <script src="admin-inactivity.js"></script>
+</body>
+
+</html>

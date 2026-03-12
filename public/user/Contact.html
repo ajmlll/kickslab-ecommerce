@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - KICKSLAB</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="user-search.js"></script>
+    <link rel="stylesheet" href="user-auth-helper.css">
+    <link rel="stylesheet" href="user-search.css">
+    <style>
+        /* Google Fonts Import */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;700&display=swap');
+
+
+        /* 3. Sign Up Button Styles - Removed to match normal links */
+
+        :root {
+            /* Colors - Primitives */
+            --color-black: #000000;
+            --color-dark: #121212;
+            --color-white: #ffffff;
+            --color-accent: #4285F4;
+            --color-grey-bg: #F4F4F4;
+            --color-grey-light: #E0E0E0;
+            --color-text-muted: #666666;
+
+            /* Semantic Variables */
+            --bg-body: var(--color-grey-bg);
+            --bg-card: var(--color-white);
+            --bg-nav: var(--color-white);
+            --bg-footer: var(--color-dark);
+
+            --text-main: var(--color-black);
+            --text-inverse: var(--color-white);
+            --text-muted: var(--color-text-muted);
+
+            --border-color: var(--color-grey-light);
+            --shadow-color: rgba(0, 0, 0, 0.05);
+
+            /* Typography */
+            --font-body: 'Inter', sans-serif;
+            --font-heading: 'Oswald', sans-serif;
+
+            /* Spacing */
+            --spacing-md: 16px;
+            --spacing-lg: 20px;
+            --spacing-xl: 40px;
+
+            /* Layout */
+            --container-width: 1280px;
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+        }
+
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            background: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* Utilities */
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .align-center {
+            align-items: center;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .font-heading {
+            font-family: var(--font-heading);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 10px 24px;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: var(--border-radius-sm);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--color-accent);
+            color: var(--color-white);
+        }
+
+        .btn-primary:hover {
+            background-color: #3367d6;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        /* Announcement Bar */
+        .announcement-bar {
+            background-color: var(--color-black);
+            color: var(--color-white);
+            font-size: 12px;
+            padding: 10px 0;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            z-index: 1001;
+            position: relative;
+        }
+
+        .announcement-bar strong {
+            color: var(--color-accent);
+        }
+
+        /* Hero Section */
+        .contact-hero {
+            position: relative;
+            height: 400px;
+            background: url('https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=2000&auto=format&fit=crop') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--color-white);
+        }
+
+        .contact-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .contact-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-hero h1 {
+            font-family: var(--font-heading);
+            font-size: 64px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .contact-hero p {
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--bg-nav);
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .nav-left,
+        .nav-right {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-left {
+            justify-content: flex-start;
+            gap: 15px;
+        }
+
+        .nav-right {
+            justify-content: flex-end;
+        }
+
+        .nav-center {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .navbar .logo {
+            font-size: 32px;
+            font-weight: 800;
+            font-style: italic;
+            letter-spacing: -1px;
+            color: var(--text-main);
+            line-height: 1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            color: var(--text-main);
+            position: relative;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links a.active::after,
+        .nav-links a:hover::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--text-main);
+        }
+
+        .nav-icons {
+            gap: 20px;
+            font-size: 18px;
+            color: var(--text-main);
+        }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box input {
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            padding: 5px 25px 5px 0;
+            font-family: inherit;
+            width: 180px;
+            background: transparent;
+            color: var(--text-main);
+            font-size: 14px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--text-main);
+            width: 220px;
+        }
+
+        .search-box .fa-search {
+            position: absolute;
+            right: 0;
+            color: var(--text-main);
+            pointer-events: none;
+            font-size: 14px;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            font-size: 24px;
+            color: var(--text-main);
+        }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            display: none;
+        }
+
+        .mobile-menu-overlay.active {
+            display: block;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100%;
+            background: var(--bg-nav);
+            z-index: 1002;
+            transition: 0.3s;
+            padding: 20px;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .mobile-menu.active {
+            left: 0;
+        }
+
+        .mobile-menu-header {
+            margin-bottom: 30px;
+            color: var(--text-main);
+        }
+
+        .mobile-nav-links li {
+            margin-bottom: 20px;
+        }
+
+        .mobile-nav-links a {
+            font-weight: 600;
+            font-size: 16px;
+            display: block;
+            color: var(--text-main);
+        }
+
+        /* --- CONTACT SECTION START --- */
+        .contact-section {
+            padding: 60px 0;
+            background-color: var(--bg-body);
+        }
+
+        .contact-header {
+            margin-bottom: 50px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-title {
+            font-family: var(--font-heading);
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            color: var(--text-main);
+        }
+
+        .contact-desc {
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 60px;
+            background: var(--bg-card);
+            padding: 60px;
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+        }
+
+        .contact-info-item {
+            margin-bottom: 30px;
+        }
+
+        .contact-info-item h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .contact-info-item p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .contact-info-item i {
+            color: var(--color-accent);
+            margin-right: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            font-family: inherit;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            background-color: #FAFAFA;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            background-color: #fff;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .error-msg {
+            color: #d32f2f;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: var(--border-radius-sm);
+            display: none;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .form-status.success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            display: block;
+        }
+
+        .form-status.error {
+            background-color: #ffebee;
+            color: #c62828;
+            display: block;
+        }
+
+        /* --- CONTACT SECTION END --- */
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-footer);
+            color: var(--color-white);
+            padding: 60px 0 20px 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: 30px 30px 0 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 30px;
+        }
+
+        .footer-col h4 {
+            color: #f59e0b;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .footer-col p,
+        .footer-col a {
+            font-size: 13px;
+            line-height: 2;
+            color: #cccccc;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .footer-col a:hover {
+            color: var(--color-white);
+            transform: translateX(5px);
+            transition: all 0.3s ease;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .footer-socials a {
+            color: #ffffff;
+            font-size: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-socials a:hover {
+            color: var(--color-accent);
+        }
+
+        .footer-large-text {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-heading);
+            font-size: 150px;
+            font-style: italic;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* --- RESPONSIVE BREAKPOINTS --- */
+        /* Tablet (Max 1024px) */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .nav-links,
+            .search-box input {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .search-box .fa-search {
+                position: static;
+                cursor: pointer;
+                pointer-events: auto;
+                font-size: 20px;
+                margin-left: 5px;
+            }
+
+            .nav-center {
+                align-items: center;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+                /* Stack columns on tablet/mobile */
+                gap: 40px;
+            }
+        }
+
+        /* Mobile (Max 768px) */
+        @media (max-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                text-align: center;
+            }
+
+            .footer-col h4 {
+                margin-top: 10px;
+            }
+
+            .footer-socials {
+                justify-content: center;
+            }
+
+            .contact-title {
+                font-size: 32px;
+            }
+
+            .contact-grid {
+                padding: 20px;
+            }
+        }
+
+        /* Small Mobile (Max 600px) */
+        @media (max-width: 600px) {
+            .footer-large-text {
+                font-size: 100px;
+                bottom: -20px;
+            }
+
+            .contact-title {
+                font-size: 28px;
+            }
+        }
+
+        /* --- SweetAlert2 Creative Premium Styles --- */
+        .creative-premium-modal {
+            background: linear-gradient(135deg, #312e81, #4f46e5) !important;
+            border-radius: 20px !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+            overflow: hidden;
+            border: none !important;
+            color: #fff !important;
+        }
+
+        .creative-premium-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(66, 133, 244, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .creative-html-container {
+            margin: 0 !important;
+            padding: 40px 30px !important;
+            z-index: 1;
+            position: relative;
+        }
+
+        .creative-modal-content {
+            text-align: center;
+        }
+
+        .floating-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #4285F4, #2b5db0);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px auto;
+            font-size: 28px;
+            color: white;
+            box-shadow: 0 10px 25px rgba(66, 133, 244, 0.4);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .creative-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #4285F4 0%, #00d2ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .creative-desc {
+            font-family: 'Inter', sans-serif;
+            color: #a0a0a0;
+            font-size: 15px;
+            line-height: 1.6;
+            padding: 0 15px;
+        }
+
+        .creative-confirm-btn {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
+            width: 100%;
+            padding: 18px !important;
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 600 !important;
+            letter-spacing: 2px !important;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+            border-radius: 0 0 20px 20px !important;
+            text-transform: uppercase !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 10px;
+            margin: 0 !important;
+        }
+
+        .creative-confirm-btn:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <div class="nav-left">
+                <button class="mobile-menu-btn" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+            </div>
+
+            <div class="nav-center">
+                <a href="Landingpage.html" class="logo font-heading">KICKSLAB</a>
+                <ul class="nav-links">
+                    <li><a href="Landingpage.html">Home</a></li>
+                    <li><a href="ProductListing.html" class="protected-link">Shop</a></li>
+                    <li><a href="AboutPage.html">About</a></li>
+                    <li><a href="Contact.html" class="active protected-link">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-right">
+                <div class="nav-icons flex align-center justify-end">
+                    <a href="Wishlist.html"><i class="far fa-heart"></i></a>
+                    <a href="Cart.html"><i class="fas fa-shopping-bag"></i></a>
+                    <a href="#"><i class="fas fa-user-circle"></i></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay"></div>
+    <div class="mobile-menu">
+        <div class="mobile-menu-header flex justify-between align-center">
+            <span class="logo font-heading">KICKSLAB</span>
+            <button class="close-menu-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="Landingpage.html">Home</a></li>
+            <li><a href="ProductListing.html" class="protected-link">Shop</a></li>
+            <li><a href="AboutPage.html">About</a></li>
+            <li><a href="Contact.html" class="protected-link">Contact</a></li>
+        </ul>
+    </div>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="contact-hero">
+            <div class="contact-hero-content">
+                <h1>Get In Touch</h1>
+                <p>WE'D LOVE TO HEAR FROM YOU</p>
+            </div>
+        </section>
+
+        <section class="contact-section">
+            <div class="container">
+                <div class="contact-header text-center">
+                    <h2 class="contact-title">Contact Us</h2>
+                    <p class="contact-desc">Have questions about your order or need help with sizing? Send us a message
+                        below.</p>
+                </div>
+
+                <div class="contact-grid">
+                    <!-- Left: Contact Info -->
+                    <div class="contact-info">
+                        <!-- Store Removed -->
+
+                        <div class="contact-info-item">
+                            <h4><i class="fas fa-phone"></i> Phone</h4>
+                            <p>+91 9778294649</p>
+                        </div>
+                        <div class="contact-info-item">
+                            <h4><i class="fas fa-envelope"></i> Email</h4>
+                            <p>kickslabshoe@gmail.com</p>
+                        </div>
+                    </div>
+
+                    <!-- Right: Contact Form -->
+                    <div class="contact-form-wrapper">
+                        <form id="contactForm" novalidate>
+                            <div class="form-group">
+                                <label for="fullname" class="form-label">Full Name</label>
+                                <input type="text" id="fullname" class="form-control" placeholder="John Doe">
+                                <div class="error-msg" id="nameError">⚠ Full name is required</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" id="email" class="form-control" placeholder="john@example.com">
+                                <div class="error-msg" id="emailError">⚠ Please enter a valid email address</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="subject" class="form-label">Subject</label>
+                                <input type="text" id="subject" class="form-control" placeholder="Order Inquiry">
+                                <div class="error-msg" id="subjectError">⚠ Subject is required</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="message" class="form-label">Message</label>
+                                <textarea id="message" class="form-control"
+                                    placeholder="How can we help you?"></textarea>
+                                <div class="error-msg" id="messageError">⚠ Require 10 characters</div>
+                            </div>
+
+                            <button type="submit" id="submitBtn" class="btn btn-primary btn-full">SEND MESSAGE</button>
+
+                            <div id="formStatus" class="form-status"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Area -->
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <h4>About us</h4>
+                <p>We are the biggest hyperstore in the universe. We got you all cover with our exclusive collections
+                    and latest drops.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Categories</h4>
+                <a href="#">Runners</a>
+                <a href="#">Sneakers</a>
+                <a href="#">Basketball</a>
+                <a href="#">Outdoor</a>
+                <a href="#">Golf</a>
+                <a href="#">Hiking</a>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <a href="AboutPage.html">About</a>
+                <a href="Contact.html" style="color:var(--color-accent)">Contact</a>
+                <a href="#">Blogs</a>
+            </div>
+            <div class="footer-col">
+                <h4>Follow us</h4>
+                <div class="footer-socials">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-large-text">KICKSLAB</div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Mobile Menu Functionality (Reused) ---
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const closeMenuBtn = document.querySelector('.close-menu-btn');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const overlay = document.querySelector('.mobile-menu-overlay');
+
+            function toggleMenu() {
+                mobileMenu.classList.toggle('active');
+                overlay.classList.toggle('active');
+                document.body.classList.toggle('no-scroll');
+            }
+
+            if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMenu);
+            if (closeMenuBtn) closeMenuBtn.addEventListener('click', toggleMenu);
+            if (overlay) overlay.addEventListener('click', toggleMenu);
+
+            // --- Contact Form Validation & Submission ---
+            const form = document.getElementById('contactForm');
+            const statusDiv = document.getElementById('formStatus');
+            const submitBtn = document.getElementById('submitBtn');
+
+            const nameInput = document.getElementById('fullname');
+            const emailInput = document.getElementById('email');
+            const subjectInput = document.getElementById('subject');
+            const messageInput = document.getElementById('message');
+
+            const nameError = document.getElementById('nameError');
+            const emailError = document.getElementById('emailError');
+            const subjectError = document.getElementById('subjectError');
+            const messageError = document.getElementById('messageError');
+
+            const showError = (input, errorElement, show) => {
+                if (show) {
+                    errorElement.style.display = 'block';
+                    input.style.borderColor = '#d32f2f';
+                } else {
+                    errorElement.style.display = 'none';
+                    input.style.borderColor = 'var(--border-color)';
+                }
+            };
+
+            const validateField = (input, errorElement, validationFn) => {
+                const isValid = validationFn(input.value.trim());
+                showError(input, errorElement, !isValid);
+                return isValid;
+            };
+
+            if (form) {
+                // Clear errors on input
+                nameInput.addEventListener('input', () => validateField(nameInput, nameError, val => val.length >= 3));
+                emailInput.addEventListener('input', () => {
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    validateField(emailInput, emailError, val => emailPattern.test(val));
+                });
+                subjectInput.addEventListener('input', () => validateField(subjectInput, subjectError, val => val.length >= 5));
+                messageInput.addEventListener('input', () => validateField(messageInput, messageError, val => val.length >= 10 && val.length <= 1000));
+
+                form.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    statusDiv.className = 'form-status';
+                    statusDiv.innerText = '';
+
+                    const nameValid = validateField(nameInput, nameError, val => val.length >= 3);
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    const emailValid = validateField(emailInput, emailError, val => emailPattern.test(val));
+                    const subjectValid = validateField(subjectInput, subjectError, val => val.length >= 5);
+                    const messageValid = validateField(messageInput, messageError, val => val.length >= 10 && val.length <= 1000);
+
+                    if (!nameValid || !emailValid || !subjectValid || !messageValid) {
+                        return; // Stop submission if any field is invalid
+                    }
+
+                    const name = nameInput.value.trim();
+                    const email = emailInput.value.trim();
+                    const subject = subjectInput.value.trim();
+                    const message = messageInput.value.trim();
+
+                    // UI Loading State
+                    const originalBtnText = submitBtn.innerText;
+                    submitBtn.innerText = 'Sending...';
+                    submitBtn.disabled = true;
+                    submitBtn.style.opacity = '0.6';
+                    submitBtn.style.cursor = 'wait';
+
+                    try {
+                        const response = await fetch('/api/contact/send-message', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ name, email, subject, message })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok && data.success) {
+                            // Success UI requirements: Creative Premium Modal and Alert
+                            Swal.fire({
+                                html: `
+                                    <div class="creative-modal-content">
+                                        <div class="floating-icon">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </div>
+                                        <h2 class="creative-title">MESSAGE <span class="gradient-text">SENT</span></h2>
+                                        <p class="creative-desc">Your voice has been heard. Our team is already on it and will be in touch shortly.</p>
+                                    </div>
+                                `,
+                                showConfirmButton: true,
+                                confirmButtonText: '<i class="fas fa-check"></i> GOT IT',
+                                background: 'linear-gradient(135deg, #312e81, #4f46e5)',
+                                padding: 0,
+                                width: '420px',
+                                customClass: {
+                                    popup: 'creative-premium-modal',
+                                    confirmButton: 'creative-confirm-btn',
+                                    htmlContainer: 'creative-html-container'
+                                },
+                                buttonsStyling: false,
+                                showClass: {
+                                    popup: 'animate__animated animate__zoomIn animate__faster'
+                                },
+                                hideClass: {
+                                    popup: 'animate__animated animate__zoomOut animate__faster'
+                                }
+                            });
+
+                            statusDiv.classList.add('success');
+                            statusDiv.innerText = 'We will contact you as soon as possible';
+                            form.reset();
+                        } else {
+                            statusDiv.classList.add('error');
+                            statusDiv.innerText = data.message || 'Failed to send message. Please try again.';
+                        }
+                    } catch (error) {
+                        console.error('Error submitting contact form:', error);
+                        statusDiv.classList.add('error');
+                        statusDiv.innerText = 'An unexpected error occurred. Please try again later.';
+                    } finally {
+                        submitBtn.innerText = originalBtnText;
+                        submitBtn.disabled = false;
+                        submitBtn.style.opacity = '1';
+                        submitBtn.style.cursor = 'pointer';
+
+                        if (statusDiv.classList.contains('success')) {
+                            statusDiv.style.display = 'block';
+                            setTimeout(() => {
+                                statusDiv.style.display = 'none';
+                                statusDiv.className = 'form-status';
+                            }, 5000);
+                        } else {
+                            statusDiv.style.display = 'block';
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="user-auth-helper.js"></script>
+    <script src="user-search.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            AuthSystem.init();
+
+            // Form Guard for Contact Page
+            document.getElementById('contactForm')?.addEventListener('submit', function (e) {
+                if (!AuthSystem.isLoggedIn()) {
+                    e.preventDefault();
+                    AuthSystem.showAuthModal();
+                }
+            });
+
+            if (new URLSearchParams(window.location.search).get('action') === 'login') {
+                AuthSystem.showAuthModal();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,353 @@
+/* Global Admin Sidebar CSS */
+:root {
+    --sidebar-width: 260px;
+    --sidebar-bg: #ffffff;
+    --sidebar-text: #6b7280;
+    --sidebar-text-active: #ffffff;
+    --sidebar-active-bg: #4e73df;
+    --sidebar-hover-bg: #f3f4f6;
+    --sidebar-border: #e5e7eb;
+    --sidebar-logo-color: #000000;
+}
+
+/* Reset for sidebar context */
+.sidebar,
+.sidebar * {
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.25rem;
+    /* Reduced from 1.5rem */
+    border-right: 1px solid var(--sidebar-border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+}
+
+/* Logo */
+/* Logo */
+.sidebar .logo {
+    display: block;
+    margin-bottom: 0.5rem;
+    text-decoration: none;
+    text-align: center;
+}
+
+.sidebar .logo img {
+    max-width: 160px;
+    /* Slightly reduced */
+    height: auto;
+    display: inline-block;
+}
+
+/* Menu Categories */
+.sidebar .menu-category {
+    font-size: 0.7rem;
+    color: var(--sidebar-text);
+    margin-bottom: 0.25rem;
+    margin-top: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Nav Items */
+.sidebar .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0.85rem;
+    /* Reduced padding */
+    color: var(--sidebar-text);
+    text-decoration: none;
+    border-radius: 8px;
+    margin-bottom: 0.15rem;
+    /* Reduced margin */
+    transition: all 0.2s;
+    font-weight: 500;
+    font-size: 0.85rem;
+    /* Slightly smaller */
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+}
+
+.sidebar .nav-item:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: #1f2937;
+}
+
+.sidebar .nav-item.active {
+    background-color: var(--sidebar-active-bg);
+    color: var(--sidebar-text-active);
+    box-shadow: 0 4px 6px rgba(78, 115, 223, 0.25);
+}
+
+/* Icons */
+.sidebar .nav-icon {
+    margin-right: 0.75rem;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Sidebar Nav Badge - Refined Sizing */
+.nav-badge {
+    background-color: #ef4444;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.15rem 0.4rem;
+    border-radius: 6px;
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.2rem;
+    height: 1.2rem;
+    line-height: 1;
+    box-shadow: 0 1px 2px rgba(239, 68, 68, 0.2);
+    transform-origin: center;
+    animation: badge-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes badge-pop {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.sidebar .nav-item.active .nav-badge {
+    background-color: white;
+    color: var(--sidebar-active-bg, #4e73df);
+}
+
+/* Top Page Notification Alert */
+.page-notification-alert {
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    animation: slide-down 0.4s ease-out;
+}
+
+@keyframes slide-down {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.pna-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #991b1b;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.pna-icon {
+    color: #ef4444;
+    font-size: 1.1rem;
+}
+
+.pna-ok-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pna-ok-btn:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+.sidebar .icon {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Bottom Actions (Logout) */
+.sidebar .sidebar-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--sidebar-border);
+}
+
+.sidebar .logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    color: #374151;
+    border: 1px solid var(--sidebar-border);
+    border-radius: 8px;
+    cursor: pointer;
+    background: transparent;
+    width: 100%;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.sidebar .logout-btn:hover {
+    background-color: #fef2f2;
+    /* Light red hover for logout */
+    border-color: #fee2e2;
+    color: #ef4444;
+}
+
+/* Responsive adjustments */
+
+/* Admin Role Badge */
+.admin-role-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.85rem;
+    /* Reduced padding */
+    border-radius: 8px;
+    font-size: 0.7rem;
+    /* Smaller font */
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin: -0.25rem auto 1rem auto;
+    /* Overlap slightly with logo margin/reduce bottom */
+    width: max-content;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    text-transform: uppercase;
+    transition: transform 0.2s ease, box-shadow 0.2s;
+}
+
+.admin-role-badge i {
+    font-size: 0.85rem;
+}
+
+.admin-role-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
+.role-admin {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: #ffffff !important;
+    border: 1px solid #60a5fa;
+}
+
+.role-manager {
+    background: linear-gradient(135deg, #065f46, #10b981);
+    color: #ffffff !important;
+    border: 1px solid #34d399;
+}
+
+.role-editor {
+    background: linear-gradient(135deg, #7c2d12, #f59e0b);
+    color: #ffffff !important;
+    border: 1px solid #fbbf24;
+}
+
+.role-viewer {
+    background: linear-gradient(135deg, #374151, #6b7280);
+    color: #ffffff !important;
+    border: 1px solid #9ca3af;
+}
+
+/* Tablet & Mobile (Max width 1199px) */
+@media (max-width: 1199px) {
+    .sidebar {
+        transform: translateX(-100%);
+        box-shadow: none;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Overlay when sidebar is open */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+}
+
+/* Ensure hamburger is visible on these screens (controlled by page CSS usually, but we can add utility here) */
+.d-md-none {
+    display: none;
+}
+
+@media (max-width: 1199px) {
+    .d-md-block {
+        display: block !important;
+    }
+
+    .d-md-none {
+        display: none !important;
+    }
+}
+
+/* Explicit Hamburger Visibility */
+@media (min-width: 1200px) {
+    .hamburger-menu {
+        display: none !important;
+    }
+}
+
+@media (max-width: 1199px) {
+    .hamburger-menu {
+        display: block !important;
+    }
+}

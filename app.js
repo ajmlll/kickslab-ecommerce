@@ -1,0 +1,148 @@
+const express = require("express");
+const path = require("path");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const AppError = require("./utils/AppError");
+const globalErrorHandler = require("./controllers/error.controller");
+const { protectStatic } = require("./middlewares/staticAuth.middleware");
+
+const session = require("express-session");
+const passport = require("./config/passport.config");
+
+const app = express();
+
+// --- 1. Global Middlewares ---
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
+
+// Body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// Session and Passport
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'kickslab-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000 // 1 day
+    }
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Static Files Protection (After cookieParser, before static)
+app.use(protectStatic);
+
+// Static Files
+app.use(express.static(path.join(__dirname, "public")));
+
+// Request Logging (Development Only)
+if (process.env.NODE_ENV === 'development') {
+    app.use((req, res, next) => {
+        console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+        next();
+    });
+}
+
+// --- 2. Routes ---
+
+// Specific UI Redirects (Legacy support)
+app.get("/", (req, res) => {
+    res.redirect("/user/Landingpage.html");
+});
+app.get("/verify-email", (req, res) => {
+    res.sendFile(path.join(__dirname, "public/user/otp-verification.html"));
+});
+app.get("/user", (req, res) => {
+    res.sendFile(path.join(__dirname, "public/user/Landingpage.html"));
+});
+app.get("/default", (req, res) => {
+    res.redirect("/user/Landingpage.html");
+});
+
+// API Routes
+app.use("/api/users", require("./routes/userAuth.routes"));
+app.use("/api/users/profile", require("./routes/userProfile.routes"));
+app.use("/api/admin", require("./routes/category.routes"));
+app.use("/api/admin", require("./routes/brand.routes"));
+app.use("/api/admin", require("./routes/product.routes"));
+app.use("/api/admin", require("./routes/admin.routes"));
+app.use("/api/cart", require("./routes/cart.routes"));
+app.use("/api/wishlist", require("./routes/wishlist.routes"));
+app.use("/api/orders", require("./routes/order.routes"));
+app.use("/api/payment", require("./routes/payment.routes"));
+app.use("/api/addresses", require("./routes/address.routes"));
+app.use("/api/reviews", require("./routes/review.routes"));
+app.use("/api/returns", require("./routes/return.routes"));
+app.use("/api/coupons", require("./routes/coupon.routes"));
+app.use("/api/wallet", require("./routes/wallet.routes"));
+app.use("/api", require("./routes/offer.routes"));
+app.use("/api/contact", require("./routes/contact.routes"));
+
+// --- Google OAuth Routes ---
+app.get("/auth/google", (req, res, next) => {
+    if (req.query.remember) {
+        req.session.googleRememberMe = req.query.remember === 'true';
+    }
+    next();
+}, passport.authenticate("google", { scope: ["profile", "email"] }));
+
+app.get("/auth/google/callback",
+    passport.authenticate("google", { failureRedirect: "/user/login.html?error=google_failed" }),
+    (req, res) => {
+        // Successful authentication
+        const user = req.user;
+        const rememberMe = req.session.googleRememberMe;
+
+        // Generate JWT (same as normal login)
+        const jwt = require("jsonwebtoken");
+        const token = jwt.sign(
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: "30d" }
+        );
+
+        const cookieName = user.role === "admin" ? "adminToken" : "token";
+
+        const cookieOptions = {
+            httpOnly: true,
+            sameSite: "lax",
+            path: "/"
+        };
+
+        if (rememberMe) {
+            cookieOptions.maxAge = 30 * 24 * 60 * 60 * 1000;
+        }
+
+        res.cookie(cookieName, token, cookieOptions);
+
+        // Redirect based on role
+        if (user.role === "admin") {
+            res.redirect("/admin/dashboard.html");
+        } else {
+            res.redirect("/user/Landingpage.html");
+        }
+    }
+);
+
+// --- 3. 404 Handlers ---
+
+// Handle undefined API routes (Forward to global error handler)
+app.all('/api/*', (req, res, next) => {
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+// Handle undefined Frontend routes (Show custom 404 page)
+app.all('*', (req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'public/404.html'));
+});
+
+// --- 4. Global Error Handling Middleware ---
+app.use(globalErrorHandler);
+
+module.exports = app;

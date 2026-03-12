@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KICKSLAB - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="admin-modal.css">
+    <link rel="stylesheet" href="admin-sidebar.css">
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-blue: #3b82f6;
+            /* Tokyo Blue */
+            --primary-bg: #f8f9fa;
+            --white: #ffffff;
+            --text-dark: #111827;
+            --text-gray: #6b7280;
+            --success-green: #10b981;
+            --success-bg: #d1fae5;
+            --sidebar-width: 260px;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            margin-left: 260px;
+            transition: margin-left 0.3s;
+            padding: 2rem;
+        }
+
+        @media (max-width: 1199px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .date-select {
+            padding: 0.6rem 2.5rem 0.6rem 1rem;
+            /* Extra right padding for arrow */
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background-color: var(--white);
+            color: #374151;
+            font-size: 0.9rem;
+            font-weight: 500;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            /* Remove default arrow */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .date-select:hover {
+            border-color: #d1d5db;
+        }
+
+        .date-select:focus {
+            border-color: #3b82f6;
+            /* Tokyo Blue */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .report-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .report-btn:hover {
+            background-color: #f3f4f6;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            /* Clean subtle shadow */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 160px;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        .stat-period {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0.5rem 0 1.5rem 0;
+        }
+
+        .stat-footer {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background-color: #ecfdf5;
+            color: #10b981;
+        }
+
+        .stat-link {
+            font-size: 0.85rem;
+            color: #6366f1;
+            /* Indigo/Blueish */
+            font-weight: 500;
+            text-decoration: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            background-color: #eef2ff;
+            transition: background 0.2s;
+        }
+
+        .stat-link:hover {
+            background-color: #e0e7ff;
+        }
+
+        /* Chart Section */
+        .chart-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .chart-title h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .chart-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot.green {
+            background-color: #10b981;
+        }
+
+        .dot.red {
+            background-color: #ef4444;
+        }
+
+        /* Icons */
+        .icon {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="dashboard.html" class="logo">
+            <img src="assets/kickslab-logo.png" alt="KICKSLAB">
+        </a>
+
+        <div class="menu-category">Main menu</div>
+        <a href="dashboard.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </div>
+            Dashboard
+        </a>
+        <a href="orders.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </div>
+            Order Management
+        </a>
+        <a href="customers.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            Customers
+        </a>
+        <a href="coupons.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+            Coupon Code
+        </a>
+        <a href="sales.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+            </div>
+            Offers
+        </a>
+        <a href="categories.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
+            Categories
+        </a>
+        <a href="transactions.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+            </div>
+            Transaction
+        </a>
+        <a href="brand.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polygon
+                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                    </polygon>
+                </svg>
+            </div>
+            Brand
+        </a>
+
+        <div class="menu-category">Product</div>
+        <a href="add-product.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+            </div>
+            Add Products
+        </a>
+        <a href="product-list.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
+            Product List
+        </a>
+        <a href="reviews.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path
+                        d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                    </path>
+                </svg>
+            </div>
+            Product Reviews
+        </a>
+        <a href="returns.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polyline points="1 4 1 10 7 10"></polyline>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+            </div>
+            Product Returns
+        </a>
+
+        <a href="analytics.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            </div>
+            Analytics & Reports
+        </a>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn">
+                Logout
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <h1 class="page-title">Dashboard</h1>
+                <div class="header-actions">
+                    <select class="date-select">
+                        <option>All Time</option>
+                        <option>Today</option>
+                        <option selected>Last 7 Days</option>
+                        <option>Last 1 Month</option>
+                        <option>Last 6 Months</option>
+                        <option>Last 1 Year</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <section class="stats-grid">
+                <!-- Card 1 -->
+                <div class="stat-card">
+                    <div>
+                        <div class="stat-header">
+                            <div class="stat-title">Net Sales</div>
+                            <div class="stat-period">(Last 7 Days)</div>
+                        </div>
+                        <div class="stat-value" id="netSalesValue">₹0</div>
+                    </div>
+                    <div class="stat-footer">
+                        <div class="stat-badge badge-success">
+                            <svg class="icon" style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                <polyline points="17 6 23 6 23 12"></polyline>
+                            </svg>
+                            Revenue
+                        </div>
+                        <a href="transactions.html" class="stat-link">View Transactions</a>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="stat-card">
+                    <div>
+                        <div class="stat-header">
+                            <div class="stat-title">Total Orders</div>
+                            <div class="stat-period">(Last 7 Days)</div>
+                        </div>
+                        <div class="stat-value" id="totalOrdersValue">0</div>
+                    </div>
+                    <div class="stat-footer">
+                        <div class="stat-badge badge-success">
+                            <svg class="icon" style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            Recieved
+                        </div>
+                        <a href="orders.html" class="stat-link">View Orders</a>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="stat-card">
+                    <div>
+                        <div class="stat-header">
+                            <div class="stat-title">New Customers</div>
+                            <div class="stat-period">(Last 7 Days)</div>
+                        </div>
+                        <div class="stat-value" id="newCustomersValue">0</div>
+                    </div>
+                    <div class="stat-footer">
+                        <div class="stat-badge badge-success">
+                            <svg class="icon" style="width:14px;height:14px;" viewBox="0 0 24 24">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            Registered
+                        </div>
+                        <a href="customers.html" class="stat-link">View Customers</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chart Section -->
+            <section class="chart-section">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <h3>Item Status Breakdown</h3>
+                    </div>
+                    <div class="chart-subtitle">Active (Pending/Delivered) vs Cancelled</div>
+                </div>
+                <!-- Div for ApexChart -->
+                <div id="statusChart"></div>
+            </section>
+        </div>
+    </main>
+
+    <script src="admin-profile-helper.js"></script>
+    <script src="admin-modal-helper.js"></script>
+    <script src="admin-sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let chart;
+            const dateSelect = document.querySelector('.date-select');
+
+            // Initialize Chart
+            const initChart = (labels = [], successful = [], cancelled = []) => {
+                var options = {
+                    series: [{
+                        name: 'Successful Items',
+                        data: successful
+                    }, {
+                        name: 'Cancelled/Returned Items',
+                        data: cancelled
+                    }],
+                    chart: {
+                        height: 350,
+                        type: 'line',
+                        toolbar: { show: false },
+                        zoom: { enabled: false }
+                    },
+                    colors: ['#10b981', '#ef4444'],
+                    dataLabels: { enabled: false },
+                    stroke: {
+                        curve: 'smooth',
+                        width: 3,
+                        dashArray: [0, 8] // Solid for successful, dashed for cancelled
+                    },
+                    markers: {
+                        size: 6,
+                        colors: ['#10b981', '#ef4444'],
+                        strokeColors: '#fff',
+                        strokeWidth: 2,
+                        hover: {
+                            size: 8,
+                        }
+                    },
+                    xaxis: {
+                        categories: labels,
+                        labels: {
+                            show: true,
+                            style: { colors: '#9ca3af', fontSize: '12px' }
+                        },
+                        axisBorder: { show: false },
+                        axisTicks: { show: false }
+                    },
+                    yaxis: {
+                        labels: {
+                            style: { colors: '#9ca3af', fontSize: '12px' },
+                            formatter: (val) => Math.floor(val)
+                        },
+                        min: 0,
+                    },
+                    grid: {
+                        borderColor: '#f1f1f1',
+                        xaxis: { lines: { show: false } },
+                        yaxis: { lines: { show: true } },
+                    },
+                    legend: {
+                        show: true,
+                        position: 'top',
+                        horizontalAlign: 'left',
+                        offsetX: 40,
+                        offsetY: 0,
+                        markers: {
+                            width: 12,
+                            height: 12,
+                            radius: 12
+                        },
+                        itemMargin: {
+                            horizontal: 10,
+                            vertical: 5
+                        }
+                    },
+                    tooltip: {
+                        theme: 'dark',
+                        x: { show: true },
+                        marker: { show: true }
+                    }
+                };
+
+                if (chart) {
+                    chart.updateOptions(options);
+                    chart.updateSeries(options.series);
+                } else {
+                    chart = new ApexCharts(document.querySelector("#statusChart"), options);
+                    chart.render();
+                }
+            };
+
+            const fetchStats = async () => {
+                try {
+                    const range = dateSelect.value;
+                    const response = await fetch(`/api/admin/dashboard-stats?range=${encodeURIComponent(range)}`);
+                    const result = await response.json();
+
+                    if (result.success) {
+                        const { netSales, totalOrders, newCustomers, graphData } = result.data;
+
+                        // Update Counter Cards
+                        document.getElementById('netSalesValue').textContent = new Intl.NumberFormat('en-IN', {
+                            style: 'currency',
+                            currency: 'INR',
+                            maximumFractionDigits: 0
+                        }).format(netSales);
+                        document.getElementById('totalOrdersValue').textContent = totalOrders;
+                        document.getElementById('newCustomersValue').textContent = newCustomers;
+
+                        // Update Period labels if needed
+                        document.querySelectorAll('.stat-period').forEach(el => {
+                            el.textContent = `(${range})`;
+                        });
+
+                        // Update Chart
+                        initChart(graphData.labels, graphData.successful, graphData.cancelled);
+                    }
+                } catch (error) {
+                    console.error("Error fetching dashboard stats:", error);
+                }
+            };
+
+            // Initial Load
+            fetchStats();
+
+            // Event Listener for Date Change
+            dateSelect.addEventListener('change', fetchStats);
+        });
+    </script>
+    <script src="admin-inactivity.js"></script>
+</body>
+
+</html>

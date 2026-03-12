@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - KICKSLAB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;700&display=swap');
+
+        :root {
+            --color-black: #000000;
+            --color-dark: #121212;
+            --color-white: #ffffff;
+            --color-accent: #4285F4;
+            --color-grey-bg: #F4F4F4;
+            --color-grey-light: #E0E0E0;
+            --color-text-muted: #666666;
+            --font-body: 'Inter', sans-serif;
+            --font-heading: 'Oswald', sans-serif;
+            --container-width: 1200px;
+
+            --bg-nav: var(--color-white);
+            --border-color: var(--color-grey-light);
+            --text-main: var(--color-black);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--color-black);
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 12px 24px;
+            background: var(--color-white);
+            border: 1.5px solid var(--color-black);
+            border-radius: 50px;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        .back-link i {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: var(--color-black);
+            color: var(--color-white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-link:hover i {
+            transform: translateX(-5px);
+        }
+
+        .order-main-frame {
+            background: #fff;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .frame-header {
+            padding: 35px;
+            background: #fafafa;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .frame-body {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            min-height: 500px;
+        }
+
+        .frame-left-panel {
+            padding: 40px;
+            border-right: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .frame-right-panel {
+            background: #fdfdfd;
+            padding: 40px;
+        }
+
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--color-black);
+            font-weight: 700;
+            opacity: 0.8;
+        }
+
+        .order-id {
+            font-family: var(--font-heading);
+            font-size: 32px;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+            line-height: 1;
+        }
+
+        .order-date {
+            color: var(--color-text-muted);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .status-Pending {
+            background: #fff8e1;
+            color: #f9a825;
+        }
+
+        .status-Processing {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-Shipped {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .status-Delivered {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-Cancelled {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f9f9f9;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .item-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background: #f8f8f8;
+            border: 1px solid #eee;
+            object-fit: cover;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .item-meta {
+            color: var(--color-text-muted);
+            font-size: 13px;
+        }
+
+        .item-price-calc {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .summary-container {
+            background: #fff;
+            padding: 0;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #444;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+            margin-top: 20px;
+            font-weight: 800;
+            font-size: 20px;
+            color: #000;
+        }
+
+        .info-block {
+            margin-bottom: 30px;
+        }
+
+        .info-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 8px;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+
+        .info-content {
+            font-size: 15px;
+            color: #111;
+            font-weight: 600;
+        }
+
+        /* Invoice Template Styling (Hidden on page) */
+        #invoice-template {
+            display: none;
+            padding: 40px;
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            background: #fff;
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .invoice-logo {
+            font-family: 'Oswald', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        .invoice-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 28px;
+            text-transform: uppercase;
+            text-align: right;
+        }
+
+        .invoice-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .invoice-table th {
+            text-align: left;
+            background: #f8f8f8;
+            padding: 12px;
+            border-bottom: 2px solid #eee;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .invoice-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .invoice-footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .btn-invoice {
+            background: var(--color-black);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            border: none;
+        }
+
+        .btn-invoice:hover {
+            opacity: 0.9;
+        }
+
+        .btn-invoice.disabled {
+            background: #ccc;
+            color: #888;
+            cursor: not-allowed;
+            pointer-events: none;
+            box-shadow: none;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            transform: scale(0.9);
+            transition: transform 0.2s;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            color: #4285F4;
+            margin-bottom: 20px;
+        }
+
+        .modal-box h3 {
+            font-family: var(--font-heading);
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .modal-box p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn-modal-secondary {
+            background: #f4f4f4;
+            color: #333;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="details-container" style="margin-top: 60px;">
+        <!-- Back Link -->
+        <a href="MyOrders.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to My Orders
+        </a>
+
+        <div id="loading" style="text-align: center; padding: 100px;">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p style="margin-top: 15px;">Fetching order details...</p>
+        </div>
+
+        <div id="error" style="display: none; text-align: center; padding: 100px;">
+            <i class="fas fa-exclamation-triangle fa-2x" style="color: #ff4d4f;"></i>
+            <h3 style="margin-top: 15px;">Failed to load order.</h3>
+            <p id="error-msg">Order could not be retrieved.</p>
+        </div>
+
+        <div id="content" style="display: none;">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+
+    <!-- Policy Modal -->
+    <div class="modal-overlay" id="policyModal">
+        <div class="modal-box">
+            <i class="fas fa-info-circle modal-icon"></i>
+            <h3>Return Policy</h3>
+            <p id="policyModalMsg">Returns are only allowed within 7 days of order placement. This order has exceeded
+                the return window.</p>
+            <div class="modal-actions">
+                <button class="btn-modal-secondary" onclick="closePolicyModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('id');
+
+            if (!orderId) {
+                showError("Order ID is missing.");
+                return;
+            }
+
+            fetchOrderDetails(orderId);
+        });
+
+        async function fetchOrderDetails(id) {
+            try {
+                const res = await fetch(`/api/orders/${id}`, { credentials: 'include' });
+                const data = await res.json();
+
+                if (!res.ok) throw new Error(data.error || "Order not found");
+
+                renderOrder(data.order);
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        function renderOrder(order) {
+            const isCancelled = order.orderStatus === 'Cancelled';
+            const isInvoiceEligible = !isCancelled && (order.paymentStatus === 'Paid' || order.orderStatus === 'Delivered');
+            const hasActiveReturn = order.returnRequest && order.returnRequest.status !== 'Rejected';
+
+            const content = document.getElementById('content');
+            const date = new Date(order.createdAt).toLocaleDateString(undefined, {
+                year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+
+            let topMessageHtml = '';
+            if (hasActiveReturn) {
+                topMessageHtml = `
+                    <div style="background: #e3f2fd; color: #1976d2; padding: 15px; border-radius: 8px; margin-bottom: 25px; font-weight: 600; border-left: 4px solid #4285F4; display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-info-circle" style="font-size: 20px;"></i>
+                        <span>The return order is processing for updation, you can check the My Returns option</span>
+                    </div>
+                `;
+            }
+
+            let itemsHtml = '';
+            order.items.forEach(item => {
+                let reviewBtnHtml = '';
+                // Only show links if Delivered AND NO active return
+                if (order.orderStatus === 'Delivered' && !hasActiveReturn) {
+                    reviewBtnHtml = `
+                        <div style="margin-top: 10px; display: flex; gap: 15px;">
+                            <a href="write-review.html?orderId=${order._id}&productId=${item.product}" style="font-size: 12px; color: var(--color-accent); text-decoration: underline; font-weight: 600;">
+                                Write a Review
+                            </a>
+                            <a href="#" onclick="checkReturnPolicy(event, '${order.createdAt}', '${order._id}', '${item.product}')" style="font-size: 12px; color: #6c757d; text-decoration: underline; font-weight: 600;">
+                                Return Item
+                            </a>
+                        </div>
+                    `;
+                }
+
+                itemsHtml += `
+                    <div class="order-item" style="align-items: flex-start;">
+                        <img src="${item.productImage || 'https://via.placeholder.com/80'}" class="item-img" alt="${item.productName}" onerror="this.src='https://via.placeholder.com/80'">
+                        <div class="item-details">
+                            <div class="item-name">${item.productName}</div>
+                            <div class="item-meta">Size: ${item.size} | Qty: ${item.quantity}</div>
+                            ${reviewBtnHtml}
+                        </div>
+                        <div class="item-price-calc" style="align-self: center;">₹${(item.price * item.quantity).toFixed(2)}</div>
+                    </div>
+                `;
+            });
+
+            const addr = order.shippingAddress;
+            const fullAddress = `${addr.address}, ${addr.city}, ${addr.state} - ${addr.zipCode}`;
+
+            content.innerHTML = `
+                ${topMessageHtml}
+                <div class="order-main-frame">
+                    <div class="frame-header">
+                        <div>
+                            <div class="order-id">ORDER #${order._id.substring(order._id.length - 8).toUpperCase()}</div>
+                            <div class="order-date">Placed on ${date}</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <button class="btn-invoice ${isInvoiceEligible ? '' : 'disabled'}" ${isInvoiceEligible ? 'onclick="downloadInvoice()"' : ''}>
+                                <i class="fas fa-file-pdf"></i> Invoice
+                            </button>
+                            <div class="status-badge status-${order.orderStatus}">${order.orderStatus}</div>
+                        </div>
+                    </div>
+
+                    <div class="frame-body">
+                        <div class="frame-left-panel">
+                            <div class="section-title"><i class="fas fa-box"></i> Order Items</div>
+                            <div class="items-list" style="margin-bottom: 50px;">
+                                ${itemsHtml}
+                            </div>
+
+                            <div class="section-title"><i class="fas fa-map-marker-alt"></i> Shipping Information</div>
+                            <div class="info-block">
+                                <span class="info-label">Recipient</span>
+                                <div class="info-content">${addr.name}</div>
+                            </div>
+                            <div class="info-block">
+                                <span class="info-label">Address</span>
+                                <div class="info-content">${fullAddress}</div>
+                            </div>
+                            <div class="info-block">
+                                <span class="info-label">Phone</span>
+                                <div class="info-content">+91 ${addr.phone}</div>
+                            </div>
+                        </div>
+
+                        <div class="frame-right-panel">
+                            <div class="section-title">Billing Details</div>
+                            <div class="summary-container">
+                                <div class="summary-row">
+                                    <span>Price (${order.items.length} items)</span>
+                                    <span>₹${order.totalMRP.toFixed(2)}</span>
+                                </div>
+                                ${order.productDiscount > 0 ? `
+                                <div class="summary-row" style="color: #c62828;">
+                                    <span>Product Discount</span>
+                                    <span>-₹${order.productDiscount.toFixed(2)}</span>
+                                </div>` : ''}
+                                ${order.couponDiscount > 0 ? `
+                                <div class="summary-row" style="color: #c62828;">
+                                    <span>Coupon (${order.couponCode || 'Applied'})</span>
+                                    <span>-₹${order.couponDiscount.toFixed(2)}</span>
+                                </div>` : ''}
+                                <div class="summary-row">
+                                    <span>Shipping</span>
+                                    <span style="color: #2e7d32; font-weight: 700;">FREE</span>
+                                </div>
+                                ${order.totalSaved > 0 ? `
+                                <div class="summary-row" style="color: #2e7d32; font-weight: 700; margin-top: 15px; border-top: 1px dashed #eee; padding-top: 15px;">
+                                    <span>Total Saved</span>
+                                    <span>₹${order.totalSaved.toFixed(2)}</span>
+                                </div>` : ''}
+                                <div class="summary-row total">
+                                    <span>Net Payable</span>
+                                    <span>₹${order.totalAmount.toFixed(2)}</span>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 50px;">
+                                <div class="section-title">Payment Info</div>
+                                <div class="info-block">
+                                    <span class="info-label">Method</span>
+                                    <div class="info-content" style="text-transform: uppercase;">${order.paymentMethod}</div>
+                                </div>
+                                <div class="info-block" style="margin-top: 15px;">
+                                    <span class="info-label">Payment Status</span>
+                                    <div class="info-content" style="${order.paymentStatus === 'Refunded' ? 'color: #2e7d32;' : ''}">${order.paymentStatus}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('loading').style.display = 'none';
+            content.style.display = 'block';
+
+            // Prepare Hidden Invoice Template
+            prepareInvoiceTemplate(order);
+        }
+
+        function prepareInvoiceTemplate(order) {
+            const date = new Date(order.createdAt).toLocaleDateString("en-GB");
+            const addr = order.shippingAddress;
+
+            let itemsRows = order.items.map(item => `
+                <tr>
+                    <td>${item.productName}<br><small>Size: ${item.size}</small></td>
+                    <td>${item.quantity}</td>
+                    <td>₹${item.price.toFixed(2)}</td>
+                    <td style="text-align:right;">₹${(item.price * item.quantity).toFixed(2)}</td>
+                </tr>
+            `).join('');
+
+            const templateHTML = `
+                <div id="invoice-template">
+                    <div class="invoice-header">
+                        <div class="invoice-logo">KICKSLAB</div>
+                        <div class="invoice-title">INVOICE</div>
+                    </div>
+                    <div class="invoice-info-grid">
+                        <div>
+                            <p><strong>Billed To:</strong></p>
+                            <p>${addr.name}</p>
+                            <p>${addr.address}</p>
+                            <p>${addr.city}, ${addr.state} - ${addr.zipCode}</p>
+                            <p>Phone: ${addr.phone}</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <p><strong>Order ID:</strong> #${order._id.toUpperCase()}</p>
+                            <p><strong>Date:</strong> ${date}</p>
+                            <p><strong>Payment:</strong> ${order.paymentMethod.toUpperCase()}</p>
+                        </div>
+                    </div>
+                    <table class="invoice-table">
+                        <thead>
+                            <tr>
+                                <th>Product Details</th>
+                                <th>Qty</th>
+                                <th>Unit Price</th>
+                                <th style="text-align:right;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsRows}
+                        </tbody>
+                    </table>
+                    <div style="display: flex; justify-content: flex-end;">
+                        <div style="width: 300px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Price (${order.items.length} items):</span>
+                                <span>₹${order.totalMRP.toFixed(2)}</span>
+                            </div>
+                            ${order.productDiscount > 0 ? `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #c62828;">
+                                <span>Product Discount:</span>
+                                <span>-₹${order.productDiscount.toFixed(2)}</span>
+                            </div>` : ''}
+                            ${order.couponDiscount > 0 ? `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #c62828;">
+                                <span>Coupon (${order.couponCode || 'None'}):</span>
+                                <span>-₹${order.couponDiscount.toFixed(2)}</span>
+                            </div>` : ''}
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <span>Shipping:</span>
+                                <span>Free</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-top: 2px solid #333; padding-top: 10px; font-weight: 700; font-size: 18px; margin-top: 10px;">
+                                <span>Net Payable:</span>
+                                <span>₹${order.totalAmount.toFixed(2)}</span>
+                            </div>
+                            ${order.totalSaved > 0 ? `
+                            <div style="text-align: right; color: #2e7d32; font-weight: 600; font-size: 14px; margin-top: 5px;">
+                                Total Saved: ₹${order.totalSaved.toFixed(2)}
+                            </div>` : ''}
+                            ${order.paymentStatus === 'Refunded' ? `
+                            <div style="text-align: right; color: #c62828; font-weight: 700; font-size: 16px; margin-top: 15px; text-transform: uppercase;">
+                                ORDER REFUNDED
+                            </div>` : ''}
+                        </div>
+                    </div>
+                    <div class="invoice-footer">
+                        <p>Thank you for shopping with KICKSLAB!</p>
+                        <p>www.kickslab.com</p>
+                    </div>
+                </div>
+            `;
+
+            // Append to body if not exists
+            const existing = document.getElementById('invoice-template-container');
+            if (existing) existing.remove();
+
+            const container = document.createElement('div');
+            container.id = 'invoice-template-container';
+            container.style.position = 'fixed';
+            container.style.top = '-9999px';
+            container.style.left = '-9999px';
+            container.innerHTML = templateHTML;
+            document.body.appendChild(container);
+        }
+
+        async function downloadInvoice() {
+            const template = document.getElementById('invoice-template');
+            if (!template) return;
+
+            // Show it briefly for capturing
+            template.style.display = 'block';
+
+            const opt = {
+                margin: 10,
+                filename: 'KICKSLAB-Invoice.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            try {
+                await html2pdf().set(opt).from(template).save();
+            } catch (err) {
+                console.error("PDF generation error:", err);
+                alert("Failed to generate PDF. Please try again.");
+            } finally {
+                template.style.display = 'none';
+            }
+        }
+
+        function showError(msg) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error-msg').textContent = msg;
+        }
+
+        function checkReturnPolicy(e, createdAt, orderId, productId) {
+            e.preventDefault();
+            const orderDate = new Date(createdAt);
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+            if (orderDate < sevenDaysAgo) {
+                showPolicyModal();
+                return;
+            }
+            window.location.href = `ReturnRequest.html?orderId=${orderId}&productId=${productId}`;
+        }
+
+        function showPolicyModal() {
+            document.getElementById('policyModal').classList.add('active');
+        }
+
+        function closePolicyModal() {
+            document.getElementById('policyModal').classList.remove('active');
+        }
+
+    </script>
+</body>
+
+</html>

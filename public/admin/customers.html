@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KICKSLAB - Customers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet" href="admin-modal.css">
+
+    <link rel="stylesheet" href="admin-sidebar.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-blue: #3b82f6;
+            --primary-bg: #f8f9fa;
+            --white: #ffffff;
+            --text-dark: #111827;
+            --text-gray: #6b7280;
+            --border-color: #e5e7eb;
+            --danger-red: #ef4444;
+            --warning-orange: #f59e0b;
+            --success-green: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            margin-left: 260px;
+            padding: 2rem;
+            transition: margin-left 0.3s;
+        }
+
+        @media (max-width: 1199px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        .content-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Page Header */
+        .page-header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--text-dark);
+        }
+
+        /* Customer Card */
+        .customer-card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .search-container {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-blue);
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.9rem;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 1rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        /* Row styling */
+        tbody tr {
+            transition: background 0.1s;
+        }
+
+        tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        /* Columns */
+        .col-email {
+            color: var(--text-gray);
+        }
+
+        .col-spent {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background-color: #ecfdf5;
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+
+        .status-unverified {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+
+        /* Action Buttons */
+        .action-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+
+        .btn-lock {
+            background-color: #fff7ed;
+            /* Light orange */
+            color: #f97316;
+            /* Orange */
+        }
+
+
+
+        /* Icons */
+        .icon-sm {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .pagination-info {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            background-color: var(--white);
+            color: var(--text-gray);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .page-btn:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .page-btn.active {
+            background-color: #3b82f6;
+            color: var(--white);
+            border-color: #3b82f6;
+        }
+
+        .page-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        @media (max-width: 640px) {
+            .pagination {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Customer Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-gray);
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 0 2rem 2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .avatar-placeholder {
+            width: 80px;
+            height: 80px;
+            background-color: #ebf5ff;
+            color: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .customer-name-large {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .customer-id-small {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .details-list {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            color: var(--text-gray);
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .detail-value.active-status {
+            color: var(--success-green);
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            text-align: right;
+        }
+
+        .btn-modal-close {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        .btn-modal-close:hover {
+            background-color: #2563eb;
+        }
+
+        .customer-name-link {
+            cursor: pointer;
+            color: var(--text-dark);
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .customer-name-link:hover {
+            color: var(--primary-blue);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="dashboard.html" class="logo">
+            <img src="assets/kickslab-logo.png" alt="KICKSLAB">
+        </a>
+
+        <div class="menu-category">Main menu</div>
+        <a href="dashboard.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </div>
+            Dashboard
+        </a>
+        <a href="orders.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </div>
+            Order Management
+        </a>
+        <a href="customers.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            Customers
+        </a>
+        <a href="coupons.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+            Coupon Code
+        </a>
+        <a href="sales.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+            </div>
+            Offers
+        </a>
+        <a href="categories.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
+            Categories
+        </a>
+        <a href="transactions.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+            </div>
+            Transaction
+        </a>
+        <a href="brand.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polygon
+                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                    </polygon>
+                </svg>
+            </div>
+            Brand
+        </a>
+
+        <div class="menu-category">Product</div>
+        <a href="add-product.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+            </div>
+            Add Products
+        </a>
+        <a href="product-list.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
+            Product List
+        </a>
+        <a href="reviews.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path
+                        d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                    </path>
+                </svg>
+            </div>
+            Product Reviews
+        </a>
+        <a href="returns.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polyline points="1 4 1 10 7 10"></polyline>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+            </div>
+            Product Returns
+        </a>
+
+        <a href="analytics.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            </div>
+            Analytics & Reports
+        </a>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn">
+                Logout
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            <h1 class="page-header-title">Customers</h1>
+
+            <div class="customer-card">
+                <div class="card-header">
+                    <h2 class="card-title">Customer List</h2>
+                    <div class="search-container">
+                        <input type="text" placeholder="Search customers..." class="search-input">
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Joined Date</th>
+                                <th>Orders</th>
+                                <th>Cancellations</th>
+                                <th>Spent</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-table-body">
+                            <!-- Rows will be dynamically rendered here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination">
+                    <div class="pagination-info" id="pagination-info">Showing users</div>
+                    <div class="pagination-controls" id="pagination-controls">
+                        <!-- Pagination controls here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Customer Profile Modal -->
+    <div class="modal-overlay" id="customerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Customer Profile</h3>
+                <button class="close-modal" onclick="closeCustomerModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body-content">
+                <!-- Modal content will be dynamically rendered -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-close" onclick="closeCustomerModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-profile-helper.js"></script>
+    <script src="admin-modal-helper.js"></script>
+
+    <script src="admin-sidebar.js"></script>
+    <script>
+        let allUsers = [];
+        let currentPage = 1;
+        const customerModal = document.getElementById('customerModal');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAdminCustomers(currentPage);
+
+            const searchInput = document.querySelector('.search-input');
+            let debounceTimer;
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        currentPage = 1;
+                        fetchAdminCustomers(currentPage, e.target.value);
+                    }, 400);
+                });
+            }
+        });
+
+        async function fetchAdminCustomers(page = 1, searchQuery = '') {
+            const tbody = document.getElementById('customers-table-body');
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 20px;">Loading customers...</td></tr>';
+
+            try {
+                const searchInput = document.querySelector('.search-input');
+                const search = searchQuery || (searchInput ? searchInput.value : '');
+
+                const res = await fetch(`/api/users/admin/all?page=${page}&limit=20&search=${encodeURIComponent(search)}`);
+                const data = await res.json();
+
+                if (data.success) {
+                    allUsers = data.users || data.data;
+                    renderCustomers(allUsers);
+                    renderPagination(data.totalRecords || allUsers.length, data.totalPages || 1, data.currentPage || 1);
+                } else {
+                    throw new Error(data.message || 'Failed to fetch users');
+                }
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color: red;">Failed to load customers.</td></tr>';
+            }
+        }
+
+        function renderPagination(totalRecords, totalPages, currentPageNum) {
+            currentPage = currentPageNum;
+            const paginationInfo = document.getElementById('pagination-info');
+            const paginationControls = document.getElementById('pagination-controls');
+
+            if (!paginationInfo || !paginationControls) return;
+
+            const limit = 20;
+            const startRecord = totalRecords === 0 ? 0 : ((currentPage - 1) * limit) + 1;
+            const endRecord = Math.min(currentPage * limit, totalRecords);
+
+            paginationInfo.textContent = `Showing ${startRecord}–${endRecord} of ${totalRecords} users`;
+
+            let controlsHtml = '';
+
+            // Prev Button
+            controlsHtml += `<button class="page-btn ${currentPage === 1 ? 'disabled' : ''}" onclick="${currentPage === 1 ? 'return false;' : `fetchAdminCustomers(${currentPage - 1})`}">« Prev</button>`;
+
+            // Page Numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (totalPages > 7) {
+                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                        controlsHtml += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="fetchAdminCustomers(${i})">${i}</button>`;
+                    } else if (i === currentPage - 2 || i === currentPage + 2) {
+                        controlsHtml += `<span style="margin: 0 5px; align-self: center;">...</span>`;
+                    }
+                } else {
+                    controlsHtml += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="fetchAdminCustomers(${i})">${i}</button>`;
+                }
+            }
+
+            // Next Button
+            controlsHtml += `<button class="page-btn ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}" onclick="${currentPage === totalPages || totalPages === 0 ? 'return false;' : `fetchAdminCustomers(${currentPage + 1})`}">Next »</button>`;
+
+            paginationControls.innerHTML = controlsHtml;
+        }
+
+        function renderCustomers(users) {
+            const tbody = document.getElementById('customers-table-body');
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No customers found.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            users.forEach(user => {
+                const joinedDate = new Date(user.createdAt).toLocaleDateString('en-GB');
+                const name = user.name || 'Unknown User';
+                const statusClass = user.isVerified ? 'status-active' : 'status-unverified';
+                const statusText = user.isVerified ? 'ACTIVE' : 'UNVERIFIED';
+
+                const blockIcon = user.isBlocked ?
+                    `<svg class="icon-sm" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>` :
+                    `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+
+                html += `
+                    <tr onclick="openCustomerModal('${user._id}')" style="cursor: pointer;">
+                        <td>${name}</td>
+                        <td class="col-email">${user.email}</td>
+                        <td>${joinedDate}</td>
+                        <td>${user.orderCount}</td>
+                        <td style="color: var(--danger-red); font-weight: 600;">${user.cancellationCount || 0}</td>
+                        <td class="col-spent">₹${(user.totalSpent || 0).toLocaleString()}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}${user.isBlocked ? ' (BLOCKED)' : ''}</span></td>
+                        <td>
+                            <div class="action-group">
+                                <button class="action-btn btn-lock" onclick="event.stopPropagation(); toggleBlockStatus('${user._id}')" title="${user.isBlocked ? 'Unblock' : 'Block'} User">
+                                    ${blockIcon}
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function openCustomerModal(userId) {
+            const user = allUsers.find(u => u._id === userId);
+            if (!user) return;
+
+            const name = user.name || 'Unknown User';
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+            const joinedDate = new Date(user.createdAt).toLocaleDateString('en-GB');
+
+            const content = document.getElementById('modal-body-content');
+            content.innerHTML = `
+                <div class="avatar-placeholder">${initials}</div>
+                <h4 class="customer-name-large">${name}</h4>
+                <p class="customer-id-small">${user._id}</p>
+
+                <div class="stats-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <div class="stat-card">
+                        <div class="stat-value">${user.orderCount}</div>
+                        <div class="stat-label">Orders</div>
+                    </div>
+                    <div class="stat-card" style="border-color: #fee2e2;">
+                        <div class="stat-value" style="color: var(--danger-red);">${user.cancellationCount || 0}</div>
+                        <div class="stat-label">Cancelled</div>
+                    </div>
+                    <div class="stat-card" style="border-color: #dcfce7;">
+                        <div class="stat-value" style="color: var(--success-green);">₹${(user.walletBalance || 0).toLocaleString()}</div>
+                        <div class="stat-label">Wallet</div>
+                    </div>
+                </div>
+
+                <div class="details-list">
+                    <div class="detail-row">
+                        <span class="detail-label">Email</span>
+                        <span class="detail-value">${user.email}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Total Spent</span>
+                        <span class="detail-value" style="color: var(--primary-blue);">₹${(user.totalSpent || 0).toLocaleString()}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Total Refunded</span>
+                        <span class="detail-value" style="color: var(--warning-orange);">₹${(user.refundedAmount || 0).toLocaleString()}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Joined On</span>
+                        <span class="detail-value">${joinedDate}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value ${user.isVerified ? 'active-status' : ''}">${user.isVerified ? 'Active' : 'Unverified'}${user.isBlocked ? ' (Blocked)' : ''}</span>
+                    </div>
+                </div>
+            `;
+
+            customerModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCustomerModal() {
+            customerModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        async function toggleBlockStatus(userId) {
+            if (await AdminModal.confirm('Are you sure you want to change this user\'s block status?')) {
+                try {
+                    const res = await fetch(`/api/users/admin/${userId}/block`, { method: 'PUT' });
+                    const data = await res.json();
+                    if (data.success) {
+                        AdminModal.alert(data.message, 'success');
+                        fetchAdminCustomers();
+                    } else {
+                        AdminModal.alert(data.message || 'Failed to update status', 'error');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    AdminModal.alert('Error updating status', 'error');
+                }
+            }
+        }
+
+
+
+        window.onclick = function (event) {
+            if (event.target == customerModal) {
+                closeCustomerModal();
+            }
+        }
+    </script>
+    <script src="admin-inactivity.js"></script>
+</body>
+
+</html>

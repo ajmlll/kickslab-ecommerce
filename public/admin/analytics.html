@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KICKSLAB - Analytics & Reports</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet" href="admin-modal.css">
+
+    <link rel="stylesheet" href="admin-sidebar.css">
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-blue: #3b82f6;
+            --primary-bg: #f8f9fa;
+            --white: #ffffff;
+            --text-dark: #111827;
+            --text-gray: #6b7280;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+            --border-color: #e5e7eb;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            margin-left: 260px;
+            padding: 2rem;
+        }
+
+        .content-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-title p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .date-select {
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--white);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--text-gray);
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .metric-trend {
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .trend-up {
+            color: var(--success-green);
+        }
+
+        .trend-down {
+            color: var(--danger-red);
+        }
+
+        /* Charts Row */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-box {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .toggle-group {
+            display: flex;
+            background: #f3f4f6;
+            padding: 3px;
+            border-radius: 6px;
+        }
+
+        .toggle-btn {
+            border: none;
+            background: transparent;
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--text-gray);
+        }
+
+        .toggle-btn.active {
+            background: var(--white);
+            color: var(--text-dark);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Tables Row */
+        .tables-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .data-table-box {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .view-all {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 1rem 0;
+            border-bottom: 1px solid #f9fafb;
+            font-size: 0.9rem;
+        }
+
+        /* Status Breakdown Column Chart */
+        .status-breakdown-box {
+            margin-bottom: 2rem;
+        }
+
+        /* Reports & Insights Row */
+        .reports-insights-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .reports-box {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .report-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem;
+            background: #f9fafb;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .report-info h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .report-info p {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+        }
+
+        .ai-insights-box {
+            background: #000;
+            color: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            color: #ef4444;
+        }
+
+        .insight-item {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .insight-icon {
+            color: #ef4444;
+            flex-shrink: 0;
+        }
+
+        .insight-content h5 {
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+            color: #fff;
+        }
+
+        .insight-content p {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            line-height: 1.4;
+        }
+
+        .pdf-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: #111827;
+            color: var(--white);
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .pdf-btn:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 1024px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-row,
+            .tables-row,
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="dashboard.html" class="logo">
+            <img src="assets/kickslab-logo.png" alt="KICKSLAB">
+        </a>
+
+        <div class="menu-category">Main menu</div>
+        <a href="dashboard.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </div>
+            Dashboard
+        </a>
+        <a href="orders.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </div>
+            Order Management
+        </a>
+        <a href="customers.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            Customers
+        </a>
+        <a href="coupons.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+            Coupon Code
+        </a>
+        <a href="sales.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+            </div>
+            Offers
+        </a>
+        <a href="categories.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
+            Categories
+        </a>
+        <a href="transactions.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+            </div>
+            Transaction
+        </a>
+        <a href="brand.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polygon
+                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                    </polygon>
+                </svg>
+            </div>
+            Brand
+        </a>
+
+        <div class="menu-category">Product</div>
+        <a href="add-product.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+            </div>
+            Add Products
+        </a>
+        <a href="product-list.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
+            Product List
+        </a>
+        <a href="reviews.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path
+                        d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                    </path>
+                </svg>
+            </div>
+            Product Reviews
+        </a>
+        <a href="returns.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polyline points="1 4 1 10 7 10"></polyline>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+            </div>
+            Product Returns
+        </a>
+
+        <a href="analytics.html" class="nav-item active">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            </div>
+            Analytics & Reports
+        </a>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn">
+                Logout
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            <!-- Header -->
+            <div class="analytics-header">
+                <div class="header-title">
+                    <h1>Analytics & Reports</h1>
+                    <p>Track business performance and sales insights.</p>
+                </div>
+                <select class="date-select" id="dateRangeSelect">
+                    <option value="Last 7 Days">Last 7 Days</option>
+                    <option value="Last 30 Days" selected>Last 30 Days</option>
+                    <option value="Last 3 Months">Last 3 Months</option>
+                    <option value="Last Year">Last Year</option>
+                </select>
+            </div>
+
+            <!-- Metric Cards -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span class="metric-label">Total Revenue</span>
+                    <span class="metric-value" id="revenueValue">₹0</span>
+                    <div class="metric-trend" id="revenueTrend"></div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Total Orders</span>
+                    <span class="metric-value" id="ordersValue">0</span>
+                    <div class="metric-trend" id="ordersTrend"></div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Avg. Order Value</span>
+                    <span class="metric-value" id="aovValue">₹0</span>
+                    <div class="metric-trend" id="aovTrend"></div>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-label">Active Users</span>
+                    <span class="metric-value" id="usersValue">0</span>
+                    <div class="metric-trend" id="usersTrend"></div>
+                </div>
+            </div>
+
+            <div class="metrics-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 2rem;">
+                <div class="metric-card">
+                    <span class="metric-label">Conversion Rate</span>
+                    <span class="metric-value" id="convRateValue">0%</span>
+                    <div class="metric-trend" id="convTrend"></div>
+                </div>
+                <div class="metric-card" style="border: 2px solid #fee2e2; background: #fff5f5;">
+                    <span class="metric-label">Repeat Purchase Rate</span>
+                    <span class="metric-value" id="repeatRateValue">0%</span>
+                    <div class="metric-trend" style="color: #ef4444; font-weight: 700;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                        </svg>
+                        Customer Loyalty High
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="charts-row">
+                <div class="chart-box">
+                    <div class="chart-header">
+                        <span class="section-title">Sales Overview</span>
+                        <div class="toggle-group">
+                            <button class="toggle-btn active" onclick="setChartType('daily')">Daily</button>
+                            <button class="toggle-btn" onclick="setChartType('monthly')">Monthly</button>
+                        </div>
+                    </div>
+                    <div id="salesChart"></div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart-header">
+                        <span class="section-title">Payment Methods</span>
+                    </div>
+                    <div id="paymentChart"></div>
+                </div>
+            </div>
+
+            <!-- Tables Row -->
+            <div class="tables-row">
+                <div class="data-table-box">
+                    <div class="table-header">
+                        <span class="section-title">Top Selling Products</span>
+                        <a href="product-list.html" class="view-all">View All</a>
+                    </div>
+                    <table id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Units Sold</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Coupon Performance</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Coupon</th>
+                                    <th>Uses</th>
+                                    <th>Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody id="couponPerformanceTable">
+                                <!-- Dynamic dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Offer Performance</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Offer</th>
+                                    <th>Type</th>
+                                    <th>Uses</th>
+                                    <th>Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody id="offerPerformanceTable">
+                                <!-- Dynamic dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Status Bar Chart -->
+            <div class="chart-box status-breakdown-box">
+                <span class="section-title" style="display: block; margin-bottom: 1.5rem;">Order Status Breakdown</span>
+                <div id="statusChart"></div>
+            </div>
+
+            <!-- Reports & AI Insights -->
+            <div class="reports-insights-row">
+                <div class="reports-box">
+                    <h3 class="section-title" style="margin-bottom: 1.5rem;">Reports & Exports</h3>
+
+                    <div class="report-item">
+                        <div class="report-info">
+                            <h4>Monthly Sales Report</h4>
+                            <p>Detailed breakdown of revenue, tax and expenses.</p>
+                        </div>
+                        <button class="pdf-btn" onclick="downloadPDFReport()">PDF</button>
+                    </div>
+
+                    <div class="report-item">
+                        <div class="report-info">
+                            <h4>Order Transaction Report</h4>
+                            <p>Complete order list including payment data.</p>
+                        </div>
+                        <button class="pdf-btn" onclick="downloadPDFReport()">PDF</button>
+                    </div>
+
+                    <div class="report-item">
+                        <div class="report-info">
+                            <h4>Customer Activity Report</h4>
+                            <p>Historical data of user registrations and sessions.</p>
+                        </div>
+                        <button class="pdf-btn" onclick="downloadPDFReport()">PDF</button>
+                    </div>
+                </div>
+
+                <div class="ai-insights-box" id="aiInsightsContainer">
+                    <div class="ai-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                        </svg>
+                        AI Insights
+                    </div>
+                    <!-- Dynamic insights will be injected here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin-profile-helper.js"></script>
+    <script src="admin-modal-helper.js"></script>
+    <script src="admin-sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let salesChart, paymentChart, statusChart;
+            const dateSelect = document.getElementById('dateRangeSelect');
+
+            const initCharts = () => {
+                // Sales Chart
+                salesChart = new ApexCharts(document.querySelector("#salesChart"), {
+                    series: [{ name: 'Revenue', data: [] }, { name: 'Orders', data: [] }],
+                    chart: { type: 'area', height: 350, toolbar: { show: false } },
+                    colors: ['#ef4444', '#3b82f6'],
+                    stroke: { curve: 'smooth', width: [3, 2], dashArray: [0, 5] },
+                    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.3, opacityTo: 0.05 } },
+                    markers: { size: 4, strokeColors: "#fff", strokeWidth: 2, hover: { size: 7 } },
+                    xaxis: { type: 'datetime', labels: { style: { colors: '#6b7280' } } },
+                    yaxis: [
+                        { title: { text: "Revenue (₹)" }, labels: { style: { colors: '#6b7280' } } },
+                        { opposite: true, title: { text: "Orders" }, labels: { style: { colors: '#6b7280' } } }
+                    ],
+                    grid: { borderColor: '#f1f1f1' },
+                    legend: { position: 'top', horizontalAlign: 'center' }
+                });
+                salesChart.render();
+
+                // Payment Chart
+                paymentChart = new ApexCharts(document.querySelector("#paymentChart"), {
+                    series: [],
+                    chart: { type: 'donut', height: 350 },
+                    labels: [],
+                    colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+                    legend: { position: 'bottom' }
+                });
+                paymentChart.render();
+
+                // Status Chart
+                statusChart = new ApexCharts(document.querySelector("#statusChart"), {
+                    series: [{ data: [] }],
+                    chart: { type: 'bar', height: 350, toolbar: { show: false } },
+                    colors: ['#ef4444', '#9ca3af', '#f59e0b', '#10b981', '#3b82f6', '#6366f1', '#14b8a6'],
+                    plotOptions: { bar: { distributed: true, borderRadius: 6 } },
+                    xaxis: { categories: [] },
+                    legend: { show: false }
+                });
+                statusChart.render();
+            };
+
+            const updateDashboard = async () => {
+                const range = dateSelect.value;
+                try {
+                    const response = await fetch(`/api/admin/analytics?range=${encodeURIComponent(range)}`);
+                    const result = await response.json();
+                    if (!result.success) return;
+
+                    const data = result.data;
+
+                    // Metrics
+                    const formatCurrency = (val) => new Intl.NumberFormat('en-IN', {
+                        style: 'currency', currency: 'INR',
+                        maximumFractionDigits: 0
+                    }).format(val);
+                    const updateMetric = (id, trendId, val, trend, isCurrency = true) => {
+                        document.getElementById(id).textContent = isCurrency ? formatCurrency(val) : val;
+                        const trendEl = document.getElementById(trendId);
+                        const isUp = trend >= 0;
+                        trendEl.className = `metric-trend ${isUp ? 'trend-up' : 'trend-down'}`;
+                        trendEl.innerHTML = `${isUp ? '▲' : '▼'} ${Math.abs(trend).toFixed(1)}% vs prev`;
+                    };
+
+                    updateMetric('revenueValue', 'revenueTrend', data.metrics.revenue.value, data.metrics.revenue.trend);
+                    updateMetric('ordersValue', 'ordersTrend', data.metrics.orders.value, data.metrics.orders.trend, false);
+                    updateMetric('aovValue', 'aovTrend', data.metrics.aov.value, data.metrics.aov.trend);
+                    updateMetric('usersValue', 'usersTrend', data.metrics.activeUsers.value, data.metrics.activeUsers.trend, false);
+
+                    document.getElementById('convRateValue').textContent = data.metrics.conversionRate.value.toFixed(1) + '%';
+                    const convTrendEl = document.getElementById('convTrend');
+                    convTrendEl.className = `metric-trend ${data.metrics.conversionRate.trend >= 0 ? 'trend-up' : 'trend-down'}`;
+                    convTrendEl.innerHTML = `${data.metrics.conversionRate.trend >= 0 ? '▲' : '▼'} ${Math.abs(data.metrics.conversionRate.trend).toFixed(1)}% vs prev`;
+
+                    document.getElementById('repeatRateValue').textContent = data.customerInsights.repeatRate.toFixed(1) + '%';
+
+                    // Sales Overview
+                    salesChart.updateSeries([
+                        { name: 'Revenue', data: data.salesOverview.map(d => ({ x: d._id, y: d.revenue })) },
+                        { name: 'Orders', data: data.salesOverview.map(d => ({ x: d._id, y: d.orders })) }
+                    ]);
+
+                    // Payment Methods
+                    paymentChart.updateOptions({
+                        series: data.paymentMethods.map(p => p.count),
+                        labels: data.paymentMethods.map(p => p._id.charAt(0).toUpperCase() + p._id.slice(1))
+                    });
+
+                    // Top Products Table
+                    const ptBody = document.querySelector('#productsTable tbody');
+                    ptBody.innerHTML = data.topProducts.map(p => `
+    <tr>
+        <td><span style="display:flex; align-items:center; gap:0.5rem;">
+                <div
+                    style="width:10px; height:10px; border-radius:50%; background:${['#ef4444', '#3b82f6', '#10b981', '#9ca3af', '#f59e0b'][Math.floor(Math.random() * 5)]}">
+                </div> ${p.name || 'Unknown'}
+            </span></td>
+        <td>${p.unitsSold}</td>
+        <td>${formatCurrency(p.revenue)}</td>
+    </tr>
+    `).join('');
+
+                    // Coupon Table
+                    const ctBody = document.getElementById('couponPerformanceTable');
+                    if (data.couponPerformance && data.couponPerformance.length > 0) {
+                        ctBody.innerHTML = data.couponPerformance.map(c => `
+    <tr>
+        <td><span style="font-weight: 600;">${c._id}</span></td>
+        <td>${c.uses}</td>
+        <td>${formatCurrency(c.revenue)}</td>
+    </tr>
+    `).join('');
+                    } else {
+                        ctBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 2rem; color: #9ca3af;">No coupons used</td></tr>';
+                    }
+
+                    // Offer Performance
+                    const otBody = document.getElementById('offerPerformanceTable');
+                    if (data.offerPerformance && data.offerPerformance.length > 0) {
+                        otBody.innerHTML = data.offerPerformance.map(o => `
+    <tr>
+        <td><span style="font-weight: 600;">${o.title}</span></td>
+        <td><span class="status-badge"
+                style="background: #e0f2fe; color: #0369a1; text-transform: capitalize; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;">${o.type}</span>
+        </td>
+        <td>${o.uses}</td>
+        <td>${formatCurrency(o.revenue)}</td>
+    </tr>
+    `).join('');
+                    } else {
+                        otBody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #9ca3af;">No active offers generating sales</td></tr>';
+                    }
+
+                    // Status Breakdown
+                    statusChart.updateOptions({
+                        series: [{ data: data.statusBreakdown.map(s => s.count) }],
+                        xaxis: { categories: data.statusBreakdown.map(s => s._id) }
+                    });
+
+                    // AI Insights
+                    const insightsContainer = document.getElementById('aiInsightsContainer');
+                    const headerHtml = `
+    <div class="ai-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
+        AI Insights
+    </div>`;
+
+                    if (data.insights && data.insights.length > 0) {
+                        insightsContainer.innerHTML = headerHtml + data.insights.map(insight => {
+                            let icon = '';
+                            if (insight.type === 'growth') icon = '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline>';
+                            else if (insight.type === 'warning') icon = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>';
+                            else if (insight.type === 'product') icon = '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path>';
+                            else icon = '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle>';
+
+                            return `
+    <div class="insight-item">
+        <div class="insight-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                ${icon}
+            </svg>
+        </div>
+        <div class="insight-content">
+            <h5>${insight.title}</h5>
+            <p>${insight.text}</p>
+        </div>
+    </div>
+    </div>
+    `;
+                        }).join('');
+                    } else {
+                        insightsContainer.innerHTML = headerHtml + '<p style="font-size: 0.8rem; color: #9ca3af; padding: 1rem 0;">Collecting more data to provide insights...</p>';
+                    }
+
+                } catch (error) {
+                    console.error("Fetch Analytics Error:", error);
+                }
+            };
+
+            initCharts();
+            updateDashboard();
+
+            dateSelect.addEventListener('change', updateDashboard);
+        });
+
+        function downloadPDFReport() {
+            const range = document.getElementById('dateRangeSelect').value;
+            window.location.href = `/api/admin/analytics/report?range=${encodeURIComponent(range)}`;
+        }
+
+        function setChartType(type) {
+            const btns = document.querySelectorAll('.toggle-btn');
+            btns.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            // In a real app, this would change the grouping level in the API
+            AdminModal.alert(`Switched to ${type} view`, 'success');
+        }
+    </script>
+    <script src="admin-inactivity.js"></script>
+</body>
+
+</html>

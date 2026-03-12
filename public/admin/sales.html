@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KICKSLAB - Offers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet" href="admin-modal.css">
+
+    <link rel="stylesheet" href="admin-sidebar.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-blue: #3b82f6;
+            --primary-bg: #f8f9fa;
+            --white: #ffffff;
+            --text-dark: #111827;
+            --text-gray: #6b7280;
+            --border-color: #e5e7eb;
+            --danger-red: #ef4444;
+            --warning-orange: #f59e0b;
+            --success-green: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            margin-left: 260px;
+            padding: 2rem;
+            transition: margin-left 0.3s;
+        }
+
+        @media (max-width: 1199px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        .content-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Page Header */
+        .page-header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--text-dark);
+        }
+
+        /* Card Container */
+        .sales-card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            position: relative;
+            width: 250px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-blue);
+        }
+
+        .add-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .add-btn:hover {
+            background-color: #2563eb;
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.9rem;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 1rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        tbody tr {
+            transition: background 0.1s;
+        }
+
+        tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        /* Banner Thumbnail */
+        .banner-thumb {
+            width: 100px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .sale-name {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .offer-text {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background-color: #ecfdf5;
+            color: #10b981;
+        }
+
+        .status-expired {
+            background-color: #fef2f2;
+            color: #ef4444;
+        }
+
+        /* Action Buttons */
+        .action-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+
+        .btn-edit {
+            background-color: #fffbeb;
+            color: #f59e0b;
+        }
+
+        .btn-delete {
+            background-color: #fef2f2;
+            color: #ef4444;
+        }
+
+        .icon-sm {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            padding-bottom: 1.5rem;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-gray);
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-banner {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            padding: 0 1.5rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .modal-sale-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .details-list {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+        }
+
+        .detail-label {
+            color: var(--text-gray);
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .detail-value.offer-value {
+            color: var(--primary-blue);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 0 1.5rem;
+        }
+
+        .btn-modal-close {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 0.6rem 2rem;
+            border-radius: 6px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-modal-close:hover {
+            background-color: #2563eb;
+        }
+
+        .clickable-row {
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .search-container {
+                width: 100%;
+                order: 2;
+            }
+
+            .add-btn {
+                width: 100%;
+                justify-content: center;
+                order: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <a href="dashboard.html" class="logo">
+            <img src="assets/kickslab-logo.png" alt="KICKSLAB">
+        </a>
+
+        <div class="menu-category">Main menu</div>
+        <a href="dashboard.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </div>
+            Dashboard
+        </a>
+        <a href="orders.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+            </div>
+            Order Management
+        </a>
+        <a href="customers.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            Customers
+        </a>
+        <a href="coupons.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+            Coupon Code
+        </a>
+        <a href="sales.html" class="nav-item active">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+            </div>
+            Offers
+        </a>
+        <a href="categories.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
+            Categories
+        </a>
+        <a href="transactions.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+            </div>
+            Transaction
+        </a>
+        <a href="brand.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polygon
+                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                    </polygon>
+                </svg>
+            </div>
+            Brand
+        </a>
+
+        <div class="menu-category">Product</div>
+        <a href="add-product.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+            </div>
+            Add Products
+        </a>
+        <a href="product-list.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
+            Product List
+        </a>
+        <a href="reviews.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path
+                        d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                    </path>
+                </svg>
+            </div>
+            Product Reviews
+        </a>
+        <a href="returns.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polyline points="1 4 1 10 7 10"></polyline>
+                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+            </div>
+            Product Returns
+        </a>
+        <a href="analytics.html" class="nav-item">
+            <div class="nav-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            </div>
+            Analytics & Reports
+        </a>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn">
+                Logout
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="flex-header"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                <h1 class="page-header-title" style="margin-bottom: 0;">Offers</h1>
+
+                <div class="search-container" style="flex: 1; max-width: 400px; position: relative;">
+                    <svg class="icon-sm"
+                        style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-gray);"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="offerSearch" class="search-input"
+                        placeholder="Search by title, type or description..."
+                        style="padding-left: 2.5rem; width: 100%;">
+                </div>
+
+                <button class="add-btn" onclick="openOfferModal()">
+                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    New Offer
+                </button>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="stats-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="stats-card"
+                    style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <p style="color: var(--text-gray); font-size: 0.875rem; margin-bottom: 0.5rem;">Total Offers</p>
+                    <h3 id="totalOffersCount" style="font-size: 1.5rem; font-weight: 700;">0</h3>
+                </div>
+                <div class="stats-card"
+                    style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <p style="color: var(--text-gray); font-size: 0.875rem; margin-bottom: 0.5rem;">Active Now</p>
+                    <h3 id="activeOffersCount"
+                        style="font-size: 1.5rem; font-weight: 700; color: var(--success-green);">0</h3>
+                </div>
+            </div>
+
+            <!-- Card Grid -->
+            <div id="offersGrid"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+                <!-- Skeleton Loader or Empty State will be here -->
+                <div id="noOffers"
+                    style="display: none; grid-column: 1/-1; text-align: center; padding: 4rem; background: white; border-radius: 12px; border: 2px dashed var(--border-color);">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🏷️</div>
+                    <h4 style="font-size: 1.25rem; font-weight: 600; color: var(--text-gray);">No offers found</h4>
+                    <p style="color: var(--text-gray);">Start by creating your first promotional offer.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- OFFER MODAL (Add/Edit) -->
+    <div class="modal-overlay" id="offerModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 id="modalTitle">Create New Offer</h3>
+                <button class="close-modal" onclick="closeOfferModal()">&times;</button>
+            </div>
+            <form id="offerForm" onsubmit="handleOfferSubmit(event)">
+                <input type="hidden" id="offerId">
+                <div class="modal-body" style="text-align: left; padding-top: 0; max-height: 70vh; overflow-y: auto;">
+
+                    <div class="preview-container" style="margin-bottom: 1.5rem;">
+                        <label>Banner Image</label>
+                        <div id="bannerPreview"
+                            style="width: 100%; height: 180px; background: #f3f4f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px dashed var(--border-color); cursor: pointer; position: relative;">
+                            <span id="previewText" style="color: var(--text-gray);">Click to upload banner</span>
+                            <img id="previewImg" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <input type="file" id="offerBannerInput" accept="image/*" style="display: none;"
+                            onchange="previewBanner(this)">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Offer Title</label>
+                            <input type="text" id="offerTitle" class="search-input" style="width: 100%;" required
+                                placeholder="e.g. Summer Sale 2024">
+                        </div>
+                        <div class="form-group">
+                            <label>Offer Type</label>
+                            <select id="offerType" class="search-input" style="width: 100%;"
+                                onchange="toggleTargetSelector()" required>
+                                <option value="category">Category</option>
+                                <option value="brand">Brand</option>
+                                <option value="product">Product</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label id="targetLabel">Target Category</label>
+                        <select id="targetId" class="search-input" style="width: 100%;" required>
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                        <div class="form-group">
+                            <label>Discount Type</label>
+                            <select id="discountType" class="search-input" style="width: 100%;" required>
+                                <option value="percentage">Percentage (%)</option>
+                                <option value="flat">Flat Amount (₹)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Discount Value</label>
+                            <input type="number" id="discountValue" class="search-input" style="width: 100%;" required
+                                min="1">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" id="startDate" class="search-input" style="width: 100%;" required>
+                        </div>
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="date" id="endDate" class="search-input" style="width: 100%;" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label>Description</label>
+                        <textarea id="offerDesc" class="search-input" style="width: 100%; height: 80px; resize: none;"
+                            required placeholder="Brief description of the offer..."></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="checkbox" id="offerActive" checked style="width: 18px; height: 18px;">
+                        <label for="offerActive" style="margin-bottom: 0;">Set as active</label>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="padding: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <button type="button" class="btn-modal-close"
+                        style="background: #f3f4f6; color: var(--text-dark); margin-right: 0.5rem;"
+                        onclick="closeOfferModal()">Cancel</button>
+                    <button type="submit" id="saveOfferBtn" class="btn-modal-close">Save Offer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SUCCESS/ERROR TOASTS -->
+    <div id="toast"
+        style="position: fixed; top: 1rem; right: 1rem; padding: 1rem 2rem; border-radius: 8px; color: white; font-weight: 600; transform: translateX(200%); transition: transform 0.3s ease; z-index: 10001;">
+    </div>
+
+    <script src="admin-profile-helper.js"></script>
+    <script src="admin-modal-helper.js"></script>
+
+    <script src="admin-sidebar.js"></script>
+    <script>
+        let offers = [];
+        let categories = [];
+        let brands = [];
+        let products = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchInitialData();
+            fetchOffers();
+
+            // Click banner preview to trigger file input
+            document.getElementById('bannerPreview').addEventListener('click', () => {
+                document.getElementById('offerBannerInput').click();
+            });
+
+            // Search functionality
+            document.getElementById('offerSearch').addEventListener('input', (e) => {
+                renderOffers(e.target.value);
+            });
+        });
+
+        async function fetchInitialData() {
+            try {
+                const [catRes, brandRes, prodRes] = await Promise.all([
+                    fetch('/api/admin/categories'),
+                    fetch('/api/admin/brands'),
+                    fetch('/api/admin/products')
+                ]);
+
+                const catData = await catRes.json();
+                const brandData = await brandRes.json();
+                const prodData = await prodRes.json();
+
+                // Handle both JSend {status: 'success', data: {...}} and direct array responses
+                categories = Array.isArray(catData) ? catData : (catData.data?.categories || catData.categories || []);
+                brands = Array.isArray(brandData) ? brandData : (brandData.data?.brands || brandData.brands || []);
+                products = Array.isArray(prodData) ? prodData : (prodData.data?.products || prodData.products || []);
+
+                toggleTargetSelector(); // Initial target load
+            } catch (e) {
+                console.error("Failed to load targets", e);
+            }
+        }
+
+        async function fetchOffers() {
+            try {
+                const res = await fetch('/api/admin/offers');
+                const data = await res.json();
+                if (data.status === 'success') {
+                    offers = data.data.offers;
+                    renderOffers();
+                    updateStats();
+                }
+            } catch (e) {
+                showToast("Failed to load offers", "error");
+            }
+        }
+
+        function renderOffers(searchTerm = '') {
+            const grid = document.getElementById('offersGrid');
+            const noOffers = document.getElementById('noOffers');
+
+            // Keep noOffers element but clear cards
+            const existingItems = grid.querySelectorAll('.offer-card');
+            existingItems.forEach(item => item.remove());
+
+            // Filter offers based on search term
+            const filteredOffers = offers.filter(offer => {
+                const term = searchTerm.toLowerCase().trim();
+                if (!term) return true;
+
+                return (
+                    offer.title.toLowerCase().includes(term) ||
+                    offer.description.toLowerCase().includes(term) ||
+                    offer.offerType.toLowerCase().includes(term) ||
+                    (offer.status && offer.status.toLowerCase().includes(term))
+                );
+            });
+
+            if (filteredOffers.length === 0) {
+                noOffers.style.display = 'block';
+                noOffers.querySelector('h4').innerText = searchTerm ? `No results for "${searchTerm}"` : 'No offers found';
+                return;
+            }
+
+            noOffers.style.display = 'none';
+            filteredOffers.forEach(offer => {
+                const card = createOfferCard(offer);
+                grid.appendChild(card);
+            });
+        }
+
+        function createOfferCard(offer) {
+            const div = document.createElement('div');
+            div.className = 'offer-card';
+            div.style = `
+                background: white; 
+                border-radius: 12px; 
+                overflow: hidden; 
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+                transition: transform 0.2s, box-shadow 0.2s;
+            `;
+
+            const statusClass = `status-${offer.status.toLowerCase()}`;
+            const discountBadge = offer.discountType === 'percentage' ? `${offer.discountValue}% OFF` : `₹${offer.discountValue} OFF`;
+
+            div.innerHTML = `
+                <div style="position: relative; height: 160px;">
+                    <img src="${offer.bannerImage}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div style="position: absolute; top: 0.75rem; right: 0.75rem;">
+                        <span class="status-badge ${statusClass}">${offer.status}</span>
+                    </div>
+                    <div style="position: absolute; bottom: 0.75rem; left: 0.75rem; background: var(--primary-blue); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-weight: 700;">
+                        ${discountBadge}
+                    </div>
+                </div>
+                <div style="padding: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                        <h4 style="font-weight: 700; font-size: 1.1rem;">${offer.title}</h4>
+                        <span style="font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase; font-weight: 600;">${offer.offerType}</span>
+                    </div>
+                    <p style="color: var(--text-gray); font-size: 0.875rem; margin-bottom: 1rem; height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical;">
+                        ${offer.description}
+                    </p>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-gray); font-size: 0.75rem; margin-bottom: 1.25rem;">
+                        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <span>${new Date(offer.startDate).toLocaleDateString()} - ${new Date(offer.endDate).toLocaleDateString()}</span>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button onclick="openOfferModal(true, '${offer._id}')" class="add-btn" style="flex: 1; justify-content: center; background: #f3f4f6; color: var(--text-dark); box-shadow: none;">Edit</button>
+                        <button onclick="handleDelete('${offer._id}')" class="add-btn" style="background: #fef2f2; color: #ef4444; box-shadow: none;">
+                            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        function toggleTargetSelector() {
+            const type = document.getElementById('offerType').value;
+            const targetSelect = document.getElementById('targetId');
+            const label = document.getElementById('targetLabel');
+
+            let data = [];
+            label.innerText = `Target ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+
+            if (type === 'category') data = categories;
+            else if (type === 'brand') data = brands;
+            else if (type === 'product') data = products;
+
+            targetSelect.innerHTML = data.map(item => `<option value="${item._id}">${item.name}</option>`).join('');
+        }
+
+        function openOfferModal(isEdit = false, id = null) {
+            const modal = document.getElementById('offerModal');
+            const form = document.getElementById('offerForm');
+            const title = document.getElementById('modalTitle');
+
+            form.reset();
+            document.getElementById('previewImg').style.display = 'none';
+            document.getElementById('previewText').style.display = 'block';
+            document.getElementById('offerId').value = id || '';
+
+            if (isEdit) {
+                const offer = offers.find(o => o._id === id);
+                if (offer) {
+                    title.innerText = 'Edit Offer';
+                    document.getElementById('offerTitle').value = offer.title;
+                    document.getElementById('offerType').value = offer.offerType;
+                    toggleTargetSelector();
+                    document.getElementById('targetId').value = offer.targetId._id || offer.targetId;
+                    document.getElementById('discountType').value = offer.discountType;
+                    document.getElementById('discountValue').value = offer.discountValue;
+                    document.getElementById('startDate').value = offer.startDate.split('T')[0];
+                    document.getElementById('endDate').value = offer.endDate.split('T')[0];
+                    document.getElementById('offerDesc').value = offer.description;
+                    document.getElementById('offerActive').checked = offer.isActive;
+
+                    document.getElementById('previewImg').src = offer.bannerImage;
+                    document.getElementById('previewImg').style.display = 'block';
+                    document.getElementById('previewText').style.display = 'none';
+                }
+            } else {
+                title.innerText = 'Create New Offer';
+                toggleTargetSelector(); // Sync UI for new offer
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeOfferModal() {
+            document.getElementById('offerModal').classList.remove('active');
+        }
+
+        async function handleOfferSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('saveOfferBtn');
+            const id = document.getElementById('offerId').value;
+            const isEdit = !!id;
+
+            const formData = new FormData();
+            formData.append('title', document.getElementById('offerTitle').value);
+            formData.append('offerType', document.getElementById('offerType').value);
+            formData.append('targetId', document.getElementById('targetId').value);
+            formData.append('discountType', document.getElementById('discountType').value);
+            formData.append('discountValue', document.getElementById('discountValue').value);
+            formData.append('startDate', document.getElementById('startDate').value);
+            formData.append('endDate', document.getElementById('endDate').value);
+            formData.append('description', document.getElementById('offerDesc').value);
+            formData.append('isActive', document.getElementById('offerActive').checked);
+
+            const file = document.getElementById('offerBannerInput').files[0];
+            if (file) formData.append('bannerImage', file);
+
+            btn.disabled = true;
+            btn.innerText = 'Saving...';
+
+            try {
+                const url = isEdit ? `/api/admin/offers/${id}` : '/api/admin/offers';
+                const method = isEdit ? 'PUT' : 'POST';
+
+                const res = await fetch(url, { method, body: formData });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    showToast(isEdit ? "Offer updated!" : "Offer created!", "success");
+                    closeOfferModal();
+                    fetchOffers();
+                } else {
+                    showToast(data.message || "Failed to save offer", "error");
+                }
+            } catch (e) {
+                showToast("Server error", "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Save Offer';
+            }
+        }
+
+        async function handleDelete(id) {
+            if (await AdminModal.confirm("Are you sure you want to delete this offer?")) {
+                try {
+                    const res = await fetch(`/api/admin/offers/${id}`, { method: 'DELETE' });
+                    if (res.status === 204) {
+                        showToast("Offer deleted", "success");
+                        fetchOffers();
+                    }
+                } catch (e) {
+                    showToast("Failed to delete", "error");
+                }
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalOffersCount').innerText = offers.length;
+            document.getElementById('activeOffersCount').innerText = offers.filter(o => o.status === 'Active').length;
+        }
+
+        function previewBanner(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.getElementById('previewImg');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById('previewText').style.display = 'none';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.background = type === 'success' ? '#10b981' : '#ef4444';
+            toast.style.transform = 'translateX(0)';
+            setTimeout(() => {
+                toast.style.transform = 'translateX(200%)';
+            }, 3000);
+        }
+    </script>
+    <script src="admin-inactivity.js"></script>
+</body>
+
+</html>
+</body>
+
+</html>

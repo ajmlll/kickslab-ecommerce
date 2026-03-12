@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancellation Details - KICKSLAB</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="user-auth-helper.css">
+    <style>
+        /* Google Fonts Import */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;700&display=swap');
+
+        /* --- Global Styles --- */
+        :root {
+            --color-black: #000000;
+            --color-dark: #121212;
+            --color-white: #ffffff;
+            --color-accent: #4285F4;
+            --color-grey-bg: #F4F4F4;
+            --color-grey-light: #E0E0E0;
+            --color-text-muted: #666666;
+            --border-color: var(--color-grey-light);
+            --font-body: 'Inter', sans-serif;
+            --font-heading: 'Oswald', sans-serif;
+            --container-width: 1280px;
+        }
+
+        /* Reusing exact styles from return-details.html for "perfection" */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--color-black);
+            background-color: var(--color-grey-bg);
+            line-height: 1.5;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .font-heading {
+            font-family: var(--font-heading);
+        }
+
+        /* Announcement Bar */
+        .announcement-bar {
+            background-color: var(--color-black);
+            color: var(--color-white);
+            font-size: 12px;
+            padding: 10px 0;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Navbar Styles from return-details.html */
+        .navbar {
+            background-color: var(--color-white);
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .nav-left,
+        .nav-right {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-right {
+            justify-content: flex-end;
+        }
+
+        .nav-center {
+            flex: 0 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            font-style: italic;
+            letter-spacing: -1px;
+            color: var(--color-black);
+            line-height: 1;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-icons {
+            gap: 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Account Layout */
+        .account-page-wrapper {
+            padding: 60px 0 100px 0;
+        }
+
+        .page-title {
+            font-family: var(--font-heading);
+            font-size: 32px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+
+        .account-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* Sidebar Desktop Styles */
+        .account-sidebar {
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-menu {
+            background-color: #ffffff;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 16px 30px;
+            color: #555;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            background: transparent;
+            border-radius: 0;
+            width: 100%;
+            margin-bottom: 0;
+            border-bottom: 1px solid #f9f9f9;
+        }
+
+        .sidebar-link:last-child {
+            border-bottom: none;
+        }
+
+        .sidebar-link:hover {
+            background-color: #fafafa;
+            color: var(--color-black);
+            padding-left: 35px;
+        }
+
+        .sidebar-link.active {
+            background-color: #f8f8f8;
+            color: var(--color-black);
+            border-left-color: var(--color-black);
+            font-weight: 600;
+        }
+
+        /* Content Area */
+        .account-content {
+            background: #fff;
+            padding: 40px;
+            border: 1px solid #eee;
+            min-height: 600px;
+        }
+
+        /* Stepper Styling */
+        .stepper-wrapper {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .stepper-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #eee;
+            z-index: 0;
+        }
+
+        .stepper-item {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            width: 33.33%;
+        }
+
+        .step-counter {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #ddd;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #999;
+        }
+
+        .step-name {
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        .stepper-item.completed .step-counter,
+        .stepper-item.active .step-counter {
+            background: var(--color-black);
+            border-color: var(--color-black);
+            color: white;
+        }
+
+        .stepper-item.completed .step-name,
+        .stepper-item.active .step-name {
+            color: var(--color-black);
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .info-block h4 {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .info-block p {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* Refund Alert Box - Same as List */
+        .refund-notification-box {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .refund-icon {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Product Table Styling in details */
+        .items-section h4 {
+            font-family: var(--font-heading);
+            text-transform: uppercase;
+            font-size: 18px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .item-card {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f9f9f9;
+        }
+
+        .item-thumb {
+            width: 70px;
+            height: 70px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item-thumb img {
+            max-width: 100%;
+        }
+
+        .item-details h5 {
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .item-details p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .item-price {
+            margin-left: auto;
+            font-weight: 700;
+            font-family: var(--font-heading);
+        }
+
+        /* Footer from return-details.html */
+        footer {
+            background-color: var(--color-dark);
+            color: white;
+            padding: 60px 0 20px 0;
+            position: relative;
+            overflow: hidden;
+            margin-top: auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 30px;
+        }
+
+        .footer-col h4 {
+            color: #FFC107;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .footer-col a,
+        .footer-col p {
+            color: #ccc;
+            margin-bottom: 10px;
+            display: block;
+            font-size: 14px;
+        }
+
+        .footer-socials {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .footer-large-text {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-heading);
+            font-size: 150px;
+            font-style: italic;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+        }
+
+        /* Mobile Layout (767px) - Optimized Fit & Blue Pills */
+        @media (max-width: 767px) {
+            body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+
+            .container {
+                padding: 0 15px;
+                width: 100%;
+                max-width: 100vw;
+                overflow-x: hidden;
+            }
+
+            .account-layout {
+                display: block;
+                width: 100%;
+            }
+
+            .account-sidebar {
+                position: sticky;
+                top: 70px;
+                z-index: 900;
+                margin-bottom: 25px;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                margin-left: -15px;
+                margin-right: -15px;
+                width: calc(100% + 30px);
+                padding: 12px 0;
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            .sidebar-menu {
+                display: flex;
+                flex-direction: row;
+                overflow-x: auto;
+                white-space: nowrap;
+                padding: 0 15px;
+                gap: 10px;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+                border: none;
+                border-radius: 0;
+            }
+
+            .sidebar-menu::-webkit-scrollbar {
+                display: none;
+            }
+
+            .sidebar-link {
+                padding: 8px 16px;
+                margin: 0;
+                background: #f4f4f4;
+                border: none;
+                font-size: 13px;
+                width: auto;
+                border-radius: 50px;
+                flex-shrink: 0;
+                color: #555;
+                font-weight: 500;
+                display: inline-flex;
+                align-items: center;
+                border-bottom: none;
+            }
+
+            .sidebar-link:hover {
+                background: #e0e0e0;
+                padding-left: 16px;
+                transform: translateY(-1px);
+            }
+
+            .sidebar-link.active {
+                background: var(--color-accent);
+                color: white;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .account-content {
+                padding: 0;
+                border: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .nav-links,
+            .nav-left .search-box input {
+                display: none;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-socials {
+                justify-content: center;
+            }
+
+            .footer-large-text {
+                font-size: 80px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">Free Shipping on Orders Over ₹5000 | Easy 7-Day Returns</div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <div class="nav-left">
+                <button style="font-size: 24px; margin-right: 15px; display: none;" class="mobile-menu-btn"><i
+                        class="fas fa-bars"></i></button>
+                <div class="search-box" style="position: relative; display: flex; align-items: center;">
+                    <i class="fas fa-search" style="position: absolute; right: 0;"></i>
+                    <input type="text" placeholder="Search..."
+                        style="border: none; border-bottom: 1px solid var(--border-color); padding: 5px 25px 5px 0; width: 180px; font-size: 14px;">
+                </div>
+            </div>
+            <div class="nav-center">
+                <a href="Landingpage.html" class="logo font-heading">KICKSLAB</a>
+                <ul class="nav-links">
+                    <li><a href="Landingpage.html">Home</a></li>
+                    <li><a href="ProductListing.html">Shop</a></li>
+                    <li><a href="AboutPage.html">About</a></li>
+                    <li><a href="Contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="nav-icons flex align-center justify-end">
+                    <a href="Wishlist.html"><i class="far fa-heart"></i></a>
+                    <a href="Cart.html"><i class="fas fa-shopping-bag"></i></a>
+                    <a href="#"><i class="fas fa-user-circle"></i></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="account-page-wrapper">
+        <div class="container">
+            <h1 class="page-title">Hello <span id="user-name-display">User</span></h1>
+
+            <div class="account-layout">
+                <aside class="account-sidebar">
+                    <div class="sidebar-menu">
+                        <a href="Account.html" class="sidebar-link">Account Information</a>
+                        <a href="AddressBook.html" class="sidebar-link">Address Book</a>
+                        <a href="PaymentOptions.html" class="sidebar-link">Payment Options</a>
+                        <a href="MyCoupons.html" class="sidebar-link">My Coupons</a>
+                        <a href="MyOrders.html" class="sidebar-link">My Orders</a>
+                        <a href="return-details.html" class="sidebar-link">My Returns</a>
+                        <a href="my-cancellations.html" class="sidebar-link active">Cancellations</a>
+                        <div style="margin-top: 40px;"></div>
+                        <a class="sidebar-link" onclick="AuthSystem.logout(event)">Log Out</a>
+                    </div>
+                </aside>
+
+                <!-- Content Area -->
+                <main class="account-content">
+                    <a href="my-cancellations.html"
+                        style="display: inline-flex; align-items: center; gap: 8px; color: #666; font-size: 13px; font-weight: 600; margin-bottom: 25px; text-transform: uppercase;">
+                        <i class="fas fa-arrow-left"></i> Back to My Cancellations
+                    </a>
+
+                    <div id="loading" style="text-align: center; padding: 50px;">
+                        <i class="fas fa-spinner fa-spin fa-2x" style="color: #ddd;"></i>
+                        <p style="margin-top: 15px; color: #666;">Loading details...</p>
+                    </div>
+
+                    <div id="content" style="display: none;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+                            <div>
+                                <h2 id="display-order-id" class="font-heading"
+                                    style="font-size: 28px; margin-bottom: 5px;">#5CD3C8</h2>
+                                <p id="display-cancel-date" style="color: #666; font-size: 14px;">Cancelled on 2 March
+                                    2026</p>
+                            </div>
+                            <span
+                                style="background: #fee2e2; color: #ef4444; padding: 8px 18px; border-radius: 50px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Cancelled</span>
+                        </div>
+
+                        <!-- Stepper -->
+                        <div class="stepper-wrapper" id="stepper"></div>
+
+                        <div class="info-grid">
+                            <div class="info-block">
+                                <h4>Reason</h4>
+                                <p id="display-reason">User Requested Cancellation</p>
+                            </div>
+                            <div class="info-block">
+                                <h4>Refund Status</h4>
+                                <p id="display-refund-status">--</p>
+                            </div>
+                            <div class="info-block">
+                                <h4>Payment Method</h4>
+                                <p id="display-payment-method" style="text-transform: uppercase;">CARD</p>
+                            </div>
+                            <div class="info-block">
+                                <h4>Net Amount Paid</h4>
+                                <p id="display-total-amount" style="font-size: 18px;">₹0.00</p>
+                            </div>
+                        </div>
+
+                        <div id="refund-box-container"></div>
+
+                        <div class="items-section">
+                            <h4>Cancelled Items</h4>
+                            <div id="items-list"></div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <h4>About us</h4>
+                <p>We are the biggest hyperstore in the universe. We got you all cover with our exclusive collections
+                    and latest drops.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Categories</h4><a href="#">Runners</a><a href="#">Sneakers</a><a href="#">Basketball</a>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4><a href="AboutPage.html">About</a><a href="Contact.html">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h4>Follow us</h4>
+                <div class="footer-socials"><a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i
+                            class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-twitter"></i></a></div>
+            </div>
+        </div>
+        <div class="footer-large-text">KICKSLAB</div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="user-auth-helper.js"></script>
+    <script>
+        AuthSystem.init();
+        const mobileBtn = document.querySelector('.mobile-menu-btn');
+        const closeBtn = document.querySelector('.close-menu-btn');
+        const menu = document.querySelector('.mobile-menu');
+        const overlay = document.querySelector('.mobile-menu-overlay');
+        const toggle = () => {
+            if (menu) menu.classList.toggle('active');
+            if (overlay) overlay.classList.toggle('active');
+        };
+        if (mobileBtn) mobileBtn.addEventListener('click', toggle);
+        if (closeBtn) closeBtn.addEventListener('click', toggle);
+        if (overlay) overlay.addEventListener('click', toggle);
+
+        // Page Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('id');
+
+            if (!orderId) {
+                window.location.href = 'my-cancellations.html';
+                return;
+            }
+
+            AuthSystem.init();
+            fetchDetails(orderId);
+        });
+
+        async function fetchDetails(id) {
+            try {
+                const res = await fetch(`/api/orders/${id}`, { credentials: 'include' });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Order not found");
+                renderPage(data.order);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').innerHTML = `<p style="color: red;">Failed to load: ${err.message}</p>`;
+            }
+        }
+
+        function renderPage(order) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+
+            document.getElementById('display-order-id').textContent = `#${order._id.substring(order._id.length - 8).toUpperCase()}`;
+            const date = new Date(order.updatedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('display-cancel-date').textContent = `Cancelled on ${date}`;
+            document.getElementById('display-payment-method').textContent = order.paymentMethod;
+            document.getElementById('display-total-amount').textContent = `₹${order.totalAmount.toFixed(2)}`;
+
+            const isRefunded = order.paymentStatus === 'Refunded';
+            document.getElementById('display-refund-status').textContent = (order.paymentMethod === 'cod') ? 'No Refund Needed' : 'Check your wallet in payment options';
+
+            // Stepper
+            document.getElementById('stepper').innerHTML = `
+                <div class="stepper-item completed"><div class="step-counter"><i class="fas fa-check"></i></div><div class="step-name">Ordered</div></div>
+                <div class="stepper-item completed"><div class="step-counter"><i class="fas fa-times"></i></div><div class="step-name">Cancelled</div></div>
+                <div class="stepper-item ${isRefunded ? 'completed' : 'active'}"><div class="step-counter">${isRefunded ? '<i class="fas fa-check"></i>' : '3'}</div><div class="step-name">Refunded</div></div>
+            `;
+
+            // Refund Box
+            const boxContainer = document.getElementById('refund-box-container');
+            if (order.paymentMethod === 'cod') {
+                boxContainer.innerHTML = `
+                    <div class="refund-notification-box" style="border-left: 5px solid #666; background-color: #f9f9f9;">
+                        <div class="refund-icon" style="color: #666;"><i class="fas fa-info-circle"></i></div>
+                        <div><h5 style="margin-bottom: 4px; font-weight: 700; color: #444;">No Refund Required</h5><p style="font-size: 13px; color: #666;">This was a Cash on Delivery (COD) order. Since no payment was made, no refund is necessary.</p></div>
+                    </div>`;
+            } else {
+                boxContainer.innerHTML = `
+                    <div class="refund-notification-box" style="border-left: 5px solid #10b981; background-color: #f0fdf4;">
+                        <div class="refund-icon" style="color: #10b981;"><i class="fas fa-wallet"></i></div>
+                        <div><h5 style="margin-bottom: 4px; font-weight: 700; color: #166534;">Refund Credited to Wallet</h5><p style="font-size: 13px; color: #166534;">The refund amount has been automatically added to your wallet. Please check your wallet in the <strong>Payment Options</strong> section.</p></div>
+                    </div>`;
+            }
+
+            // Items
+            document.getElementById('items-list').innerHTML = order.items.map(item => `
+                <div class="item-card">
+                    <div class="item-thumb"><img src="${item.productImage || 'https://via.placeholder.com/70'}" onerror="this.src='https://via.placeholder.com/70'"></div>
+                    <div class="item-details"><h5>${item.productName}</h5><p>Size: ${item.size} | Qty: ${item.quantity}</p></div>
+                    <div class="item-price">₹${(item.price * item.quantity).toFixed(2)}</div>
+                </div>`).join('');
+        }
+    </script>
+</body>
+
+</html>
