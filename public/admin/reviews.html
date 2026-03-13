@@ -681,7 +681,6 @@
 
     <script src="admin-profile-helper.js"></script>
     <script src="admin-modal-helper.js"></script>
-
     <script src="admin-sidebar.js"></script>
 
     <!-- Review Details Modal -->
@@ -697,7 +696,7 @@
             <h3 class="modal-header-title">Review Details</h3>
 
             <div class="reviewer-info">
-                <div class="reviewer-avatar" id="modalAvater">AK</div>
+                <div class="reviewer-avatar" id="modalAvatar"></div>
                 <div class="reviewer-details">
                     <span class="reviewer-name" id="modalReviewer">---</span>
                     <span class="verified-badge">Verified Buyer</span>
@@ -751,7 +750,7 @@
                 const res = await fetch(`/api/reviews/admin?page=${page}&limit=20&search=${encodeURIComponent(search)}`, { credentials: 'include' });
                 if (!res.ok) {
                     if (res.status === 401 || res.status === 403) {
-                        window.location.href = '../../index.html'; // Admin login
+                        window.location.href = '/user/login.html'; // Admin login
                         return;
                     }
                     throw new Error('Failed to fetch reviews');
@@ -816,10 +815,10 @@
         function getStatusBadgeClass(status) {
             switch (status) {
                 case 'Approved': return 'status-approved';
-                case 'Rejected': return 'btn-reject'; // Reusing style color
+                case 'Rejected': return 'btn-reject';
                 case 'Pending':
                 default:
-                    return 'btn-modal-close'; // Grayish
+                    return 'btn-modal-close';
             }
         }
 
@@ -837,6 +836,12 @@
                 const productName = review.product ? review.product.name : 'Unknown Product';
 
                 let actionButtons = `
+                    <button class="action-btn" onclick="openReviewModal(${index}, event)" title="View Details" style="background-color: #eff6ff; color: #3b82f6;">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
                     <button class="action-btn btn-approve" onclick="updateReviewStatus('${review._id}', 'Approved', event)" title="Approve">
                         <svg class="icon check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"></polyline></svg>
                     </button>
@@ -914,7 +919,8 @@
             }
         }
 
-        function openReviewModal(index) {
+        function openReviewModal(index, event) {
+            if (event) event.stopPropagation();
             const review = globalReviews[index];
             if (!review) return;
 
@@ -922,7 +928,7 @@
             const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
 
             document.getElementById('modalReviewer').textContent = userName;
-            document.getElementById('modalAvater').textContent = initials;
+            document.getElementById('modalAvatar').textContent = initials;
             document.getElementById('modalProduct').textContent = review.product ? review.product.name : 'Unknown';
             document.getElementById('modalRating').textContent = `${review.rating}.0`;
 

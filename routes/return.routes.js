@@ -9,7 +9,7 @@ router.get('/user', protect, returnController.getUserReturns);
 router.put('/:id/cancel', protect, returnController.cancelReturnRequest);
 
 // Admin Routes
-router.get('/admin', protect, adminOnly, returnController.getReturnsForAdmin);
+router.get('/admin/all', protect, adminOnly, returnController.getReturnsForAdmin);
 router.put('/admin/:id/status', protect, adminOnly, returnController.updateReturnStatus);
 router.delete('/admin/:id', protect, adminOnly, returnController.deleteReturn);
 

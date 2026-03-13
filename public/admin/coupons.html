@@ -1022,6 +1022,12 @@
                     fetch('/api/admin/categories', { credentials: 'include' }),
                     fetch('/api/admin/brands', { credentials: 'include' })
                 ]);
+
+                if (catRes.status === 401 || catRes.status === 403 || brandRes.status === 401 || brandRes.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
+                }
+
                 const catData = await catRes.json();
                 const brandData = await brandRes.json();
 
@@ -1074,6 +1080,12 @@
                 const search = searchQuery || (searchInput ? searchInput.value : '');
 
                 const response = await fetch(`/api/coupons/admin?page=${page}&limit=20&search=${encodeURIComponent(search)}`, { credentials: 'include' });
+                
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
+                }
+
                 const data = await response.json();
 
                 if (data.success) {

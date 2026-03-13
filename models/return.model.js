@@ -50,6 +50,9 @@ const returnSchema = new mongoose.Schema(
                 type: String,
             },
         ],
+        pickupAddress: {
+            type: String,
+        },
         refundAmount: {
             type: Number,
         },

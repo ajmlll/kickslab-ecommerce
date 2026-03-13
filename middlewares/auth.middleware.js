@@ -4,7 +4,7 @@ const User = require("../models/user.model");
 exports.protect = async (req, res, next) => {
   let token;
   const urlPath = req.originalUrl ? req.originalUrl.split('?')[0] : '';
-  const isAdminAPI = urlPath.startsWith("/api/admin");
+  const isAdminAPI = urlPath.includes("/admin");
 
   // Strictly use correct token based on API type
   if (isAdminAPI) {
@@ -53,7 +53,7 @@ exports.protect = async (req, res, next) => {
     }
     
     // STRICTLY block Admins from User APIs if they are using their adminToken
-    if (!isAdminAPI && user.role === 'admin' && isAdminAPI) { // Logic safety
+    if (!isAdminAPI && user.role === 'admin') {
         return res.status(403).json({ success: false, message: "User access required" });
     }
 

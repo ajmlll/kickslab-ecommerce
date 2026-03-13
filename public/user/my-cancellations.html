@@ -1013,20 +1013,20 @@
                         } other item(s)` : '';
 
                     const refundHint = (order.paymentMethod === 'cod') ?
-                        `< div class="refund-hint-box cod" >
+                        `<div class="refund-hint-box cod">
                             <i class="fas fa-info-circle"></i>
                             <span>No refund required (COD)</span>
-                        </div > ` :
-                        `< div class="refund-hint-box paid" >
+                        </div>` :
+                        `<div class="refund-hint-box paid">
                             <i class="fas fa-wallet"></i>
                             <div style="flex: 1;">
                                 <div style="font-weight: 700;">Refund Credited to Wallet</div>
                                 <div style="font-size: 11px; opacity: 0.9;">The refund amount has been automatically added to your wallet. Please check your wallet in the Payment Options section.</div>
                             </div>
-                        </div > `;
+                        </div>`;
 
                     html += `
-            < div class="order-card" style = "cursor: pointer;" onclick = "window.location.href='cancellation-details.html?id=${order._id}'" >
+            <div class="order-card" style="cursor: pointer;" onclick="window.location.href='cancellation-details.html?id=${order._id}'">
                             <div class="order-header">
                                 <div class="order-info">
                                     <h4>Order #${displayId}</h4>
@@ -1050,7 +1050,7 @@
                                 <button class="btn-action btn-details" onclick="event.stopPropagation(); window.location.href='cancellation-details.html?id=${order._id}'">View Details</button>
                                 <button class="btn-action btn-buy-again" onclick="event.stopPropagation(); window.location.href='Landingpage.html'">Start Shopping</button>
                             </div>
-                        </div >
+                        </div>
             `;
                 });
 
@@ -1058,7 +1058,7 @@
 
             } catch (err) {
                 console.error(err);
-                container.innerHTML = `< div style = "text-align:center; padding: 20px; color: #dc2626;" > Error loading cancellations.</div >`;
+                listContainer.innerHTML = `<div style="text-align:center; padding: 20px; color: #dc2626;">Error loading cancellations.</div>`;
             }
         }
     </script>

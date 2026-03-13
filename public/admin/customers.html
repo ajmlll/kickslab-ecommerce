@@ -504,7 +504,7 @@
             </div>
             Order Management
         </a>
-        <a href="customers.html" class="nav-item">
+        <a href="customers.html" class="nav-item active">
             <div class="nav-icon">
                 <svg class="icon" viewBox="0 0 24 24">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -686,7 +686,6 @@
 
     <script src="admin-profile-helper.js"></script>
     <script src="admin-modal-helper.js"></script>
-
     <script src="admin-sidebar.js"></script>
     <script>
         let allUsers = [];
@@ -718,6 +717,12 @@
                 const search = searchQuery || (searchInput ? searchInput.value : '');
 
                 const res = await fetch(`/api/users/admin/all?page=${page}&limit=20&search=${encodeURIComponent(search)}`);
+                
+                if (res.status === 401 || res.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
+                }
+
                 const data = await res.json();
 
                 if (data.success) {
@@ -889,8 +894,6 @@
                 }
             }
         }
-
-
 
         window.onclick = function (event) {
             if (event.target == customerModal) {

@@ -1091,8 +1091,8 @@
                                 </div>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px;">
-                                <p style="font-size: 13px; color: #666; margin: 0;">Order ID: <span style="font-weight: 600; color: #111;">#${ret.orderId._id.substring(ret.orderId._id.length - 8).toUpperCase()}</span></p>
-                                <p style="font-size: 13px; color: #666; margin: 0;">Return ID: <span style="font-weight: 600; color: #111;">#${ret._id.substring(ret._id.length - 8).toUpperCase()}</span></p>
+                                <p style="font-size: 13px; color: #666; margin: 0;">Order ID: <span style="font-weight: 600; color: #111;">${ret.orderId.orderId || ret.orderId._id}</span></p>
+                                <p style="font-size: 13px; color: #666; margin: 0;">Return ID: <span style="font-weight: 600; color: #111;">${ret._id}</span></p>
                             </div>
                             <p style="font-size: 12px; color: #888; margin-top: 8px;">Requested on ${date}</p>
                             <div style="margin-top: 12px; display: flex; justify-content: flex-end; gap: 10px;">
@@ -1148,11 +1148,11 @@
                 <div class="return-info-grid">
                     <div class="info-block">
                         <h4>Order ID</h4>
-                        <p style="color: #4285F4;">#${ret.orderId._id.substring(ret.orderId._id.length - 8).toUpperCase()}</p>
+                        <p style="color: #4285F4;">${ret.orderId.orderId || ret.orderId._id}</p>
                     </div>
                     <div class="info-block">
                         <h4>Return ID</h4>
-                        <p>#${ret._id.substring(ret._id.length - 8).toUpperCase()}</p>
+                        <p>${ret._id}</p>
                     </div>
                     <div class="info-block">
                         <h4>Date Requested</h4>

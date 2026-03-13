@@ -157,25 +157,10 @@
             font-weight: 600;
         }
 
-        .status-pending {
-            background-color: #f3f4f6;
-            color: #4b5563;
-        }
-
-        .status-approved {
-            background-color: #ecfdf5;
-            color: #10b981;
-        }
-
-        .status-rejected {
-            background-color: #fef2f2;
-            color: #ef4444;
-        }
-
-        .status-refunded {
-            background-color: #eff6ff;
-            color: #3b82f6;
-        }
+        .status-pending { background-color: #f3f4f6; color: #4b5563; }
+        .status-approved { background-color: #ecfdf5; color: #10b981; }
+        .status-rejected { background-color: #fef2f2; color: #ef4444; }
+        .status-refunded { background-color: #eff6ff; color: #3b82f6; }
 
         /* Action Buttons */
         .action-group {
@@ -200,25 +185,10 @@
             transform: scale(1.1);
         }
 
-        .btn-approve {
-            background-color: #ecfdf5;
-            color: #10b981;
-        }
-
-        .btn-reject {
-            background-color: #fffbeb;
-            color: #f59e0b;
-        }
-
-        .btn-complete {
-            background-color: #eff6ff;
-            color: #3b82f6;
-        }
-
-        .btn-delete {
-            background-color: #fef2f2;
-            color: #ef4444;
-        }
+        .btn-approve { background-color: #ecfdf5; color: #10b981; }
+        .btn-reject { background-color: #fffbeb; color: #f59e0b; }
+        .btn-complete { background-color: #eff6ff; color: #3b82f6; }
+        .btn-delete { background-color: #fef2f2; color: #ef4444; }
 
         /* Modal Styles */
         .modal-overlay {
@@ -303,131 +273,6 @@
             font-size: 0.95rem;
             line-height: 1.6;
             border-left: 4px solid var(--primary-blue);
-        }
-
-        /* Confirmation Modal Styles */
-        #confirmActionModal .modal-content {
-            max-width: 450px;
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .confirm-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 1.5rem;
-        }
-
-        .confirm-icon.warning {
-            background: #fffbeb;
-            color: #f59e0b;
-        }
-
-        .confirm-icon.danger {
-            background: #fef2f2;
-            color: #ef4444;
-        }
-
-        .confirm-icon.success {
-            background: #f0fdf4;
-            color: #22c55e;
-        }
-
-        .confirm-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            color: var(--text-dark);
-        }
-
-        .confirm-message {
-            color: #64748b;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 2rem;
-        }
-
-        .confirm-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-
-        .btn-confirm {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-        }
-
-        .btn-confirm-cancel {
-            background: #f1f5f9;
-            color: #64748b;
-        }
-
-        .btn-confirm-cancel:hover {
-            background: #e2e8f0;
-        }
-
-        .btn-confirm-action {
-            background: var(--primary-blue);
-            color: white;
-            min-width: 120px;
-        }
-
-        .btn-confirm-action:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        /* Toast Styles */
-        .toast-container {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            z-index: 2000;
-        }
-
-        .toast {
-            background: white;
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 0.75rem;
-            border-left: 4px solid #6366f1;
-            transform: translateX(120%);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .toast.active {
-            transform: translateX(0);
-        }
-
-        .toast.error {
-            border-left-color: #ef4444;
-        }
-
-        .toast i {
-            font-size: 1.25rem;
-        }
-
-        .toast.error i {
-            color: #ef4444;
-        }
-
-        .toast.success i {
-            color: #22c55e;
         }
 
         .evidence-gallery {
@@ -673,7 +518,7 @@
             </div>
             Product Reviews
         </a>
-        <a href="returns.html" class="nav-item">
+        <a href="returns.html" class="nav-item active">
             <div class="nav-icon">
                 <svg class="icon" viewBox="0 0 24 24">
                     <polyline points="1 4 1 10 7 10"></polyline>
@@ -682,7 +527,6 @@
             </div>
             Product Returns
         </a>
-
         <a href="analytics.html" class="nav-item">
             <div class="nav-icon">
                 <svg class="icon" viewBox="0 0 24 24">
@@ -712,7 +556,7 @@
                 <div class="card-header">
                     <h2 class="card-title">Return Requests</h2>
                     <div class="search-container">
-                        <input type="text" placeholder="Search returns..." class="search-input">
+                        <input type="text" id="searchInput" placeholder="Search returns..." class="search-input">
                     </div>
                 </div>
 
@@ -738,25 +582,15 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
                 <div class="pagination">
                     <div class="pagination-info" id="pagination-info">Showing return requests</div>
                     <div class="pagination-controls" id="pagination-controls">
-                        <!-- Pagination controls here -->
                     </div>
                 </div>
-
             </div>
         </div>
     </main>
 
-    <script src="admin-profile-helper.js"></script>
-    <script src="admin-modal-helper.js"></script>
-
-    <script src="admin-sidebar.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Return Details Modal -->
     <div class="modal-overlay" id="returnModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal()">
@@ -784,405 +618,290 @@
                 <span class="info-label">Date Requested</span>
                 <span class="info-value" id="modalDate">---</span>
             </div>
+            <div class="info-row">
+                <span class="info-label">Current Status</span>
+                <span class="info-value" id="modalStatus" style="font-weight: 700;">---</span>
+            </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 20px 0;">
                 <div>
-                    <p class="info-label" style="margin-bottom: 8px;"><i class="fas fa-map-marker-alt"></i> Pickup
-                        Address</p>
-                    <div id="modalAddress"
-                        style="padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--warning-orange); font-size: 0.9rem; line-height: 1.6;">
-                        "..."
+                    <p class="info-label" style="margin-bottom: 8px;"><i class="fas fa-map-marker-alt"></i> Pickup Address</p>
+                    <div id="modalAddress" style="padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--warning-orange); font-size: 0.9rem; line-height: 1.6;">
+                        ---
                     </div>
                 </div>
                 <div>
-                    <p class="info-label" style="margin-bottom: 8px;"><i class="fas fa-info-circle"></i> Item Condition
-                    </p>
-                    <div id="modalCondition"
-                        style="padding: 15px; background: #eff6ff; border-radius: 8px; border-left: 4px solid #3b82f6; font-size: 0.9rem; font-weight: 700; color: #1e40af; margin-bottom: 15px;">
-                        "..."
-                    </div>
-                    <p class="info-label" style="margin-bottom: 8px;"><i class="fas fa-comment-alt"></i> Return Reason
-                    </p>
-                    <div class="reason-box" id="modalReason" style="margin: 0; min-height: 60px;">
-                        "..."
+                    <p class="info-label" style="margin-bottom: 8px;"><i class="fas fa-info-circle"></i> Item Condition</p>
+                    <div id="modalCondition" style="padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--primary-blue); font-size: 0.9rem; line-height: 1.6;">
+                        ---
                     </div>
                 </div>
             </div>
 
-            <div id="evidenceSection" style="display: none;">
-                <p class="info-label" style="margin-bottom: 8px;">Evidence Photos</p>
-                <div class="evidence-gallery" id="modalEvidence"></div>
-            </div>
+            <p class="info-label" style="margin-bottom: 8px;"><i class="fas fa-comment-alt"></i> Return Reason</p>
+            <div id="modalReason" class="reason-box">---</div>
 
-            <div class="order-context-box" id="refundSummarySection"
-                style="display: none; background-color: #ecfdf5; border-color: #a7f3d0;">
-                <p style="font-weight: 700; font-size: 0.9rem; margin-bottom: 10px; color: #065f46;">
-                    <i class="fas fa-receipt"></i> Refund Summary
-                </p>
-                <div class="info-row" style="margin-bottom: 5px;">
-                    <span class="info-label" style="font-size: 0.8rem;">Items Total</span>
-                    <span class="info-value" id="modalRefundItemsTotal" style="font-size: 0.8rem;">₹0</span>
-                </div>
-                <div class="info-row" style="margin-bottom: 5px;">
-                    <span class="info-label" style="font-size: 0.8rem;">Final Refund (Pro-rated)</span>
-                    <span class="info-value" id="modalRefundFinalAmount"
-                        style="font-size: 0.9rem; color: #059669;">₹0</span>
-                </div>
-                <div class="info-row" style="margin-bottom: 0;">
-                    <span class="info-label" style="font-size: 0.8rem;">Transaction ID</span>
-                    <span class="info-value" id="modalRefundTxId"
-                        style="font-size: 0.75rem; font-family: monospace;">---</span>
-                </div>
+            <p class="info-label" style="margin-bottom: 12px;"><i class="fas fa-images"></i> Evidence Photos</p>
+            <div id="modalEvidence" class="evidence-gallery">
+                <!-- Images populated via JS -->
             </div>
 
             <div class="order-context-box">
-                <p style="font-weight: 700; font-size: 0.9rem; margin-bottom: 10px; color: #1e40af;">
-                    <i class="fas fa-shopping-bag"></i> Order Context
-                </p>
-                <div id="modalOrderItems"></div>
-                <hr style="margin: 10px 0; border: none; border-top: 1px solid #dbeafe;">
-                <div class="info-row" style="margin-bottom: 0;">
-                    <span class="info-label" style="font-size: 0.8rem;">Order Total Amount</span>
-                    <span class="info-value" id="modalOrderTotal" style="font-size: 0.8rem;">₹0</span>
-                </div>
-                <div class="info-row" style="margin-bottom: 0;">
-                    <span class="info-label" style="font-size: 0.8rem;">Payment Method</span>
-                    <span class="info-value" id="modalOrderPayment" style="font-size: 0.8rem;">---</span>
+                <p class="info-label" style="margin-bottom: 10px; color: #1e40af;">Returning Items:</p>
+                <div id="modalItems">
+                    <!-- Items populated via JS -->
                 </div>
             </div>
 
-            <div class="info-row" style="margin-bottom: 0.5rem;">
-                <span class="info-label">Admin Comment</span>
-            </div>
-            <textarea class="admin-comment-area" id="modalAdminComment"
-                placeholder="Write feedback for customer..."></textarea>
-
-            <div class="info-row" id="updateStatusSection">
-                <span class="info-label">Update Status</span>
-                <div class="action-group" style="gap: 10px;">
-                    <button class="btn-save" id="btnApprove" style="background-color: var(--success-green);"
-                        onclick="confirmAndUpdateStatus('Approved')">Approve</button>
-                    <button class="btn-save" id="btnReject" style="background-color: var(--danger-red);"
-                        onclick="updateStatus('Rejected')">Reject</button>
+            <div id="adminActionSection">
+                <p class="info-label" style="margin-bottom: 8px;">Admin Comments</p>
+                <textarea id="adminComment" class="admin-comment-area" placeholder="Add your notes about this return request..."></textarea>
+                
+                <div id="actionButtons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
+                    <!-- Buttons populated via JS -->
                 </div>
-            </div>
-            <div id="refundCompletedNotice"
-                style="display: none; padding: 15px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; color: #166534; font-weight: 600; text-align: center; margin-top: 10px;">
-                <i class="fas fa-check-circle"></i> This return has been processed and refunded.
             </div>
         </div>
     </div>
 
-    <!-- Premium Confirmation Modal Removed -->
-
+    <script src="admin-profile-helper.js"></script>
+    <script src="admin-modal-helper.js"></script>
+    <script src="admin-sidebar.js"></script>
     <script>
-        const modal = document.getElementById('returnModal');
-        let globalReturns = [];
-        let currentReturnId = null;
+        let returnsData = [];
         let currentPage = 1;
+        const limit = 10;
+        let selectedReturnId = null;
 
-        document.addEventListener('DOMContentLoaded', () => fetchReturns(1));
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchReturns();
+        });
 
-        async function fetchReturns(page = 1, searchQuery = '') {
+        async function fetchReturns(page = 1) {
             try {
-                const searchInput = document.querySelector('.search-input');
-                const search = searchQuery || (searchInput ? searchInput.value : '');
-
-                const res = await fetch(`/api/returns/admin?page=${page}&limit=20&search=${encodeURIComponent(search)}`, { credentials: 'include' });
-                if (!res.ok) throw new Error('Failed to fetch returns');
-
-                const responseData = await res.json();
-
-                if (responseData.success) {
-                    globalReturns = responseData.data || responseData.returns || [];
-                    renderReturns(globalReturns);
-                    renderPagination(responseData.totalRecords || globalReturns.length, responseData.totalPages || 1, responseData.currentPage || 1);
-                } else if (Array.isArray(responseData)) {
-                    globalReturns = responseData;
-                    renderReturns(globalReturns);
+                const search = document.getElementById('searchInput').value;
+                const response = await fetch(`/api/returns/admin/all?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`);
+                
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
                 }
-            } catch (err) {
-                console.error(err);
-                document.getElementById('returnsTableBody').innerHTML = `
-                    <tr><td colspan="6" style="text-align:center; color:red;">Failed to load returns.</td></tr>
-                `;
-            }
-        }
 
-        function renderPagination(totalRecords, totalPages, currentPageNum) {
-            currentPage = currentPageNum;
-            const paginationInfo = document.getElementById('pagination-info');
-            const paginationControls = document.getElementById('pagination-controls');
-
-            if (!paginationInfo || !paginationControls) return;
-
-            const limit = 20;
-            const startRecord = totalRecords === 0 ? 0 : ((currentPage - 1) * limit) + 1;
-            const endRecord = Math.min(currentPage * limit, totalRecords);
-
-            paginationInfo.textContent = `Showing ${startRecord}–${endRecord} of ${totalRecords} return requests`;
-
-            let controlsHtml = '';
-
-            // Prev Button
-            controlsHtml += `<button class="page-btn ${currentPage === 1 ? 'disabled' : ''}" onclick="${currentPage === 1 ? 'return false;' : `fetchReturns(${currentPage - 1})`}">« Prev</button>`;
-
-            // Page Numbers
-            for (let i = 1; i <= totalPages; i++) {
-                if (totalPages > 7) {
-                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                        controlsHtml += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="fetchReturns(${i})">${i}</button>`;
-                    } else if (i === currentPage - 2 || i === currentPage + 2) {
-                        controlsHtml += `<span style="margin: 0 5px; align-self: center;">...</span>`;
-                    }
-                } else {
-                    controlsHtml += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="fetchReturns(${i})">${i}</button>`;
+                const data = await response.json();
+                if (data.status === 'success') {
+                    returnsData = data.data.returns;
+                    renderReturnsTable(returnsData);
+                    renderPagination(data.data.total, data.data.totalPages, data.data.currentPage);
                 }
-            }
-
-            // Next Button
-            controlsHtml += `<button class="page-btn ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}" onclick="${currentPage === totalPages || totalPages === 0 ? 'return false;' : `fetchReturns(${currentPage + 1})`}">Next »</button>`;
-
-            paginationControls.innerHTML = controlsHtml;
-        }
-
-        function getStatusClass(status) {
-            switch (status) {
-                case 'Pending': return 'status-pending';
-                case 'Approved': return 'status-approved';
-                case 'Rejected': return 'status-rejected';
-                case 'Refunded': return 'status-refunded';
-                default: return '';
+            } catch (error) {
+                console.error('Error fetching returns:', error);
             }
         }
 
-        function renderReturns(returns) {
+        function renderReturnsTable(returns) {
             const tbody = document.getElementById('returnsTableBody');
+            tbody.innerHTML = '';
+
             if (returns.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No return requests found.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">No return requests found.</td></tr>';
                 return;
             }
 
-            let html = '';
-            returns.forEach((ret, index) => {
-                const customerName = ret.userId ? ret.userId.name : 'Unknown';
-                const date = new Date(ret.createdAt).toLocaleDateString();
-
-                const statusDisplay = ret.status === 'Approved' ? 'Refunded to Wallet' : ret.status;
-                const statusClass = ret.status === 'Approved' ? 'status-approved' : getStatusClass(ret.status);
-
-                html += `
-                    <tr>
-                        <td>${customerName}</td>
-                        <td>#${ret.orderId._id.substring(ret.orderId._id.length - 8).toUpperCase()}</td>
-                        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ret.reason}</td>
-                        <td><span class="status-badge ${statusClass}">${statusDisplay}</span></td>
-                        <td>${date}</td>
-                        <td>
-                            <div class="action-group">
-                                <button class="action-btn btn-complete" onclick="openModal(${index})" title="View Details">
-                                    <i class="fas fa-eye" style="font-size: 14px;"></i>
-                                </button>
-                                <button class="action-btn btn-delete" onclick="deleteReturn('${ret._id}')" title="Delete">
-                                    <i class="fas fa-trash" style="font-size: 14px;"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+            returns.forEach(ret => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${ret.userId ? ret.userId.name : 'Guest'}</td>
+                    <td>${ret.orderId ? (ret.orderId.orderId || ret.orderId._id) : 'N/A'}</td>
+                    <td>${ret.reason}</td>
+                    <td><span class="status-badge status-${ret.status.toLowerCase()}">${ret.status === 'Refunded' ? 'Approved & Refunded' : ret.status}</span></td>
+                    <td>${new Date(ret.createdAt).toLocaleDateString()}</td>
+                    <td>
+                        <button class="action-btn btn-complete" onclick="openDetailsModal('${ret._id}')" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
                 `;
+                tbody.appendChild(tr);
             });
-            tbody.innerHTML = html;
         }
 
-        function openModal(index) {
-            const ret = globalReturns[index];
+        function openDetailsModal(id) {
+            const ret = returnsData.find(r => r._id === id);
             if (!ret) return;
 
-            currentReturnId = ret._id;
-            document.getElementById('modalReturnId').textContent = `#${ret._id.toString().toUpperCase()}`;
-            document.getElementById('modalCustomer').textContent = ret.userId ? ret.userId.name : 'Unknown';
-            document.getElementById('modalOrder').textContent = `#${ret.orderId._id}`;
+            selectedReturnId = id;
+            document.getElementById('modalReturnId').textContent = id;
+            document.getElementById('modalCustomer').textContent = ret.userId ? ret.userId.name : 'Guest';
+            document.getElementById('modalOrder').textContent = ret.orderId ? (ret.orderId.orderId || ret.orderId._id) : 'N/A';
             document.getElementById('modalDate').textContent = new Date(ret.createdAt).toLocaleString();
+            
+            const statusTarget = document.getElementById('modalStatus');
+            statusTarget.textContent = ret.status === 'Refunded' ? 'Approved & Refunded' : ret.status;
+            statusTarget.style.color = getStatusColor(ret.status);
+            
+            // Pickup Address mapping
+            const shippingAddr = ret.orderId && ret.orderId.shippingAddress ? 
+                `${ret.orderId.shippingAddress.name}, ${ret.orderId.shippingAddress.address}, ${ret.orderId.shippingAddress.city}, ${ret.orderId.shippingAddress.zipCode}` : 
+                'No address provided';
+            document.getElementById('modalAddress').textContent = ret.pickupAddress || shippingAddr;
+            
+            // Item Condition mapping
+            const condition = ret.items && ret.items[0] ? ret.items[0].condition : 'N/A';
+            document.getElementById('modalCondition').textContent = condition;
+            
             document.getElementById('modalReason').textContent = ret.reason;
-            document.getElementById('modalAdminComment').value = ret.adminComment || '';
+            document.getElementById('adminComment').value = ret.adminComment || '';
 
-            // Handle Address
-            const addr = ret.orderId.shippingAddress || {};
-            document.getElementById('modalAddress').innerHTML = `
-                <strong>${addr.name || 'N/A'}</strong><br>
-                ${addr.address || 'N/A'}<br>
-                ${addr.city || ''}, ${addr.state || ''} ${addr.zipCode || ''}<br>
-                <strong>Phone:</strong> ${addr.phone || 'N/A'}
-            `;
-
-            // Handle Evidence Photos
+            // Evidence Photos mapping
             const evidenceDiv = document.getElementById('modalEvidence');
-            const evidenceSection = document.getElementById('evidenceSection');
-            if (ret.evidencePhotos && ret.evidencePhotos.length > 0) {
-                evidenceSection.style.display = 'block';
-                evidenceDiv.innerHTML = ret.evidencePhotos.map(url => `
-                    <img src="${url}" class="evidence-img" onclick="window.open('${url}', '_blank')">
-                `).join('');
+            evidenceDiv.innerHTML = '';
+            const photos = ret.evidencePhotos || ret.images || [];
+            if (photos.length > 0) {
+                photos.forEach(img => {
+                    const imgEl = document.createElement('img');
+                    imgEl.src = img;
+                    imgEl.className = 'evidence-img';
+                    imgEl.onclick = () => window.open(img, '_blank');
+                    evidenceDiv.appendChild(imgEl);
+                });
             } else {
-                evidenceSection.style.display = 'none';
+                evidenceDiv.innerHTML = '<p style="color: #94a3b8; font-size: 0.85rem;">No evidence photos provided.</p>';
             }
 
-            // Handle Order Context
-            const order = ret.orderId;
-            const isRefunded = ret.status === 'Approved' || ret.status === 'Refunded';
-
-            document.getElementById('modalOrderTotal').textContent = `₹${order.totalAmount || 0}`;
-            document.getElementById('modalOrderPayment').innerHTML = `
-                ${order.paymentMethod.toUpperCase()} 
-                ${isRefunded ? `<span style="color: var(--success-green); font-weight: 800; margin-left:10px;"><i class="fas fa-wallet"></i> Refunded to Wallet</span>` : ''}
-            `;
-
-            const itemsContainer = document.getElementById('modalOrderItems');
-            if (ret.items && ret.items.length > 0) {
-                // Mapping labels for Item Condition
-                const conditionLabels = {
-                    'unopened': 'Unopened (Original Packaging)',
-                    'opened': 'Opened (Tried on but not worn outside)',
-                    'used': 'Used / Worn'
-                };
-
-                // Display the primary item condition in the prominent box
-                const primaryCondition = ret.items[0].condition;
-                document.getElementById('modalCondition').textContent = conditionLabels[primaryCondition] || primaryCondition || 'N/A';
-
-                itemsContainer.innerHTML = ret.items.map(item => {
-                    const fullCondition = conditionLabels[item.condition] || item.condition || 'N/A';
-
-                    return `
-                        <div class="order-item-mini" style="margin-bottom: 15px;">
-                            <img src="${item.productImage || 'https://via.placeholder.com/30'}" onerror="this.src='https://via.placeholder.com/30'" style="width: 40px; height: 40px;">
-                            <div style="flex: 1;">
-                                <div style="font-weight: 700; font-size: 0.9rem;">${item.productName}</div>
-                                <div style="font-size: 0.8rem; color: #666;">Qty: ${item.quantity} | <span style="color: #3b82f6; font-weight: 700;">${fullCondition}</span></div>
-                            </div>
-                            <div style="font-weight: 600;">₹${item.price}</div>
-                        </div>
+            // Items
+            const itemsDiv = document.getElementById('modalItems');
+            itemsDiv.innerHTML = '';
+            
+            // Use items from return request if available, otherwise from order
+            const returnItems = (ret.items && ret.items.length > 0) ? ret.items : (ret.orderId ? ret.orderId.items : []);
+            
+            if (returnItems.length > 0) {
+                returnItems.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'order-item-mini';
+                    itemDiv.innerHTML = `
+                        <img src="${item.productImage || 'https://via.placeholder.com/30'}" alt="${item.productName || 'Item'}">
+                        <span>${item.productName || 'Unknown Product'} (x${item.quantity || 1})</span>
                     `;
-                }).join('');
+                    itemsDiv.appendChild(itemDiv);
+                });
+            }
+
+            // Action Buttons based on status
+            const buttonsDiv = document.getElementById('actionButtons');
+            buttonsDiv.innerHTML = '';
+            
+            if (ret.status === 'Pending') {
+                buttonsDiv.innerHTML = `
+                    <button class="btn-save" style="background-color: #10b981;" onclick="updateReturnStatus('Approved')">Approve Request</button>
+                    <button class="btn-save" style="background-color: #ef4444;" onclick="updateReturnStatus('Rejected')">Reject Request</button>
+                `;
+            } else if (ret.status === 'Refunded') {
+                buttonsDiv.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 15px; background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; color: #065f46; font-weight: 600;">
+                        <i class="fas fa-check-circle"></i> Refund Completed
+                    </div>
+                `;
+            } else if (ret.status === 'Rejected') {
+                buttonsDiv.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 15px; background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; color: #991b1b; font-weight: 600;">
+                        <i class="fas fa-times-circle"></i> Request Rejected
+                    </div>
+                `;
             } else {
-                document.getElementById('modalCondition').textContent = 'N/A';
-                itemsContainer.innerHTML = '<p style="font-size: 0.8rem; color: #666;">No items found in return.</p>';
+                buttonsDiv.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #64748b;">Status: ${ret.status}</p>`;
             }
 
-            // Handle Refund Summary
-            const refundSummary = document.getElementById('refundSummarySection');
-            const updateStatusSection = document.getElementById('updateStatusSection');
-            const refundNotice = document.getElementById('refundCompletedNotice');
-
-            // Calculate current return subtotal
-            const returnSubtotal = ret.items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-
-            if (isRefunded) {
-                refundSummary.style.display = 'block';
-                updateStatusSection.style.display = 'none';
-                refundNotice.style.display = 'block';
-                document.getElementById('modalAdminComment').disabled = true;
-
-                document.getElementById('modalRefundItemsTotal').textContent = `₹${returnSubtotal}`;
-                document.getElementById('modalRefundFinalAmount').textContent = `₹${ret.refundAmount || '---'}`;
-                document.getElementById('modalRefundTxId').textContent = ret.refundTransactionId || '---';
-            } else {
-                refundSummary.style.display = 'none';
-                updateStatusSection.style.display = 'flex';
-                refundNotice.style.display = 'none';
-                document.getElementById('modalAdminComment').disabled = false;
-            }
-
-            modal.classList.add('active');
-        }
-
-        async function confirmAndUpdateStatus(status) {
-            const ret = globalReturns.find(r => r._id === currentReturnId);
-            if (!ret) return;
-
-            let message = `Are you sure you want to change this return status to ${status.toUpperCase()}?`;
-
-            if (status === 'Approved') {
-                const order = ret.orderId;
-                const itemsSubtotal = ret.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-                let totalSellingPrice = order.totalMRP - (order.productDiscount || 0);
-                if (!totalSellingPrice || isNaN(totalSellingPrice) || totalSellingPrice <= 0) {
-                    totalSellingPrice = order.totalAmount;
-                }
-                const estimatedRefund = Math.floor(((itemsSubtotal / totalSellingPrice) * order.totalAmount) * 100) / 100;
-
-                message = `Are you sure you want to approve this return?\n\nThe amount ₹${estimatedRefund} (Pro-rated) will be credited to the customer's wallet immediately.`;
-            }
-
-            if (await AdminModal.confirm(message)) {
-                updateStatus(status);
-            }
+            document.getElementById('returnModal').classList.add('active');
         }
 
         function closeModal() {
-            modal.classList.remove('active');
+            document.getElementById('returnModal').classList.remove('active');
         }
 
-        function showToast(message, type = 'success') {
-            AdminModal.alert(message, type);
-        }
-
-        async function updateStatus(status) {
-            if (!currentReturnId) return;
-
-            const adminComment = document.getElementById('modalAdminComment').value;
-
+        async function updateReturnStatus(status) {
+            const comment = document.getElementById('adminComment').value;
+            
             try {
-                const res = await fetch(`/api/returns/admin/${currentReturnId}/status`, {
+                const response = await fetch(`/api/returns/admin/${selectedReturnId}/status`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ status, adminComment })
+                    body: JSON.stringify({ status, adminComment: comment })
                 });
 
-                if (!res.ok) throw new Error('Failed to update status');
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
+                }
 
-                showToast(`Return request ${status.toLowerCase()} successfully`);
-                closeModal();
-                fetchReturns(currentPage);
-            } catch (err) {
-                console.error(err);
-                showToast(err.message || 'Error updating status', 'error');
+                const data = await response.json();
+                if (data.status === 'success') {
+                    AdminModal.alert(`Return status updated to ${status}`, 'success');
+                    closeModal();
+                    fetchReturns(currentPage);
+                }
+            } catch (error) {
+                console.error('Error updating return status:', error);
+                AdminModal.alert('Failed to update status', 'error');
             }
         }
 
-        async function deleteReturn(id) {
-            if (await AdminModal.confirm('Are you sure you want to delete this return request? This action will permanently remove the record from history.')) {
-                try {
-                    const res = await fetch(`/api/returns/admin/${id}`, {
-                        method: 'DELETE',
-                        credentials: 'include'
-                    });
+        function renderPagination(total, totalPages, curPage) {
+            currentPage = curPage;
+            const paginationInfo = document.getElementById('pagination-info');
+            const paginationControls = document.getElementById('pagination-controls');
 
-                    if (!res.ok) throw new Error('Failed to delete');
-                    showToast('Record deleted successfully', 'success');
-                    fetchReturns(currentPage);
-                } catch (err) {
-                    console.error(err);
-                    showToast('Error deleting record', 'error');
+            paginationInfo.textContent = `Showing ${(curPage-1)*limit + 1} to ${Math.min(curPage*limit, total)} of ${total} returns`;
+            paginationControls.innerHTML = '';
+
+            const prevBtn = document.createElement('button');
+            prevBtn.className = `page-btn ${curPage === 1 ? 'disabled' : ''}`;
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.onclick = () => { if (curPage > 1) fetchReturns(curPage - 1); };
+            paginationControls.appendChild(prevBtn);
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= curPage - 1 && i <= curPage + 1)) {
+                    const btn = document.createElement('button');
+                    btn.className = `page-btn ${curPage === i ? 'active' : ''}`;
+                    btn.textContent = i;
+                    btn.onclick = () => fetchReturns(i);
+                    paginationControls.appendChild(btn);
+                } else if (i === curPage - 2 || i === curPage + 2) {
+                    const span = document.createElement('span');
+                    span.textContent = '...';
+                    paginationControls.appendChild(span);
                 }
             }
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = `page-btn ${curPage === totalPages ? 'disabled' : ''}`;
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.onclick = () => { if (curPage < totalPages) fetchReturns(curPage + 1); };
+            paginationControls.appendChild(nextBtn);
         }
 
-        // Search Implementation
-        let searchDebounceTimer;
-        document.querySelector('.search-input').addEventListener('input', function (e) {
-            clearTimeout(searchDebounceTimer);
-            searchDebounceTimer = setTimeout(() => {
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
                 currentPage = 1;
-                fetchReturns(currentPage, e.target.value);
-            }, 400);
+                fetchReturns(1);
+            }, 500);
         });
 
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
+        function getStatusColor(status) {
+            switch (status) {
+                case 'Pending': return '#F59E0B';
+                case 'Approved': return '#10B981';
+                case 'Rejected': return '#EF4444';
+                case 'Refunded': return '#3B82F6';
+                case 'Cancelled': return '#9CA3AF';
+                default: return '#6B7280';
+            }
+        }
+
+        fetchReturns(1);
     </script>
     <script src="admin-inactivity.js"></script>
 </body>

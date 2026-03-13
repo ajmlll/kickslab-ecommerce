@@ -52,7 +52,14 @@ exports.getAllBrands = async (req, res) => {
                 return { ...brand, productCount: count };
             }));
 
-            return res.status(200).json(brandsWithCount);
+            return res.status(200).json({
+                success: true,
+                brands: brandsWithCount,
+                data: brandsWithCount,
+                totalRecords: brandsWithCount.length,
+                totalPages: 1,
+                currentPage: 1
+            });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -68,7 +75,7 @@ exports.createBrand = async (req, res) => {
         let image = "";
 
         if (req.file) {
-            image = `/uploads/${req.file.filename}`;
+            image = `/uploads/categories/${req.file.filename}`;
         }
 
         const brand = await Brand.create({
@@ -101,7 +108,7 @@ exports.updateBrand = async (req, res) => {
         brand.status = status || brand.status;
 
         if (req.file) {
-            brand.image = `/uploads/${req.file.filename}`;
+            brand.image = `/uploads/categories/${req.file.filename}`;
         }
 
         const updatedBrand = await brand.save();

@@ -1597,8 +1597,10 @@
                     ]);
 
                     if (catsRes.ok && brandsRes.ok) {
-                        const categories = await catsRes.json();
-                        const brands = await brandsRes.json();
+                        const catsData = await catsRes.json();
+                        const brandsData = await brandsRes.json();
+                        const categories = catsData.data || [];
+                        const brands = brandsData.data || [];
 
                         // Deep linking from URL
                         const urlParams = new URLSearchParams(window.location.search);

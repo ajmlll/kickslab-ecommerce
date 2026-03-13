@@ -4,6 +4,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (typeof AdminModal !== 'undefined') {
+        AdminModal.clearAll();
+    }
     initSidebar();
 });
 

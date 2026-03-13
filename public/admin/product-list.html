@@ -794,7 +794,14 @@
                 let url = `/api/admin/products?page=${page}&limit=20&status=${statusQuery}&stock=${stockQuery}&search=${encodeURIComponent(searchQuery)}`;
 
                 const res = await fetch(url);
+
+                if (res.status === 401 || res.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
+                }
+
                 const responseData = await res.json();
+
 
                 if (responseData.success) {
                     allProducts = responseData.data || responseData.products;

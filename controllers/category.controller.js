@@ -34,11 +34,17 @@ exports.addCategory = catchAsync(async (req, res, next) => {
         return next(new AppError("Category with this name or slug already exists", 400));
     }
 
+    let image = "";
+    if (req.file) {
+        image = `/uploads/categories/${req.file.filename}`;
+    }
+
     const newCategory = new Category({
         name,
         slug,
         description,
-        isActive
+        isActive,
+        image
     });
 
     await newCategory.save();
@@ -93,7 +99,14 @@ exports.getAllCategories = catchAsync(async (req, res, next) => {
             return { ...cat, productCount: count };
         }));
 
-        return res.status(200).json(categoriesWithCount);
+        return res.status(200).json({
+            success: true,
+            categories: categoriesWithCount,
+            data: categoriesWithCount,
+            totalRecords: categoriesWithCount.length,
+            totalPages: 1,
+            currentPage: 1
+        });
     }
 });
 
@@ -139,6 +152,10 @@ exports.updateCategory = catchAsync(async (req, res, next) => {
 
     if (description !== undefined) category.description = description;
     if (isActive !== undefined) category.isActive = isActive;
+    
+    if (req.file) {
+        category.image = `/uploads/categories/${req.file.filename}`;
+    }
 
     await category.save();
     res.status(200).json({ message: "Category updated successfully", category });

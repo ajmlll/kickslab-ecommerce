@@ -288,7 +288,7 @@
         </a>
 
         <div class="menu-category">Main menu</div>
-        <a href="dashboard.html" class="nav-item">
+        <a href="dashboard.html" class="nav-item active">
             <div class="nav-icon">
                 <svg class="icon" viewBox="0 0 24 24">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -624,6 +624,12 @@
                 try {
                     const range = dateSelect.value;
                     const response = await fetch(`/api/admin/dashboard-stats?range=${encodeURIComponent(range)}`);
+                    
+                    if (response.status === 401 || response.status === 403) {
+                        window.location.href = '/user/login.html';
+                        return;
+                    }
+
                     const result = await response.json();
 
                     if (result.success) {

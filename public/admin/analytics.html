@@ -742,6 +742,12 @@
                 const range = dateSelect.value;
                 try {
                     const response = await fetch(`/api/admin/analytics?range=${encodeURIComponent(range)}`);
+
+                    if (response.status === 401 || response.status === 403) {
+                        window.location.href = '/user/login.html';
+                        return;
+                    }
+
                     const result = await response.json();
                     if (!result.success) return;
 

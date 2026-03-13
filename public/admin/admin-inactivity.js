@@ -154,6 +154,9 @@
             warningModalOverlay.remove();
             warningModalOverlay = null;
         }
+        if (typeof AdminModal !== 'undefined') {
+            AdminModal.clearAll();
+        }
     }
 
     // Start checking every second
@@ -161,5 +164,8 @@
 
     // Initial heartbeat
     sendHeartbeat();
+    if (typeof AdminModal !== 'undefined') {
+        AdminModal.clearAll();
+    }
 
 })();

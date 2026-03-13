@@ -1042,6 +1042,11 @@
                     credentials: 'include'
                 });
 
+                if (res.status === 401 || res.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
+                }
+
                 const data = await res.json();
 
                 if (!res.ok || !data.success) throw new Error(data.error || 'Failed to fetch orders');

@@ -367,30 +367,6 @@
             width: 100%;
         }
 
-        .brand-logo-large {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: contain;
-            border: 1px solid var(--border-color);
-            padding: 4px;
-            background: #fff;
-            margin-bottom: 1rem;
-        }
-
-        .brand-title-large {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 0.25rem;
-        }
-
-        .brand-type-small {
-            font-size: 0.9rem;
-            color: var(--text-gray);
-            margin-bottom: 1.5rem;
-        }
-
         .details-list {
             width: 100%;
             text-align: left;
@@ -443,10 +419,6 @@
 
         .btn-modal-close:hover {
             background-color: #2563eb;
-        }
-
-        .clickable-row {
-            cursor: pointer;
         }
 
         /* Responsive */
@@ -561,12 +533,6 @@
             pointer-events: none;
         }
     </style>
-    <style>
-        /* Re-assert Z-Index for Modal visibility */
-        .modal-overlay {
-            z-index: 9999 !important;
-        }
-    </style>
 </head>
 
 <body>
@@ -643,7 +609,7 @@
             </div>
             Transaction
         </a>
-        <a href="brand.html" class="nav-item">
+        <a href="brand.html" class="nav-item active">
             <div class="nav-icon">
                 <svg class="icon" viewBox="0 0 24 24">
                     <polygon
@@ -714,7 +680,6 @@
                 <line x1="21" y1="12" x2="9" y2="12"></line>
             </svg>
         </button>
-        </div>
     </aside>
 
     <main class="main-content">
@@ -776,7 +741,6 @@
                 <button class="close-modal" onclick="closeAddModal()">&times;</button>
             </div>
             <div class="modal-body" style="align-items: stretch; text-align: left;">
-
                 <label>Brand Name</label>
                 <input id="brandName" placeholder="e.g. Nike" class="search-input" style="margin-bottom: 15px;">
 
@@ -833,12 +797,9 @@
         </div>
     </div>
 
-    <!-- Success/Error/Delete Modals are now handled by AdminModal utility -->
-
     <!-- Scripts -->
     <script src="admin-profile-helper.js"></script>
     <script src="admin-modal-helper.js"></script>
-
     <script src="admin-sidebar.js"></script>
     <script>
         const API_URL = "/api/admin/brands";
@@ -847,13 +808,18 @@
 
         document.addEventListener("DOMContentLoaded", () => fetchBrands(1));
 
-        // --- FETCH BRANDS ---
         async function fetchBrands(page = 1, searchQuery = '') {
             try {
                 const searchInput = document.getElementById("searchInput");
                 const search = searchQuery || (searchInput ? searchInput.value : '');
 
                 const res = await fetch(`${API_URL}?page=${page}&limit=20&search=${encodeURIComponent(search)}`);
+                
+                if (res.status === 401 || res.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
+                }
+
                 if (!res.ok) throw new Error("Failed to fetch");
 
                 const responseData = await res.json();
@@ -865,12 +831,9 @@
                 } else if (Array.isArray(responseData)) {
                     brandsData = responseData;
                     renderBrands(brandsData);
-                } else {
-                    console.error("Invalid response format");
                 }
             } catch (err) {
                 console.error(err);
-                // alert("Error loading brands"); // Silent fail for load
             }
         }
 
@@ -889,10 +852,8 @@
 
             let controlsHtml = '';
 
-            // Prev Button
             controlsHtml += `<button class="page-btn ${currentPage === 1 ? 'disabled' : ''}" onclick="${currentPage === 1 ? 'return false;' : `fetchBrands(${currentPage - 1})`}">« Prev</button>`;
 
-            // Page Numbers
             for (let i = 1; i <= totalPages; i++) {
                 if (totalPages > 7) {
                     if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
@@ -905,13 +866,11 @@
                 }
             }
 
-            // Next Button
             controlsHtml += `<button class="page-btn ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}" onclick="${currentPage === totalPages || totalPages === 0 ? 'return false;' : `fetchBrands(${currentPage + 1})`}">Next »</button>`;
 
             paginationControls.innerHTML = controlsHtml;
         }
 
-        // --- RENDER TABLE ---
         function renderBrands(brands) {
             const tbody = document.getElementById("brandTable");
             tbody.innerHTML = "";
@@ -942,11 +901,10 @@
             });
 
             if (brands.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;padding:20px;'>No brands found.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;padding:20px;'>No brands found.</td></tr>";
             }
         }
 
-        // --- ADD BRAND ---
         function openAddModal() {
             document.getElementById("addBrandModal").classList.add("active");
         }
@@ -961,7 +919,7 @@
             const description = document.getElementById("brandDesc").value.trim();
             const status = document.getElementById("brandStatus").value;
 
-            if (!name) return showError("Brand Name is required");
+            if (!name) return AdminModal.alert("Brand Name is required", "error");
 
             try {
                 const res = await fetch(API_URL, {
@@ -969,6 +927,11 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ name, description, status })
                 });
+
+                if (res.status === 401 || res.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
+                }
 
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || "Failed to create");
@@ -982,7 +945,6 @@
             }
         }
 
-        // --- EDIT BRAND ---
         function openEditModal(id) {
             const brand = brandsData.find(b => b._id === id);
             if (!brand) return;
@@ -1004,7 +966,7 @@
             const description = document.getElementById("editBrandDesc").value.trim();
             const status = document.getElementById("editBrandStatus").value;
 
-            if (!name) return showError("Brand Name is required");
+            if (!name) return AdminModal.alert("Brand Name is required", "error");
 
             try {
                 const res = await fetch(`${API_URL}/${id}`, {
@@ -1012,6 +974,11 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ name, description, status })
                 });
+
+                if (res.status === 401 || res.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
+                }
 
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || "Failed to update");
@@ -1025,13 +992,17 @@
             }
         }
 
-        // --- DELETE BRAND ---
         async function deleteBrand(id) {
             if (await AdminModal.confirm("Are you sure you want to delete this brand? This action cannot be undone.")) {
                 try {
                     const res = await fetch(`${API_URL}/${id}`, {
                         method: "DELETE"
                     });
+
+                    if (res.status === 401 || res.status === 403) {
+                        window.location.href = '/user/login.html';
+                        return;
+                    }
 
                     if (!res.ok) throw new Error("Failed to delete");
 
@@ -1044,7 +1015,6 @@
             }
         }
 
-        // --- SEARCH ---
         let searchDebounceTimer;
         document.getElementById("searchInput").addEventListener("input", function (e) {
             clearTimeout(searchDebounceTimer);
@@ -1053,8 +1023,8 @@
                 fetchBrands(currentPage, e.target.value);
             }, 400);
         });
-
-
     </script>
+    <script src="admin-inactivity.js"></script>
+</body>
 
 </html>

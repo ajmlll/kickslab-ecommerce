@@ -51,7 +51,8 @@ const getReturnsForAdmin = catchAsync(async (req, res, next) => {
             .populate('userId', 'name email phone')
             .populate({
                 path: 'orderId',
-                populate: { path: 'userId', select: 'name email' }
+                populate: { path: 'userId', select: 'name email' },
+                select: 'orderId items totalAmount createdAt' // Ensure items are included
             })
             .sort('-createdAt')
             .skip(skip)
@@ -62,18 +63,21 @@ const getReturnsForAdmin = catchAsync(async (req, res, next) => {
         const totalPages = Math.ceil(totalRecords / limit) || 1;
 
         return res.status(200).json({
-            success: true,
-            data: returns,
-            totalRecords,
-            totalPages,
-            currentPage: page
+            status: 'success',
+            data: {
+                returns: returns,
+                total: totalRecords,
+                totalPages,
+                currentPage: page
+            }
         });
     } else {
         const returns = await Return.find(query)
             .populate('userId', 'name email phone')
             .populate({
                 path: 'orderId',
-                populate: { path: 'userId', select: 'name email' }
+                populate: { path: 'userId', select: 'name email' },
+                select: 'orderId items totalAmount createdAt' // Ensure items are included
             })
             .sort('-createdAt')
             .lean();
@@ -152,11 +156,15 @@ const updateReturnStatus = catchAsync(async (req, res, next) => {
         await order.save();
     }
 
-    returnReq.status = status;
+    returnReq.status = (status === 'Approved') ? 'Refunded' : status;
     if (adminComment) returnReq.adminComment = adminComment;
     await returnReq.save();
 
-    res.json({ message: `Return status updated to ${status}`, return: returnReq });
+    res.json({ 
+        status: 'success', 
+        message: `Return status updated to ${status}`, 
+        return: returnReq 
+    });
 });
 
 // @desc    Delete a return record (Admin)
@@ -204,6 +212,7 @@ const createReturnRequest = catchAsync(async (req, res, next) => {
         items: items.map(item => ({ ...item, resolution: 'wallet' })),
         reason,
         evidencePhotos: req.body.evidencePhotos || [],
+        pickupAddress: req.body.pickupAddress,
         status: 'Pending'
     });
 
@@ -242,15 +251,6 @@ const cancelReturnRequest = catchAsync(async (req, res, next) => {
 
     res.json({ message: 'Return request deleted and cancelled successfully' });
 });
-
-module.exports = {
-    getReturnsForAdmin,
-    updateReturnStatus,
-    deleteReturn,
-    createReturnRequest,
-    getUserReturns,
-    cancelReturnRequest
-};
 
 module.exports = {
     getReturnsForAdmin,

@@ -176,7 +176,6 @@
         tbody td {
             padding: 1rem;
             vertical-align: top;
-            /* Align top due to extensive text */
             color: #374151;
             font-weight: 500;
         }
@@ -203,18 +202,6 @@
             font-size: 0.8rem;
             color: var(--text-gray);
             margin-top: 0.2rem;
-        }
-
-        .item-text {
-            color: #374151;
-            font-weight: 500;
-        }
-
-        .method-cell {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #374151;
         }
 
         /* Status Badge */
@@ -289,32 +276,7 @@
             border-color: #3b82f6;
         }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-            .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .card-actions {
-                flex-direction: column;
-                align-items: flex-start;
-                width: 100%;
-            }
-
-            .search-container,
-            .filter-select,
-            .export-btn {
-                width: 100%;
-            }
-
-            .pagination {
-                flex-direction: column;
-                gap: 1rem;
-            }
-        }
-
-        /* Transaction Modal Styles */
+        /* Modal Styles */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -387,7 +349,6 @@
             font-size: 2rem;
             font-weight: 700;
             color: #10b981;
-            /* Green for success/credit */
             margin-bottom: 0.25rem;
         }
 
@@ -451,7 +412,6 @@
         .btn-download {
             flex: 1;
             background-color: #3b82f6;
-            /* Primary Blue */
             color: white;
             border: none;
             padding: 0.75rem;
@@ -467,10 +427,6 @@
 
         .btn-download:hover {
             background-color: #2563eb;
-        }
-
-        .clickable-row {
-            cursor: pointer;
         }
     </style>
 </head>
@@ -540,7 +496,7 @@
             </div>
             Categories
         </a>
-        <a href="transactions.html" class="nav-item">
+        <a href="transactions.html" class="nav-item active">
             <div class="nav-icon">
                 <svg class="icon" viewBox="0 0 24 24">
                     <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
@@ -602,7 +558,6 @@
             </div>
             Product Returns
         </a>
-
         <a href="analytics.html" class="nav-item">
             <div class="nav-icon">
                 <svg class="icon" viewBox="0 0 24 24">
@@ -676,19 +631,15 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
                 <div class="pagination">
                     <div class="pagination-info" id="paginationInfo">Showing 0 to 0 of 0</div>
                     <div class="pagination-controls" id="paginationControls">
-                        <!-- dynamically generated -->
                     </div>
                 </div>
-
             </div>
         </div>
     </main>
 
-    <!-- Transaction Receipt Modal -->
     <div class="modal-overlay" id="transactionModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -697,40 +648,40 @@
             </div>
             <div class="modal-body">
                 <div class="amount-display">
-                    <div class="amount-large">+ ₹310.00</div>
-                    <div class="status-text-large">SUCCESS</div>
+                    <div class="amount-large" id="modalAmount">+ ₹0.00</div>
+                    <div class="status-text-large" id="modalStatus">SUCCESS</div>
                 </div>
 
                 <div class="details-list">
                     <div class="detail-row">
                         <span class="detail-label">Transaction ID</span>
-                        <span class="detail-value">TRX-443771-75</span>
+                        <span class="detail-value" id="modalTrxId">-</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Date</span>
-                        <span class="detail-value">31/01/2026, 15:23:26</span>
+                        <span class="detail-value" id="modalDate">-</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Customer</span>
-                        <span class="detail-value">rashid</span>
+                        <span class="detail-value" id="modalCustomer">-</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Item / Details</span>
-                        <span class="detail-value">Barcelona 25-26 Home Kit (x1)</span>
+                        <span class="detail-value" id="modalItem">-</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Payment Method</span>
-                        <span class="detail-value">Online</span>
+                        <span class="detail-value" id="modalMethod">-</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Type</span>
-                        <span class="detail-value">Credit</span>
+                        <span class="detail-value" id="modalType">-</span>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn-modal-close" onclick="closeTransactionModal()">Close</button>
-                <button class="btn-download">
+                <button class="btn-download" id="downloadPdfBtn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="7 10 12 15 17 10"></polyline>
@@ -744,13 +695,9 @@
 
     <script src="admin-profile-helper.js"></script>
     <script src="admin-modal-helper.js"></script>
-
-    <!-- PDF Export Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
     <script src="admin-sidebar.js"></script>
-
     <script>
         let currentPage = 1;
         const limit = 10;
@@ -765,15 +712,12 @@
         const paginationControls = document.getElementById('paginationControls');
         const transactionModal = document.getElementById('transactionModal');
 
-        // Initial Load
         document.addEventListener('DOMContentLoaded', () => {
             fetchTransactions();
         });
 
-        // Event Listeners
         dateFilter.addEventListener('change', () => { currentPage = 1; fetchTransactions(); });
         typeFilter.addEventListener('change', () => { currentPage = 1; fetchTransactions(); });
-
         searchInput.addEventListener('input', () => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
@@ -782,257 +726,130 @@
             }, 500);
         });
 
-        exportBtn.addEventListener('click', exportToPDF);
-
         async function fetchTransactions() {
             try {
                 const search = searchInput.value.trim();
                 const date = dateFilter.value;
                 const type = typeFilter.value;
-
                 const url = `/api/admin/transactions?page=${currentPage}&limit=${limit}&search=${encodeURIComponent(search)}&date=${encodeURIComponent(date)}&type=${encodeURIComponent(type)}`;
 
-                const response = await fetch(url, {
-                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('adminToken') }
-                });
-
+                const response = await fetch(url);
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
+                }
                 const data = await response.json();
 
-                if (data.success) {
-                    renderTable(data.transactions);
-                    renderPagination(data.totalRecords, data.totalPages);
-                } else {
-                    console.error('Failed to fetch transactions:', data.error);
+                if (data.status === 'success') {
+                    renderTransactions(data.data.transactions);
+                    renderPagination(data.data.total, data.data.totalPages);
                 }
             } catch (error) {
-                console.error('Fetch error:', error);
+                console.error('Error fetching transactions:', error);
             }
         }
 
-        function renderTable(transactions) {
+        function renderTransactions(transactions) {
             transactionsBody.innerHTML = '';
-
             if (transactions.length === 0) {
-                transactionsBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 2rem; color: var(--text-muted)">No transactions found.</td></tr>';
+                transactionsBody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-gray);">No transactions found</td></tr>';
                 return;
             }
 
             transactions.forEach(trx => {
-                const dateObj = new Date(trx.date);
-                const dateStr = dateObj.toLocaleDateString('en-GB');
-                const timeStr = dateObj.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+                const tr = document.createElement('tr');
+                tr.className = 'clickable-row';
+                tr.onclick = () => openTransactionModal(trx);
 
-                // Method Icons
-                let methodIcon = '';
-                if (trx.method.toLowerCase() === 'online') {
-                    methodIcon = `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`;
-                } else if (trx.method.toLowerCase() === 'wallet') {
-                    methodIcon = `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>`;
-                } else { // COD
-                    methodIcon = `<svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
-                }
+                const date = new Date(trx.createdAt).toLocaleDateString();
+                const time = new Date(trx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-                // Status Badge
-                let statusBadge = `<span class="status-badge status-success">${trx.status}</span>`;
-                if (trx.status.toLowerCase() === 'refunded') {
-                    statusBadge = `<span class="status-badge status-refunded">${trx.status}</span>`;
-                } else if (trx.status.toLowerCase() === 'pending') {
-                    statusBadge = `<span class="status-badge status-pending">${trx.status}</span>`;
-                }
-
-                const row = document.createElement('tr');
-                row.classList.add('clickable-row');
-                row.innerHTML = `
-                    <td><a href="#" class="trx-id">${trx.trxId}</a></td>
-                    <td><span>${dateStr}</span><span class="date-sub">${timeStr}</span></td>
-                    <td>${trx.customerName}</td>
-                    <td class="item-text">${trx.item}</td>
-                    <td><div class="method-cell">${methodIcon} ${trx.method}</div></td>
-                    <td>${trx.type}</td>
-                    <td>₹${trx.amount.toFixed(2)}</td>
-                    <td>${statusBadge}</td>
-                 `;
-
-                // Handle row click for modal
-                row.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    openTransactionModal(trx);
-                });
-
-                transactionsBody.appendChild(row);
+                tr.innerHTML = `
+                    <td><span class="trx-id">${trx.transactionId}</span></td>
+                    <td>${date}<span class="date-sub">${time}</span></td>
+                    <td>${trx.userId ? trx.userId.name : 'Guest'}</td>
+                    <td>${trx.orderId ? trx.orderId.items[0].productName : 'Wallet Update'} ${trx.orderId && trx.orderId.items.length > 1 ? `(+${trx.orderId.items.length - 1} more)` : ''}</td>
+                    <td>${trx.paymentMethod}</td>
+                    <td>${trx.transactionType}</td>
+                    <td style="color: ${trx.transactionType === 'Credit' ? '#10b981' : '#ef4444'}">${trx.transactionType === 'Credit' ? '+' : '-'} ₹${trx.amount.toFixed(2)}</td>
+                    <td><span class="status-badge ${trx.status === 'Success' ? 'status-success' : 'status-refunded'}">${trx.status}</span></td>
+                `;
+                transactionsBody.appendChild(tr);
             });
         }
 
-        function renderPagination(totalRecords, totalPages) {
-            const start = totalRecords === 0 ? 0 : ((currentPage - 1) * limit) + 1;
-            const end = Math.min(currentPage * limit, totalRecords);
-            paginationInfo.textContent = `Showing ${start} to ${end} of ${totalRecords}`;
+        function renderPagination(total, totalPages) {
+            paginationInfo.textContent = `Showing ${(currentPage - 1) * limit + 1} to ${Math.min(currentPage * limit, total)} of ${total}`;
+            paginationControls.innerHTML = '';
 
-            let html = ``;
+            const prevBtn = document.createElement('button');
+            prevBtn.className = `page-btn ${currentPage === 1 ? 'disabled' : ''}`;
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; fetchTransactions(); } };
+            paginationControls.appendChild(prevBtn);
 
-            // Prev Button
-            if (currentPage > 1) {
-                html += `<a href="#" class="page-btn" onclick="changePage(${currentPage - 1}, event)">&lt;</a>`;
-            } else {
-                html += `<a href="#" class="page-btn disabled">&lt;</a>`;
-            }
-
-            // Page Numbers
             for (let i = 1; i <= totalPages; i++) {
-                if (i === currentPage) {
-                    html += `<a href="#" class="page-btn active" onclick="event.preventDefault()">${i}</a>`;
-                } else {
-                    html += `<a href="#" class="page-btn" onclick="changePage(${i}, event)">${i}</a>`;
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    const btn = document.createElement('button');
+                    btn.className = `page-btn ${currentPage === i ? 'active' : ''}`;
+                    btn.textContent = i;
+                    btn.onclick = () => { currentPage = i; fetchTransactions(); };
+                    paginationControls.appendChild(btn);
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    const span = document.createElement('span');
+                    span.textContent = '...';
+                    span.style.padding = '0 0.5rem';
+                    paginationControls.appendChild(span);
                 }
             }
 
-            // Next Button
-            if (currentPage < totalPages) {
-                html += `<a href="#" class="page-btn" onclick="changePage(${currentPage + 1}, event)">&gt;</a>`;
-            } else {
-                html += `<a href="#" class="page-btn disabled">&gt;</a>`;
-            }
-
-            paginationControls.innerHTML = html;
+            const nextBtn = document.createElement('button');
+            nextBtn.className = `page-btn ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.onclick = () => { if (currentPage < totalPages) { currentPage++; fetchTransactions(); } };
+            paginationControls.appendChild(nextBtn);
         }
-
-        window.changePage = function (page, event) {
-            if (event) event.preventDefault();
-            currentPage = page;
-            fetchTransactions();
-        };
 
         function openTransactionModal(trx) {
-            if (!transactionModal) return;
-
-            const dateObj = new Date(trx.date);
-            const dateStr = dateObj.toLocaleDateString('en-GB');
-            const timeStr = dateObj.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-            const amountSign = trx.type === 'Credit' ? '+' : '-';
-            const statusColor = trx.status.toLowerCase() === 'refunded' ? '#d97706' : '#10b981';
-
-            transactionModal.querySelector('.amount-large').textContent = `${amountSign} ₹${trx.amount.toFixed(2)}`;
-
-            const statusEl = transactionModal.querySelector('.status-text-large');
-            statusEl.textContent = trx.status.toUpperCase();
-            statusEl.style.color = statusColor;
-
-            // Fill details
-            const detailValues = transactionModal.querySelectorAll('.detail-value');
-            if (detailValues.length >= 6) {
-                detailValues[0].textContent = trx.trxId;
-                detailValues[1].textContent = `${dateStr}, ${timeStr}`;
-                detailValues[2].textContent = trx.customerName;
-                detailValues[3].textContent = trx.item;
-                detailValues[4].textContent = trx.method;
-                detailValues[5].textContent = trx.type;
+            if (!trx) return;
+            
+            const amount = typeof trx.amount === 'number' ? trx.amount : 0;
+            document.getElementById('modalAmount').textContent = `${trx.transactionType === 'Credit' ? '+' : '-'} ₹${amount.toFixed(2)}`;
+            document.getElementById('modalAmount').style.color = trx.transactionType === 'Credit' ? '#10b981' : '#ef4444';
+            document.getElementById('modalStatus').textContent = trx.status || 'N/A';
+            document.getElementById('modalTrxId').textContent = trx.transactionId || '-';
+            document.getElementById('modalDate').textContent = trx.createdAt ? new Date(trx.createdAt).toLocaleString() : '-';
+            document.getElementById('modalCustomer').textContent = trx.userId ? (trx.userId.name || 'User') : 'Guest';
+            
+            let itemDetails = 'Wallet Update';
+            if (trx.orderId && trx.orderId.items && Array.isArray(trx.orderId.items)) {
+                itemDetails = trx.orderId.items.map(i => i.productName || 'Product').join(', ');
             }
+            document.getElementById('modalItem').textContent = itemDetails;
+            
+            document.getElementById('modalMethod').textContent = trx.paymentMethod || '-';
+            document.getElementById('modalType').textContent = trx.transactionType || '-';
 
             transactionModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
         }
 
-        window.closeTransactionModal = function () {
-            if (transactionModal) {
-                transactionModal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        };
+        function closeTransactionModal() {
+            transactionModal.classList.remove('active');
+        }
 
-        window.onclick = function (event) {
-            if (event.target == transactionModal) {
-                closeTransactionModal();
-            }
-        };
-
-        // Export Functionality (PDF)
-        async function exportToPDF() {
-            try {
-                // Fetch ALL matching transactions for export (ignore pagination limit)
-                const search = searchInput.value.trim();
-                const date = dateFilter.value;
-                const type = typeFilter.value;
-
-                // Pass a huge limit to get all
-                const url = `/api/admin/transactions?page=1&limit=100000&search=${encodeURIComponent(search)}&date=${encodeURIComponent(date)}&type=${encodeURIComponent(type)}`;
-
-                const response = await fetch(url, {
-                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('adminToken') }
-                });
-
-                const data = await response.json();
-                if (!data.success) {
-                    AdminModal.alert("Export Failed", data.error, "error");
-                    return;
-                }
-
-                const transactions = data.transactions;
-                if (transactions.length === 0) {
-                    AdminModal.alert("Export Notice", "No transactions to export.", "info");
-                    return;
-                }
-
-                // Initialize jsPDF
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-
-                // Add Title
-                doc.setFontSize(18);
-                doc.setTextColor(40);
-                doc.text("Transactions Report", 14, 22);
-
-                // Add Timestamp
-                doc.setFontSize(11);
-                doc.setTextColor(100);
-                doc.text(`Generated on: ${new Date().toLocaleString('en-GB')}`, 14, 30);
-
-                // Add active filters info
-                doc.setFontSize(10);
-                doc.text(`Date Filter: ${date} | Type: ${type} | Total Records: ${transactions.length}`, 14, 36);
-
-                // Prepare table data
-                const tableColumn = ["Trx ID", "Date", "Customer", "Item", "Method", "Type", "Amount", "Status"];
-                const tableRows = [];
-
-                transactions.forEach(trx => {
-                    const dateObj = new Date(trx.date);
-                    const dateStr = dateObj.toLocaleDateString('en-GB') + ' ' + dateObj.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-
-                    const trxData = [
-                        trx.trxId,
-                        dateStr,
-                        trx.customerName,
-                        trx.item,
-                        trx.method,
-                        trx.type,
-                        `Rs.${trx.amount.toFixed(2)}`,
-                        trx.status
-                    ];
-                    tableRows.push(trxData);
-                });
-
-                // Generate Table
-                doc.autoTable({
-                    head: [tableColumn],
-                    body: tableRows,
-                    startY: 42,
-                    styles: { fontSize: 8, cellPadding: 3 },
-                    headStyles: { fillColor: [79, 70, 229], textColor: 255 }, // matches brand indigo
-                    alternateRowStyles: { fillColor: [248, 250, 252] },
-                    margin: { top: 40 }
-                });
-
-                // Save Document
-                doc.save(`Transactions_Report_${new Date().getTime()}.pdf`);
-
-            } catch (err) {
-                console.error('Export Error:', err);
-                AdminModal.alert("Export Failed", "Failed to export data to PDF. Check console for details.", "error");
-            }
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text("KICKSLAB - Transaction Report", 14, 15);
+            doc.autoTable({
+                html: 'table',
+                startY: 20,
+                theme: 'grid',
+                headStyles: { fillColor: [59, 130, 246] }
+            });
+            doc.save("KICKSLAB_Transactions.pdf");
         }
     </script>
-
     <script src="admin-inactivity.js"></script>
 </body>
 

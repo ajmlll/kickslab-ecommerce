@@ -522,7 +522,6 @@
                             </tr>
                         </thead>
                         <tbody id="messages-body">
-                            <!-- Injected dynamcially -->
                             <tr>
                                 <td colspan="5" style="text-align: center; padding: 3rem;">Loading messages...</td>
                             </tr>
@@ -541,24 +540,18 @@
         </div>
     </main>
 
-    <!-- Modal -->
     <div class="admin-modal-overlay" id="messageModal">
         <div class="admin-modal-container" style="max-width: 600px; text-align: left;">
-            <div class="admin-modal-title"
-                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+            <div class="admin-modal-title" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1.5rem;">
                 <span id="modal-title-text">Message Preview</span>
-                <button class="close-modal" onclick="closeModal()"
-                    style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-gray);">&times;</button>
+                <button class="close-modal" onclick="closeModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-gray);">&times;</button>
             </div>
 
             <div class="admin-modal-message" style="margin-bottom: 0;">
                 <div class="message-details-header">
-                    <h4 id="modal-subject"
-                        style="font-size: 1.2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem;">
-                    </h4>
+                    <h4 id="modal-subject" style="font-size: 1.2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem;"></h4>
                     <p style="color: var(--text-gray); font-size: 0.9rem;">
-                        From: <strong id="modal-name" style="color: var(--text-dark);"></strong>
-                        (<span id="modal-email"></span>)
+                        From: <strong id="modal-name" style="color: var(--text-dark);"></strong> (<span id="modal-email"></span>)
                     </p>
                     <p style="color: var(--text-gray); font-size: 0.85rem; margin-top: 0.25rem;" id="modal-date"></p>
                 </div>
@@ -566,17 +559,14 @@
                 <div class="message-full-body" id="modal-content" style="margin-top: 1.5rem;"></div>
 
                 <div class="reply-section" style="margin-top: 2rem;">
-                    <a href="#" class="btn-reply-main" id="modal-reply-btn"
-                        style="width: 100%; justify-content: center;">
+                    <a href="#" class="btn-reply-main" id="modal-reply-btn" style="width: 100%; justify-content: center;">
                         <i class="fas fa-reply"></i> Reply via Email
                     </a>
                 </div>
             </div>
 
-            <div class="admin-modal-footer"
-                style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); margin-top: 1.5rem;">
-                <button class="admin-modal-btn secondary" onclick="closeModal()"
-                    style="min-width: 100px;">Close</button>
+            <div class="admin-modal-footer" style="padding-top: 1.5rem; border-top: 1px solid var(--border-color); margin-top: 1.5rem;">
+                <button class="admin-modal-btn secondary" onclick="closeModal()" style="min-width: 100px;">Close</button>
             </div>
         </div>
     </div>
@@ -596,9 +586,16 @@
 
         async function fetchMessages() {
             try {
-                const res = await fetch(`/api/contact/admin/all?page=${currentPage}&limit=${limit}&status=${currentStatus}`);
-                const result = await res.json();
+                const res = await fetch(`/api/contact/admin/all?page=${currentPage}&limit=${limit}&status=${currentStatus}`, {
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('adminToken') }
+                });
 
+                if (res.status === 401 || res.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
+                }
+
+                const result = await res.json();
                 if (result.success) {
                     messagesData = result.data;
                     renderMessages(result.data);
@@ -619,10 +616,7 @@
             }
 
             messages.forEach(msg => {
-                const date = new Date(msg.createdAt).toLocaleDateString('en-GB', {
-                    day: '2-digit', month: 'short', year: 'numeric'
-                });
-
+                const date = new Date(msg.createdAt).toLocaleDateString();
                 const row = document.createElement('tr');
                 if (!msg.isRead) row.className = 'unread-row';
 
@@ -653,11 +647,6 @@
                             <a href="mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject)}" class="btn-icon btn-reply" title="Reply Email">
                                 <i class="fas fa-reply"></i>
                             </a>
-                            ${!msg.isRead ? `
-                                <button class="btn-icon btn-read" onclick="markAsRead('${msg._id}')" title="Mark as Read">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                            ` : ''}
                         </div>
                     </td>
                 `;
@@ -681,16 +670,24 @@
             document.getElementById('messageModal').classList.add('active');
 
             if (!msg.isRead) {
-                await markAsRead(id, true);
+                await markAsRead(id);
             }
         }
 
-        async function markAsRead(id, silent = false) {
+        async function markAsRead(id) {
             try {
-                const res = await fetch(`/api/contact/admin/${id}/read`, { method: 'PATCH' });
+                const res = await fetch(`/api/contact/admin/${id}/read`, { 
+                    method: 'PATCH',
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('adminToken') }
+                });
+                
+                if (res.status === 401 || res.status === 403) {
+                    window.location.href = '/user/login.html';
+                    return;
+                }
+
                 if (res.ok) {
-                    if (!silent) fetchMessages();
-                    if (window.initNotifications) window.initNotifications();
+                    fetchMessages();
                 }
             } catch (error) {
                 console.error('Error marking as read:', error);
@@ -704,19 +701,11 @@
         function filterMessages(status) {
             currentStatus = status;
             currentPage = 1;
-
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent.toLowerCase().includes(status)) btn.classList.add('active');
-            });
-
             fetchMessages();
         }
 
         function updatePagination(pagination) {
-            document.getElementById('pagination-info').textContent =
-                `Showing Page ${pagination.currentPage} of ${pagination.totalPages} (${pagination.totalMessages} results)`;
-
+            document.getElementById('pagination-info').textContent = `Showing Page ${pagination.currentPage} of ${pagination.totalPages}`;
             document.getElementById('prev-btn').disabled = pagination.currentPage === 1;
             document.getElementById('next-btn').disabled = pagination.currentPage === pagination.totalPages || pagination.totalPages === 0;
         }

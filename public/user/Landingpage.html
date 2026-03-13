@@ -2566,8 +2566,9 @@
         async function loadLandingCategories() {
             try {
                 const res = await fetch("/api/admin/categories");
-                const categories = await res.json();
+                const catResponse = await res.json();
 
+                const categories = catResponse.data || [];
                 const track = document.getElementById("categoryTrack");
 
                 if (!categories || categories.length === 0) {

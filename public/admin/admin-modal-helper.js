@@ -73,6 +73,7 @@ const AdminModal = {
                 el.remove();
             } else {
                 el.classList.remove('active');
+                el.style.display = '';
             }
         });
 
@@ -145,7 +146,10 @@ if (typeof window !== 'undefined') {
     window.AdminModal = AdminModal; // Ensure global access
 
     // Clear on DOM Ready
-    document.addEventListener('DOMContentLoaded', () => AdminModal.clearAll());
+    document.addEventListener('DOMContentLoaded', () => {
+        AdminModal.clearAll();
+        setTimeout(() => AdminModal.clearAll(), 150);
+    });
 
     // Clear on Full Page Load (including all assets)
     window.addEventListener('load', () => AdminModal.clearAll());

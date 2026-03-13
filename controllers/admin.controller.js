@@ -141,12 +141,12 @@ exports.getTransactions = catchAsync(async (req, res, next) => {
                 if (order.paymentMethod === "card") methodStr = "Online";
 
                 transactions.push({
-                    trxId: pseudoId,
-                    date: order.createdAt,
-                    customerName: order.userId ? order.userId.name : "Unknown",
-                    item: itemDesc,
-                    method: methodStr,
-                    type: "Credit",
+                    transactionId: pseudoId,
+                    createdAt: order.createdAt,
+                    userId: order.userId || { name: "Unknown" },
+                    orderId: order, // Passing full order object as it contains items
+                    paymentMethod: methodStr,
+                    transactionType: "Credit",
                     amount: order.totalAmount,
                     status: order.paymentStatus === "Refunded" ? "Refunded" : "Success",
                     timestamp: new Date(order.createdAt).getTime()
@@ -177,12 +177,12 @@ exports.getTransactions = catchAsync(async (req, res, next) => {
 
             if (matchesSearch) {
                 transactions.push({
-                    trxId: pseudoId,
-                    date: trx.createdAt,
-                    customerName: trx.userId ? trx.userId.name : "Unknown",
-                    item: "Wallet Refund",
-                    method: "Wallet",
-                    type: "Debit",
+                    transactionId: pseudoId,
+                    createdAt: trx.createdAt,
+                    userId: trx.userId || { name: "Unknown" },
+                    orderId: trx.orderId ? { _id: trx.orderId, items: [{ productName: "Wallet Refund", quantity: 1 }] } : { items: [{ productName: "Wallet Refund", quantity: 1 }] },
+                    paymentMethod: "Wallet",
+                    transactionType: "Debit",
                     amount: trx.amount,
                     status: "Success",
                     timestamp: new Date(trx.createdAt).getTime()
@@ -199,11 +199,13 @@ exports.getTransactions = catchAsync(async (req, res, next) => {
     const paginatedTransactions = transactions.slice(startIndex, startIndex + limit);
 
     res.status(200).json({
-        success: true,
-        transactions: paginatedTransactions,
-        totalRecords,
-        totalPages,
-        currentPage: page
+        status: 'success',
+        data: {
+            transactions: paginatedTransactions,
+            total: totalRecords,
+            totalPages,
+            currentPage: page
+        }
     });
 });
 
