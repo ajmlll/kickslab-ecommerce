@@ -96,7 +96,9 @@
 
         .search-container {
             position: relative;
-            width: 250px;
+            width: auto;
+            display: flex;
+            gap: 10px;
         }
 
         .search-input {
@@ -641,7 +643,13 @@
                 <div class="card-header">
                     <h2 class="card-title">Latest Reviews</h2>
                     <div class="search-container">
-                        <input type="text" placeholder="Search reviews..." class="search-input">
+                        <input type="text" id="searchInput" placeholder="Search reviews..." class="search-input" style="width: 250px;">
+                        <select id="statusFilter" class="search-input" style="width: 150px;">
+                            <option value="">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
                     </div>
                 </div>
 
@@ -744,10 +752,13 @@
 
         async function fetchReviews(page = 1, searchQuery = '') {
             try {
-                const searchInput = document.querySelector('.search-input');
+                const searchInput = document.getElementById('searchInput');
+                const statusFilter = document.getElementById('statusFilter');
+                
                 const search = searchQuery || (searchInput ? searchInput.value : '');
+                const status = statusFilter ? statusFilter.value : '';
 
-                const res = await fetch(`/api/reviews/admin?page=${page}&limit=20&search=${encodeURIComponent(search)}`, { credentials: 'include' });
+                const res = await fetch(`/api/reviews/admin?page=${page}&limit=20&search=${encodeURIComponent(search)}&status=${status}`, { credentials: 'include' });
                 if (!res.ok) {
                     if (res.status === 401 || res.status === 403) {
                         window.location.href = '/user/login.html'; // Admin login
@@ -985,17 +996,7 @@
             modal.classList.remove('active');
         }
 
-        // Search Implementation
-        document.querySelector('.search-input').addEventListener('input', function (e) {
-            const term = e.target.value.toLowerCase();
-            const filteredReviews = globalReviews.filter(r => {
-                const userName = r.user ? r.user.name.toLowerCase() : '';
-                const productName = r.product ? r.product.name.toLowerCase() : '';
-                const comment = r.comment ? r.comment.toLowerCase() : '';
-                return userName.includes(term) || productName.includes(term) || comment.includes(term);
-            });
-            renderReviews(filteredReviews);
-        });
+        // Search logic handled by debounced listener below
 
         // Close on click outside
         modal.addEventListener('click', (e) => {
@@ -1003,12 +1004,17 @@
         });
         // --- SEARCH ---
         let searchDebounceTimer;
-        document.querySelector('.search-input').addEventListener("input", function (e) {
+        document.getElementById('searchInput').addEventListener("input", function (e) {
             clearTimeout(searchDebounceTimer);
             searchDebounceTimer = setTimeout(() => {
                 currentPage = 1;
-                fetchReviews(currentPage, e.target.value);
+                fetchReviews(currentPage);
             }, 400);
+        });
+
+        document.getElementById('statusFilter').addEventListener("change", function () {
+            currentPage = 1;
+            fetchReviews(currentPage);
         });
     </script>
     <script src="admin-inactivity.js"></script>

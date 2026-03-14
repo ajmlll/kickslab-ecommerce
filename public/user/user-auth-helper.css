@@ -241,3 +241,287 @@
 .mobile-nav-links .badge-count.visible {
     transform: translateY(-50%) scale(1);
 }
+
+/* 4. Global Navbar & Mobile Menu Styles (Parity) */
+.mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 2100;
+    display: none;
+    backdrop-filter: blur(2px);
+}
+
+.mobile-menu-overlay.active {
+    display: block;
+}
+
+.mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    z-index: 2200;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    padding: 15px 25px;
+    border-bottom: 1px solid #eee;
+    display: none;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    height: auto;
+}
+
+.mobile-menu.active {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mobile-menu-header {
+    margin-bottom: 20px;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.mobile-nav-links {
+    list-style: none;
+    padding: 0;
+}
+
+.mobile-nav-links li {
+    margin-bottom: 5px;
+}
+
+.mobile-nav-links a {
+    font-weight: 500;
+    font-size: 16px;
+    display: block;
+    color: #1a1a1a;
+    text-transform: capitalize;
+    font-family: 'Inter', sans-serif;
+    padding: 8px 0;
+    border-bottom: none;
+}
+
+.mobile-menu-btn {
+    display: none;
+    font-size: 22px;
+    color: #000;
+    cursor: pointer;
+}
+
+.close-menu-btn {
+    font-size: 20px;
+    color: #000;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+
+/* 5. Responsive Account Menu (New Side Drawer Design) */
+@media (max-width: 1023px) {
+    /* Hide the static sidebar on account pages */
+    .account-sidebar {
+        display: none !important;
+    }
+
+    /* Adjust layout for single column */
+    .account-layout {
+        display: block !important;
+    }
+
+    /* Toggle Bar (Above Hello User) - Styled like a clean bar */
+    .account-drawer-toggle-wrapper {
+        margin-bottom: 25px;
+        width: 100%;
+        padding: 0;
+    }
+
+    .account-drawer-toggle {
+        display: flex;
+        align-items: center;
+        width: 100% !important;
+        background: #fbfbfb;
+        border: 1px solid #eeeeee;
+        padding: 16px 22px; /* Increased from 12x18 */
+        border-radius: 8px;
+        gap: 15px;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .account-drawer-toggle:active {
+        background: #f5f5f5;
+        transform: scale(0.995);
+    }
+
+    .account-drawer-toggle i {
+        font-size: 18px; /* Increased from 16px */
+        color: #333;
+    }
+
+    .account-drawer-toggle span {
+        font-weight: 700; /* Bolder */
+        font-size: 16px; /* Increased from 14px */
+        color: #333;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    /* 
+       SIDE DRAWER 
+       High z-index to stay above everything but the navbar if needed.
+       Sliding from left.
+    */
+    .account-side-drawer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 290px;
+        height: 100%;
+        background: #ffffff;
+        z-index: 5000; /* Above navbar (3500) */
+        transform: translateX(-100%);
+        transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 10px 0 40px rgba(0,0,0,0.12);
+    }
+
+    .account-side-drawer.active {
+        transform: translateX(0);
+    }
+
+    .drawer-header-premium {
+        padding: 22px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #f8f8f8;
+    }
+
+    .drawer-header-premium h3 {
+        font-size: 18px;
+        font-weight: 800;
+        color: #000;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .drawer-close-premium {
+        background: #f5f5f5;
+        border: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #000;
+        font-size: 15px;
+        transition: background 0.2s;
+    }
+
+    .drawer-close-premium:hover {
+        background: #e0e0e0;
+    }
+
+    .drawer-scroll-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px 0;
+    }
+
+    .drawer-nav-section {
+        margin-bottom: 30px;
+    }
+
+    .drawer-nav-label {
+        display: block;
+        padding: 0 25px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #999;
+        letter-spacing: 1.2px;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+    }
+
+    .drawer-nav-links a {
+        display: flex;
+        align-items: center;
+        padding: 15px 25px;
+        gap: 15px;
+        color: #444;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+        transition: all 0.2s;
+        border-left: 4px solid transparent;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .drawer-nav-links a i {
+        width: 20px;
+        text-align: center;
+        font-size: 16px;
+        color: #888;
+    }
+
+    /* Active State (Premium Green - Image 3/4 Style) */
+    .drawer-nav-links a.active {
+        background: #f0fdf4; /* Match image 3/4 light green */
+        color: #10b981; /* Premium Emerald */
+        border-left: 4px solid #10b981;
+    }
+
+    .drawer-nav-links a.active i {
+        color: #10b981;
+    }
+
+    .drawer-footer-premium {
+        padding: 20px 0 40px 0;
+        border-top: 1px solid #f8f8f8;
+    }
+
+    .logout-link-premium {
+        display: flex !important;
+        align-items: center;
+        padding: 15px 25px;
+        gap: 15px;
+        color: #ef4444; /* Red for logout */
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;
+        text-decoration: none;
+    }
+
+    /* Overlay Overlay */
+    .account-drawer-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 4999;
+        display: none;
+        backdrop-filter: blur(4px);
+    }
+
+    .account-drawer-overlay.active {
+        display: block;
+    }
+}

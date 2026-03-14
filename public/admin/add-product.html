@@ -418,6 +418,20 @@
             text-align: right;
             margin-top: 0.25rem;
         }
+
+        /* Drag & Drop States */
+        .main-image-upload.drag-over {
+            border-color: var(--primary-blue);
+            background: linear-gradient(145deg, #f0f9ff, #e0f2fe);
+            transform: scale(1.02);
+        }
+
+        .add-gallery-btn.drag-over {
+            border-color: var(--primary-blue);
+            background-color: #f0f9ff;
+            color: var(--primary-blue);
+            transform: scale(1.05);
+        }
     </style>
 </head>
 
@@ -687,7 +701,7 @@
     <script src="admin-sidebar.js"></script>
     <script>
         let mainImage = null;
-        let galleryImages = [];
+        let galleryState = []; // Each item: { type: 'existing' | 'new', data: string (url) | File }
 
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
@@ -696,6 +710,7 @@
             await fetchInitialData();
             setupImageHandling();
             setupCalculations();
+            setupDraftPersistence();
             
             if (productId) {
                 const titleEl = document.querySelector('.page-header-title');
@@ -788,6 +803,48 @@
             });
         }
 
+        function setupDraftPersistence() {
+            if (productId) return; // Don't persist/load if editing existing product
+
+            const form = document.getElementById('productForm');
+            const fields = [
+                'productName', 'productDesc', 'basePrice', 'discountType', 
+                'discountValue', 'categorySelect', 'brandSelect'
+            ];
+            const sizeFields = [6, 7, 8, 9, 10, 11, 12].map(s => `size-${s}`);
+
+            // Load draft
+            const savedDraft = localStorage.getItem('productDraft');
+            if (savedDraft) {
+                try {
+                    const draft = JSON.parse(savedDraft);
+                    fields.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el && draft[id] !== undefined) el.value = draft[id];
+                    });
+                    sizeFields.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el && draft[id] !== undefined) el.value = draft[id];
+                    });
+                    
+                    // Trigger calculations after loading
+                    const event = new Event('input');
+                    document.getElementById('basePrice').dispatchEvent(event);
+                    document.getElementById('size-6').dispatchEvent(event);
+                } catch (e) {
+                    console.error('Error loading draft:', e);
+                }
+            }
+
+            // Save draft on any input change
+            form.addEventListener('input', () => {
+                const draft = {};
+                fields.forEach(id => draft[id] = document.getElementById(id).value);
+                sizeFields.forEach(id => draft[id] = document.getElementById(id).value);
+                localStorage.setItem('productDraft', JSON.stringify(draft));
+            });
+        }
+
         async function fetchProductDetails() {
             try {
                 const res = await fetch(`/api/admin/products/${productId}`);
@@ -796,8 +853,6 @@
                     return;
                 }
                 const data = await res.json();
-                
-                // The API might return product directly or wrapped in data.product
                 const product = data.data && data.data.product ? data.data.product : (data.product || data);
                 
                 if (product) {
@@ -823,13 +878,12 @@
                         mainPreview.style.display = 'block';
                         document.getElementById('mainUpload').classList.add('has-image');
                         document.getElementById('mainUpload').querySelector('.empty-state').style.display = 'none';
-                        mainImage = product.image; // Keep as URL string if not changed
+                        mainImage = product.image; 
                     }
 
                     if (product.gallery && product.gallery.length > 0) {
-                        // For gallery editing, we might need to handle existing images vs new ones
-                        // For now, let's just show them
-                        renderExistingGallery(product.gallery);
+                        galleryState = product.gallery.map(url => ({ type: 'existing', data: url }));
+                        renderGallery();
                     }
 
                     // Trigger calculations
@@ -840,33 +894,6 @@
             } catch (error) {
                 console.error('Error fetching product details:', error);
             }
-        }
-
-        function renderExistingGallery(urls) {
-            const grid = document.getElementById('galleryGrid');
-            const addBtn = grid.querySelector('.add-gallery-btn');
-            
-            urls.forEach(url => {
-                const item = document.createElement('div');
-                item.className = 'gallery-item';
-                item.dataset.isExisting = "true";
-                item.dataset.url = url;
-                
-                const img = document.createElement('img');
-                img.src = url;
-                
-                const remove = document.createElement('div');
-                remove.className = 'remove-btn';
-                remove.innerHTML = '&times;';
-                remove.onclick = (e) => {
-                    e.stopPropagation();
-                    item.remove();
-                };
-                
-                item.appendChild(img);
-                item.appendChild(remove);
-                grid.insertBefore(item, addBtn);
-            });
         }
 
         async function fetchInitialData() {
@@ -909,12 +936,17 @@
             const mainInput = document.getElementById('mainImageInput');
             const mainPreview = document.getElementById('mainPreview');
             const galleryInput = document.getElementById('galleryInput');
+            const galleryDropZone = document.querySelector('.add-gallery-btn');
 
             mainUpload.onclick = () => mainInput.click();
 
             mainInput.onchange = (e) => {
                 const file = e.target.files[0];
-                if (file) {
+                handleMainImage(file);
+            };
+
+            function handleMainImage(file) {
+                if (file && file.type.startsWith('image/')) {
                     mainImage = file;
                     const reader = new FileReader();
                     reader.onload = (re) => {
@@ -925,44 +957,113 @@
                     };
                     reader.readAsDataURL(file);
                 }
-            };
+            }
+
+            // Main Upload Drag & Drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                mainUpload.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                mainUpload.addEventListener(eventName, () => mainUpload.classList.add('drag-over'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                mainUpload.addEventListener(eventName, () => mainUpload.classList.remove('drag-over'), false);
+            });
+
+            mainUpload.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const file = dt.files[0];
+                handleMainImage(file);
+            }, false);
 
             galleryInput.onchange = (e) => {
-                Array.from(e.target.files).forEach(file => {
-                    galleryImages.push(file);
-                    renderGallery();
-                });
+                const files = Array.from(e.target.files);
+                handleGalleryImages(files);
+                galleryInput.value = ''; // Reset input
             };
+
+            function handleGalleryImages(files) {
+                if (galleryState.length + files.length > 5) {
+                    AdminModal.alert('Maximum 5 gallery images allowed.', 'warning');
+                    return;
+                }
+                files.forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        galleryState.push({ type: 'new', data: file });
+                    }
+                });
+                renderGallery();
+            }
+
+            // Gallery Drag & Drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                galleryDropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                galleryDropZone.addEventListener(eventName, () => galleryDropZone.classList.add('drag-over'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                galleryDropZone.addEventListener(eventName, () => galleryDropZone.classList.remove('drag-over'), false);
+            });
+
+            galleryDropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = Array.from(dt.files);
+                handleGalleryImages(files);
+            }, false);
+
+            // Prevent default drag and drop behavior for the entire window
+            window.addEventListener('dragover', (e) => e.preventDefault(), false);
+            window.addEventListener('drop', (e) => e.preventDefault(), false);
         }
 
         function renderGallery() {
             const grid = document.getElementById('galleryGrid');
             const addBtn = grid.querySelector('.add-gallery-btn');
-            grid.innerHTML = '';
             
-            galleryImages.forEach((file, index) => {
-                const item = document.createElement('div');
-                item.className = 'gallery-item';
+            // Clear existing gallery items (but not the add button)
+            const items = grid.querySelectorAll('.gallery-item');
+            items.forEach(item => item.remove());
+            
+            galleryState.forEach((item, index) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                
                 const img = document.createElement('img');
-                const reader = new FileReader();
-                reader.onload = (e) => img.src = e.target.result;
-                reader.readAsDataURL(file);
+                if (item.type === 'existing') {
+                    img.src = item.data;
+                } else {
+                    const reader = new FileReader();
+                    reader.onload = (e) => img.src = e.target.result;
+                    reader.readAsDataURL(item.data);
+                }
                 
                 const remove = document.createElement('div');
                 remove.className = 'remove-btn';
                 remove.innerHTML = '&times;';
                 remove.onclick = (e) => {
                     e.stopPropagation();
-                    galleryImages.splice(index, 1);
+                    galleryState.splice(index, 1);
                     renderGallery();
                 };
                 
-                item.appendChild(img);
-                item.appendChild(remove);
-                grid.appendChild(item);
+                galleryItem.appendChild(img);
+                galleryItem.appendChild(remove);
+                grid.insertBefore(galleryItem, addBtn);
             });
-            
-            grid.appendChild(addBtn);
+
+            // Hide/show add button based on limit
+            addBtn.style.display = galleryState.length >= 5 ? 'none' : 'flex';
         }
 
         async function handleSubmit(status) {
@@ -1000,28 +1101,22 @@
             // Main image
             if (mainImage instanceof File) {
                 formData.append('image', mainImage);
-            } else if (typeof mainImage === 'string') {
-                formData.append('image', mainImage);
+            } else {
+                formData.append('image', mainImage); // URL string
             }
 
-            // New gallery images
-            galleryImages.forEach(img => formData.append('gallery', img));
+            // Gallery images
+            const existingToKeep = galleryState.filter(i => i.type === 'existing').map(i => i.data);
+            const newFiles = galleryState.filter(i => i.type === 'new').map(i => i.data);
 
-            // Existing gallery images to keep
-            if (productId) {
-                const existingImages = [];
-                document.querySelectorAll('.gallery-item[data-is-existing="true"]').forEach(item => {
-                    existingImages.push(item.dataset.url);
-                });
-                formData.append('existingGallery', JSON.stringify(existingImages));
-                formData.append('galleryUpdate', 'true');
-            }
+            formData.append('existingGallery', JSON.stringify(existingToKeep));
+            newFiles.forEach(file => formData.append('gallery', file));
+            formData.append('galleryUpdate', 'true');
 
             try {
                 const url = productId ? `/api/admin/products/${productId}` : '/api/admin/products';
                 const method = productId ? 'PUT' : 'POST';
                 
-                // Show loading
                 document.getElementById('publishBtn').disabled = true;
                 document.getElementById('saveDraftBtn').disabled = true;
 
@@ -1037,6 +1132,7 @@
 
                 const data = await res.json();
                 if (res.ok) {
+                    localStorage.removeItem('productDraft'); // Clear persistence on success
                     AdminModal.alert(`Product ${productId ? 'updated' : 'published'} successfully!`, 'success');
                     setTimeout(() => window.location.href = 'product-list.html', 1500);
                 } else {

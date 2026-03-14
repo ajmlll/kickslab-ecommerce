@@ -274,24 +274,33 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     }
 
     // Handle Gallery Update
-    let updatedGallery = [];
-    if (existingGallery) {
-        if (Array.isArray(existingGallery)) {
-            updatedGallery = existingGallery;
-        } else {
-            updatedGallery = [existingGallery];
-        }
-    }
-
-    if (req.files && req.files['gallery']) {
-        const newFiles = req.files['gallery'].map(file => `/uploads/products/${file.filename}`);
-        updatedGallery = [...updatedGallery, ...newFiles];
-    }
-
     if (req.body.galleryUpdate === 'true') {
+        let updatedGallery = [];
+        
+        // Add existing images to keep
+        if (existingGallery) {
+            if (Array.isArray(existingGallery)) {
+                updatedGallery = existingGallery;
+            } else if (typeof existingGallery === 'string') {
+                try {
+                    updatedGallery = JSON.parse(existingGallery);
+                } catch (e) {
+                    updatedGallery = [existingGallery];
+                }
+            }
+        }
+
+        // Add new uploaded files
+        if (req.files && req.files['gallery']) {
+            const newFiles = req.files['gallery'].map(file => `/uploads/products/${file.filename}`);
+            updatedGallery = [...updatedGallery, ...newFiles];
+        }
+
         product.gallery = updatedGallery;
     } else if (req.files && req.files['gallery']) {
-        product.gallery = [...product.gallery, ...req.files['gallery'].map(f => `/uploads/products/${f.filename}`)];
+        // Fallback or simple append if not a full gallery update
+        const newFiles = req.files['gallery'].map(f => `/uploads/products/${f.filename}`);
+        product.gallery = [...product.gallery, ...newFiles];
     }
 
     const updatedProduct = await product.save();
@@ -303,12 +312,28 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
 // @access  Public
 exports.getSearchSuggestions = catchAsync(async (req, res, next) => {
     const query = req.query.q || "";
-    if (!query || query.length < 2) {
-        return res.status(200).json([]);
+
+    // If query is empty, return "Trending" / "Popular" defaults
+    if (!query || query.trim().length === 0) {
+        const popularCategories = await Category.find({ isActive: true }).select('name').limit(4).lean();
+        const trendingBrands = await Brand.find({}).select('name').limit(4).lean();
+        
+        return res.status(200).json({
+            products: [],
+            categories: popularCategories,
+            brands: trendingBrands,
+            isDefault: true
+        });
     }
 
-    const matchingCategories = await Category.find({ name: { $regex: query, $options: "i" } }).select('_id').lean();
-    const matchingBrands = await Brand.find({ name: { $regex: query, $options: "i" } }).select('_id').lean();
+    if (query.length < 2) {
+        return res.status(200).json({ products: [], categories: [], brands: [] });
+    }
+
+    const matchingCategories = await Category.find({ name: { $regex: query, $options: "i" } }).select('name').limit(3).lean();
+    const matchingBrands = await Brand.find({ name: { $regex: query, $options: "i" } }).select('name').limit(3).lean();
+    
+    // For products, we still need IDs to match
     const categoryIds = matchingCategories.map(c => c._id);
     const brandIds = matchingBrands.map(b => b._id);
 
@@ -333,7 +358,12 @@ exports.getSearchSuggestions = catchAsync(async (req, res, next) => {
         .lean();
 
     const productsWithOffers = await applyOffersToProducts(products);
-    res.status(200).json(productsWithOffers);
+    
+    res.status(200).json({
+        products: productsWithOffers,
+        categories: matchingCategories,
+        brands: matchingBrands
+    });
 });
 
 // @desc    Delete product

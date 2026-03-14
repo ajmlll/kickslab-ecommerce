@@ -547,6 +547,9 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             border: 1px solid transparent;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .product-card:hover {
@@ -704,7 +707,10 @@
         }
 
         .product-details {
-            padding: 15px 15px 8px 20px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
 
         .product-title {
@@ -721,6 +727,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            min-height: 48px; /* Ensure space for 2 lines of price info */
+            margin-top: auto;
         }
 
         .product-price {
@@ -1118,6 +1126,25 @@
             .product-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 15px;
+                display: grid;
+            }
+
+            .product-card {
+                height: 100%;
+            }
+
+            .product-details {
+                padding: 12px;
+            }
+
+            .product-title {
+                font-size: 13px;
+                margin-bottom: 8px;
+            }
+
+            .product-price-row {
+                min-height: 40px;
+                margin-bottom: 8px;
             }
 
             .category-track {
@@ -1733,21 +1760,7 @@
         </div>
     </nav>
 
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay"></div>
-    <div class="mobile-menu">
-        <div class="mobile-menu-header flex justify-between align-center">
-            <span class="logo font-heading">KICKSLAB</span>
-            <button class="close-menu-btn"><i class="fas fa-times"></i></button>
-        </div>
-        <ul class="mobile-nav-links">
-            <li><a href="Landingpage.html">Home</a></li>
-            <!-- <li><a href="ProductListing.html">Shop</a></li> -->
-            <li><a href="ProductListing.html">Shop</a></li>
-            <li><a href="AboutPage.html">About</a></li>
-            <li><a href="Contact.html">Contact</a></li>
-        </ul>
-    </div>
+    <!-- Mobile menu handled by user-auth-helper.js -->
 
 
     <!-- Main Content -->
@@ -2694,12 +2707,13 @@
         // Initialize all logic
         document.addEventListener('DOMContentLoaded', () => {
             console.log("Landingpage.html Loaded. URL:", window.location.href);
-            AuthSystem.init();
+            // AuthSystem.init() is now handled automatically by the script inclusion if needed, 
+            // but we keep this one if it's the primary init point. 
+            // Wait, we removed it in other pages. Let's be consistent.
             initCarousel();
             loadLandingProducts();
             loadActiveOffers();
             loadLandingCategories();
-            initMobileMenu();
 
             // Auto-open login modal if redirected from a protected page
             const urlParams = new URLSearchParams(window.location.search);
@@ -2710,31 +2724,6 @@
             }
         });
 
-        // --- MOBILE MENU LOGIC ---
-        function initMobileMenu() {
-            const menuBtn = document.querySelector('.mobile-menu-btn');
-            const closeBtn = document.querySelector('.close-menu-btn');
-            const menu = document.querySelector('.mobile-menu');
-            const overlay = document.querySelector('.mobile-menu-overlay');
-
-            if (!menuBtn || !menu || !overlay) return;
-
-            const toggleMenu = (show) => {
-                menu.classList.toggle('active', show);
-                overlay.classList.toggle('active', show);
-                document.body.style.overflow = show ? 'hidden' : '';
-            };
-
-            menuBtn.addEventListener('click', () => toggleMenu(true));
-            closeBtn.addEventListener('click', () => toggleMenu(false));
-            overlay.addEventListener('click', () => toggleMenu(false));
-
-            // Close on link click
-            const links = menu.querySelectorAll('a');
-            links.forEach(link => {
-                link.addEventListener('click', () => toggleMenu(false));
-            });
-        }
     </script>
     <script src="user-auth-helper.js"></script>
     <script src="user-search.js"></script>

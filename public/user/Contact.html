@@ -327,59 +327,9 @@
             font-size: 14px;
         }
 
-        /* Mobile Menu */
+        /* Mobile Menu Removed (Handled by user-auth-helper.js) */
         .mobile-menu-btn {
             display: none;
-            font-size: 24px;
-            color: var(--text-main);
-        }
-
-        .mobile-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1001;
-            display: none;
-        }
-
-        .mobile-menu-overlay.active {
-            display: block;
-        }
-
-        .mobile-menu {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: var(--bg-nav);
-            z-index: 1002;
-            transition: 0.3s;
-            padding: 20px;
-            border-right: 1px solid var(--border-color);
-        }
-
-        .mobile-menu.active {
-            left: 0;
-        }
-
-        .mobile-menu-header {
-            margin-bottom: 30px;
-            color: var(--text-main);
-        }
-
-        .mobile-nav-links li {
-            margin-bottom: 20px;
-        }
-
-        .mobile-nav-links a {
-            font-weight: 600;
-            font-size: 16px;
-            display: block;
-            color: var(--text-main);
         }
 
         /* --- CONTACT SECTION START --- */
@@ -916,21 +866,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Mobile Menu Functionality (Reused) ---
-            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-            const closeMenuBtn = document.querySelector('.close-menu-btn');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            const overlay = document.querySelector('.mobile-menu-overlay');
 
-            function toggleMenu() {
-                mobileMenu.classList.toggle('active');
-                overlay.classList.toggle('active');
-                document.body.classList.toggle('no-scroll');
-            }
-
-            if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMenu);
-            if (closeMenuBtn) closeMenuBtn.addEventListener('click', toggleMenu);
-            if (overlay) overlay.addEventListener('click', toggleMenu);
 
             // --- Contact Form Validation & Submission ---
             const form = document.getElementById('contactForm');
@@ -1078,7 +1014,7 @@
     <script src="user-search.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            AuthSystem.init();
+             // AuthSystem is initialized by the helper script
 
             // Form Guard for Contact Page
             document.getElementById('contactForm')?.addEventListener('submit', function (e) {
@@ -1087,10 +1023,6 @@
                     AuthSystem.showAuthModal();
                 }
             });
-
-            if (new URLSearchParams(window.location.search).get('action') === 'login') {
-                AuthSystem.showAuthModal();
-            }
         });
     </script>
 </body>

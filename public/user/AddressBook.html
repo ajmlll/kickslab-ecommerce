@@ -8,6 +8,7 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="user-auth-helper.css">
+    <link rel="stylesheet" href="user-search.css">
     <style>
         /* Google Fonts Import */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;700&display=swap');
@@ -712,76 +713,6 @@
                 overflow-x: hidden;
             }
 
-            /* Stack layout using Block instead of Grid */
-            .account-layout {
-                display: block;
-                width: 100%;
-            }
-
-            /* Sticky Horizontal Sidebar (Blue Pills) */
-            .account-sidebar {
-                position: sticky;
-                top: 70px;
-                z-index: 900;
-                margin-bottom: 25px;
-                background: rgba(255, 255, 255, 0.98);
-                backdrop-filter: blur(10px);
-                /* Full bleed logic relative to 15px padding */
-                margin-left: -15px;
-                margin-right: -15px;
-                width: calc(100% + 30px);
-                padding: 12px 0;
-                border-bottom: 1px solid #f0f0f0;
-            }
-
-            .sidebar-menu {
-                display: flex;
-                flex-direction: row;
-                overflow-x: auto;
-                white-space: nowrap;
-                padding: 0 15px;
-                gap: 10px;
-                scrollbar-width: none;
-                -webkit-overflow-scrolling: touch;
-                border: none;
-                border-radius: 0;
-            }
-
-            .sidebar-menu::-webkit-scrollbar {
-                display: none;
-            }
-
-            /* Blue Pill Styles */
-            .sidebar-link {
-                padding: 8px 16px;
-                margin: 0;
-                background: #f4f4f4;
-                border: none;
-                font-size: 13px;
-                width: auto;
-                border-radius: 50px;
-                flex-shrink: 0;
-                color: #555;
-                font-weight: 500;
-                display: inline-flex;
-                /* Use inline-flex for horizontal */
-                align-items: center;
-                border-bottom: none;
-            }
-
-            .sidebar-link:hover {
-                background: #e0e0e0;
-                padding-left: 16px;
-                /* Reset hover shift */
-                transform: translateY(-1px);
-            }
-
-            .sidebar-link.active {
-                background: var(--color-accent);
-                color: white;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            }
-
             /* Content Adjustments */
             .account-content {
                 padding: 0;
@@ -865,7 +796,9 @@
     <nav class="navbar">
         <div class="container navbar-container">
             <div class="nav-left">
-                <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                <button class="mobile-menu-btn" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="search-box">
                     <i class="fas fa-search"></i>
                     <input type="text" placeholder="Search...">
@@ -882,28 +815,21 @@
             </div>
             <div class="nav-right">
                 <div class="nav-icons flex align-center justify-end">
-                    <a href="Wishlist.html"><i class="far fa-heart"></i></a>
-                    <a href="Cart.html"><i class="fas fa-shopping-bag"></i></a>
-                    <a href="#"><i class="fas fa-user-circle"></i></a>
+                    <a href="Wishlist.html" class="protected-link">
+                        <i class="far fa-heart"></i>
+                    </a>
+                    <a href="Cart.html" class="protected-link">
+                        <i class="fas fa-shopping-bag"></i>
+                    </a>
+                    <a href="#" id="accountBtn">
+                        <i class="fas fa-user-circle" id="accountIcon"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay"></div>
-    <div class="mobile-menu">
-        <div class="mobile-menu-header flex justify-between align-center" style="margin-bottom: 30px;">
-            <span class="logo font-heading">KICKSLAB</span>
-            <button class="close-menu-btn"><i class="fas fa-times"></i></button>
-        </div>
-        <ul class="mobile-nav-links">
-            <li><a href="Landingpage.html">Home</a></li>
-            <li><a href="ProductListing.html">Shop</a></li>
-            <li><a href="AboutPage.html">About</a></li>
-            <li><a href="Contact.html">Contact</a></li>
-        </ul>
-    </div>
+    <!-- Mobile menu handled by user-auth-helper.js -->
 
     <div class="container account-page-wrapper">
         <h1 class="page-title">Hello <span id="user-name-display">User</span></h1>
@@ -1292,6 +1218,7 @@
 
         AuthSystem.init();
     </script>
+    <script src="user-search.js"></script>
 </body>
 
 </html>

@@ -12,6 +12,23 @@ const passport = require("./config/passport.config");
 const app = express();
 
 // --- 1. Global Middlewares ---
+
+// Content Security Policy (Must be early to apply to static files)
+app.use((req, res, next) => {
+    res.setHeader(
+        'Content-Security-Policy',
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://checkout.razorpay.com; " +
+        "script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://checkout.razorpay.com; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; " +
+        "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
+        "img-src 'self' data: https: blob:; " +
+        "frame-src 'self' https://checkout.razorpay.com; " +
+        "connect-src 'self' https:;"
+    );
+    next();
+});
+
 app.use(cors({
     origin: true,
     credentials: true
@@ -49,19 +66,6 @@ if (process.env.NODE_ENV === 'development') {
     });
 }
 
-// Basic Content Security Policy
-app.use((req, res, next) => {
-    res.setHeader(
-        'Content-Security-Policy',
-        "default-src 'self'; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://checkout.razorpay.com; " +
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; " +
-        "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
-        "img-src 'self' data: https:; " +
-        "frame-src 'self' https://checkout.razorpay.com;"
-    );
-    next();
-});
 
 // --- 2. Routes ---
 

@@ -278,60 +278,9 @@
         }
 
         /* Mobile Menu */
+        /* Mobile Menu Removed (Handled by user-auth-helper.js) */
         .mobile-menu-btn {
             display: none;
-            font-size: 24px;
-        }
-
-        .mobile-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1001;
-            display: none;
-        }
-
-        .mobile-menu-overlay.active {
-            display: block;
-        }
-
-        .mobile-menu {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: var(--color-white);
-            z-index: 1002;
-            transition: 0.3s;
-            padding: 20px;
-            border-right: 1px solid var(--color-border);
-        }
-
-        .mobile-menu-header {
-            margin-bottom: 30px;
-            color: var(--color-black);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .mobile-menu.active {
-            left: 0;
-        }
-
-        .mobile-nav-links li {
-            margin-bottom: 20px;
-        }
-
-        .mobile-nav-links a {
-            display: block;
-            font-weight: 600;
-            font-size: 16px;
-            color: var(--color-black);
         }
 
 
@@ -1302,20 +1251,7 @@
             </div>
         </div>
     </nav>
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay"></div>
-    <div class="mobile-menu">
-        <div class="mobile-menu-header flex justify-between align-center">
-            <span class="logo font-heading">KICKSLAB</span>
-            <button class="close-menu-btn"><i class="fas fa-times"></i></button>
-        </div>
-        <ul class="mobile-nav-links">
-            <li><a href="Landingpage.html">Home</a></li>
-            <li><a href="ProductListing.html" class="protected-link">Shop</a></li>
-            <li><a href="AboutPage.html">About</a></li>
-            <li><a href="Contact.html" class="protected-link">Contact</a></li>
-        </ul>
-    </div>
+    <!-- Mobile Menu handled by user-auth-helper.js -->
 
 
     <div class="container-fluid">
@@ -2035,25 +1971,6 @@
 
         // UI Toggles
         // UI Toggles
-        // Mobile Menu Logic
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const closeMenuBtn = document.querySelector('.close-menu-btn');
-        const mobileMenu = document.querySelector('.mobile-menu');
-        const overlay = document.querySelector('.mobile-menu-overlay');
-
-        function toggleMenu() {
-            if (mobileMenu) mobileMenu.classList.toggle('active');
-            if (overlay) overlay.classList.toggle('active');
-            if (document.body) {
-                const isActive = mobileMenu ? mobileMenu.classList.contains('active') : false;
-                document.body.style.overflow = isActive ? 'hidden' : '';
-            }
-        }
-
-        if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMenu);
-        if (closeMenuBtn) closeMenuBtn.addEventListener('click', toggleMenu);
-        if (overlay) overlay.addEventListener('click', toggleMenu);
-
         // Filter Drawer Toggle
         window.toggleFilters = function () {
             const sidebar = document.getElementById('sidebar');
@@ -2440,7 +2357,5 @@
     <script src="user-auth-helper.js"></script>
     <script src="user-search.js"></script>
 </body>
-
-</html>
 
 </html>

@@ -317,59 +317,9 @@
             /* Gap between Hamburger and Search */
         }
 
-        /* Mobile Menu */
+        /* Mobile Menu Removed (Handled by user-auth-helper.js) */
         .mobile-menu-btn {
             display: none;
-            font-size: 24px;
-            color: var(--text-main);
-        }
-
-        .mobile-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1001;
-            display: none;
-        }
-
-        .mobile-menu-overlay.active {
-            display: block;
-        }
-
-        .mobile-menu {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: var(--bg-nav);
-            z-index: 1002;
-            transition: 0.3s;
-            padding: 20px;
-            border-right: 1px solid var(--border-color);
-        }
-
-        .mobile-menu.active {
-            left: 0;
-        }
-
-        .mobile-menu-header {
-            margin-bottom: 30px;
-            color: var(--text-main);
-        }
-
-        .mobile-nav-links li {
-            margin-bottom: 20px;
-        }
-
-        .mobile-nav-links a {
-            font-weight: 600;
-            font-size: 16px;
-            display: block;
-            color: var(--text-main);
         }
 
         /* Product Components (Reused for consistency) */
@@ -753,20 +703,7 @@
         </div>
     </nav>
 
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay"></div>
-    <div class="mobile-menu">
-        <div class="mobile-menu-header flex justify-between align-center">
-            <span class="logo font-heading">KICKSLAB</span>
-            <button class="close-menu-btn"><i class="fas fa-times"></i></button>
-        </div>
-        <ul class="mobile-nav-links">
-            <li><a href="Landingpage.html">Home</a></li>
-            <li><a href="ProductListing.html" class="protected-link">Shop</a></li>
-            <li><a href="AboutPage.html" class="active">About</a></li>
-            <li><a href="Contact.html" class="protected-link">Contact</a></li>
-        </ul>
-    </div>
+    <!-- Mobile menu handled by user-auth-helper.js -->
 
     <!-- Main Content -->
     <main>
@@ -891,21 +828,6 @@
     <script src="user-search.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Mobile Menu Functionality (About Page Specific)
-            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-            const closeMenuBtn = document.querySelector('.close-menu-btn');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            const overlay = document.querySelector('.mobile-menu-overlay');
-
-            function toggleMenu() {
-                if (mobileMenu) mobileMenu.classList.toggle('active');
-                if (overlay) overlay.classList.toggle('active');
-            }
-
-            if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMenu);
-            if (closeMenuBtn) closeMenuBtn.addEventListener('click', toggleMenu);
-            if (overlay) overlay.addEventListener('click', toggleMenu);
-
             // AuthSystem is initialized by the helper script
         });
     </script>

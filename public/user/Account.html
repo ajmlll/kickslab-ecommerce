@@ -8,6 +8,7 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="user-auth-helper.css">
+    <link rel="stylesheet" href="user-search.css">
     <style>
         /* Reusing global styles */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;700&display=swap');
@@ -406,59 +407,9 @@
             transform: translateY(-2px);
         }
 
-        /* Mobile Menu */
+        /* Mobile Menu Removed (Handled by user-auth-helper.js) */
         .mobile-menu-btn {
             display: none;
-            font-size: 24px;
-            color: var(--text-main);
-        }
-
-        .mobile-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1001;
-            display: none;
-        }
-
-        .mobile-menu-overlay.active {
-            display: block;
-        }
-
-        .mobile-menu {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: var(--bg-nav);
-            z-index: 1002;
-            transition: 0.3s;
-            padding: 20px;
-            border-right: 1px solid var(--border-color);
-        }
-
-        .mobile-menu.active {
-            left: 0;
-        }
-
-        .mobile-menu-header {
-            margin-bottom: 30px;
-            color: var(--text-main);
-        }
-
-        .mobile-nav-links li {
-            margin-bottom: 20px;
-        }
-
-        .mobile-nav-links a {
-            font-weight: 600;
-            font-size: 16px;
-            display: block;
-            color: var(--text-main);
         }
 
         /* Product Components */
@@ -1138,83 +1089,6 @@
                 width: 100%;
             }
 
-            /* Sticky Horizontal Sidebar (Blue Pills) */
-            .account-sidebar {
-                position: sticky;
-                top: 70px;
-                z-index: 900;
-                margin-bottom: 25px;
-                background: rgba(255, 255, 255, 0.98);
-                backdrop-filter: blur(10px);
-                /* Full bleed logic relative to 15px padding */
-                margin-left: -15px;
-                margin-right: -15px;
-                width: calc(100% + 30px);
-                padding: 12px 0;
-                border-bottom: 1px solid #f0f0f0;
-            }
-
-            .sidebar-menu {
-                display: flex;
-                flex-direction: row;
-                overflow-x: auto;
-                white-space: nowrap;
-                padding: 0 15px;
-                gap: 10px;
-                scrollbar-width: none;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .sidebar-menu::-webkit-scrollbar {
-                display: none;
-            }
-
-            /* Blue Pill Styles */
-            .sidebar-link {
-                padding: 8px 16px;
-                margin: 0;
-                background: #f4f4f4;
-                border: none;
-                font-size: 13px;
-                width: auto;
-                border-radius: 50px;
-                flex-shrink: 0;
-                color: #555;
-                font-weight: 500;
-            }
-
-            /* Blue Pill Styles */
-            .sidebar-link {
-                padding: 10px 24px;
-                /* Wider comfortable touch targets */
-                margin: 0;
-                background: #f4f4f4;
-                border: none;
-                border-bottom: none;
-                font-size: 14px;
-                /* Increased font size */
-                width: auto;
-                border-radius: 100px;
-                /* Perfectly round pills */
-                flex: 0 0 auto;
-                color: #555;
-                font-weight: 500;
-                transition: all 0.2s ease;
-            }
-
-            .sidebar-link:hover {
-                background-color: #e0e0e0;
-                transform: translateY(-1px);
-            }
-
-            .sidebar-link.active {
-                background-color: var(--color-accent);
-                color: white;
-                font-weight: 600;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                /* Subtle shadow for active state */
-            }
-
             .account-form-grid {
                 display: flex;
                 flex-direction: column;
@@ -1355,28 +1229,21 @@
             <!-- Right: Icons -->
             <div class="nav-right">
                 <div class="nav-icons flex align-center justify-end">
-                    <a href="Wishlist.html"><i class="far fa-heart"></i></a>
-                    <a href="Cart.html"><i class="fas fa-shopping-bag"></i></a>
-                    <a href="#"><i class="fas fa-user-circle"></i></a>
+                    <a href="Wishlist.html" class="protected-link">
+                        <i class="far fa-heart"></i>
+                    </a>
+                    <a href="Cart.html" class="protected-link">
+                        <i class="fas fa-shopping-bag"></i>
+                    </a>
+                    <a href="#" id="accountBtn">
+                        <i class="fas fa-user-circle" id="accountIcon"></i>
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay"></div>
-    <div class="mobile-menu">
-        <div class="mobile-menu-header flex justify-between align-center">
-            <span class="logo font-heading">KICKSLAB</span>
-            <button class="close-menu-btn"><i class="fas fa-times"></i></button>
-        </div>
-        <ul class="mobile-nav-links">
-            <li><a href="Landingpage.html">Home</a></li>
-            <li><a href="ProductListing.html">Shop</a></li>
-            <li><a href="AboutPage.html">About</a></li>
-            <li><a href="Contact.html">Contact</a></li>
-        </ul>
-    </div>
+    <!-- Mobile menu handled by user-auth-helper.js -->
 
     <!-- Main Content -->
     <div class="container account-page-wrapper">
@@ -1601,10 +1468,10 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            AuthSystem.init();
             loadProfile();
         });
     </script>
+    <script src="user-search.js"></script>
 </body>
 
 </html>

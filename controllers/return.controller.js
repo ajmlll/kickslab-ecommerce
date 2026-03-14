@@ -14,27 +14,31 @@ const getReturnsForAdmin = catchAsync(async (req, res, next) => {
     const search = req.query.search || "";
 
     let query = {};
+    if (req.query.status) {
+        query.status = req.query.status;
+    }
 
     if (search) {
-        // Find matching users and orders
-        const UserAuthSearch = require('../models/userAuth.model');
-        const matchingUsers = await UserAuthSearch.find({
+        // Find matching users
+        const matchingUsers = await User.find({
             $or: [
                 { name: { $regex: search, $options: "i" } },
                 { email: { $regex: search, $options: "i" } }
             ]
         }).select('_id').lean();
 
-        const matchingOrders = await Order.find({
-            orderId: { $regex: search, $options: "i" }
-        }).select('_id').lean();
-
         const userIds = matchingUsers.map(u => u._id);
-        const orderIds = matchingOrders.map(o => o._id);
+        
+        // Search Orders by _id if search term is a valid ObjectId
+        let orderIds = [];
+        if (require('mongoose').Types.ObjectId.isValid(search)) {
+            orderIds = [search];
+        }
 
         query.$or = [
             { reason: { $regex: search, $options: "i" } },
-            { status: { $regex: search, $options: "i" } }
+            { status: { $regex: search, $options: "i" } },
+            { "items.productName": { $regex: search, $options: "i" } }
         ];
 
         if (userIds.length > 0) {

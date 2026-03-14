@@ -77,11 +77,14 @@ const getReviewsForAdmin = async (req, res) => {
         const search = req.query.search || "";
 
         let query = {};
+        if (req.query.status) {
+            query.status = req.query.status;
+        }
 
         if (search) {
             // Find matching users and products
-            const User = require('../models/userAuth.model');
-            const matchingUsers = await User.find({
+            const UserAuth = require('../models/user.model');
+            const matchingUsers = await UserAuth.find({
                 $or: [
                     { name: { $regex: search, $options: "i" } },
                     { email: { $regex: search, $options: "i" } }
@@ -96,7 +99,8 @@ const getReviewsForAdmin = async (req, res) => {
             const productIds = matchingProducts.map(p => p._id);
 
             query.$or = [
-                { comment: { $regex: search, $options: "i" } }
+                { comment: { $regex: search, $options: "i" } },
+                { status: { $regex: search, $options: "i" } }
             ];
 
             if (userIds.length > 0) {
@@ -104,6 +108,11 @@ const getReviewsForAdmin = async (req, res) => {
             }
             if (productIds.length > 0) {
                 query.$or.push({ product: { $in: productIds } });
+            }
+
+            // Search by Order ID if valid ObjectId
+            if (require('mongoose').Types.ObjectId.isValid(search)) {
+                query.$or.push({ order: search });
             }
         }
 

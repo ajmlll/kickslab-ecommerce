@@ -555,8 +555,16 @@
             <div class="returns-card">
                 <div class="card-header">
                     <h2 class="card-title">Return Requests</h2>
-                    <div class="search-container">
-                        <input type="text" id="searchInput" placeholder="Search returns..." class="search-input">
+                    <div class="search-container" style="display: flex; gap: 10px; width: auto;">
+                        <input type="text" id="searchInput" placeholder="Search returns..." class="search-input" style="width: 250px;">
+                        <select id="statusFilter" class="search-input" style="width: 150px;">
+                            <option value="">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Refunded">Refunded</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
                     </div>
                 </div>
 
@@ -680,7 +688,8 @@
         async function fetchReturns(page = 1) {
             try {
                 const search = document.getElementById('searchInput').value;
-                const response = await fetch(`/api/returns/admin/all?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`);
+                const status = document.getElementById('statusFilter').value;
+                const response = await fetch(`/api/returns/admin/all?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}&status=${status}`);
                 
                 if (response.status === 401 || response.status === 403) {
                     window.location.href = '/user/login.html';
@@ -888,6 +897,11 @@
                 currentPage = 1;
                 fetchReturns(1);
             }, 500);
+        });
+
+        document.getElementById('statusFilter').addEventListener('change', () => {
+            currentPage = 1;
+            fetchReturns(1);
         });
 
         function getStatusColor(status) {
