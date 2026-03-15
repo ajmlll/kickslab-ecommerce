@@ -36,17 +36,11 @@
         body {
             background-color: var(--primary-bg);
             color: var(--text-dark);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
         /* Main Content */
         .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
             margin-left: 260px;
             transition: margin-left 0.3s;
             padding: 2rem;
@@ -537,6 +531,14 @@
 
             // Initialize Chart
             const initChart = (labels = [], successful = [], cancelled = []) => {
+                const chartElement = document.querySelector("#statusChart");
+                if (!chartElement) return;
+
+                if (typeof ApexCharts === 'undefined') {
+                    chartElement.innerHTML = '<div style="padding: 2rem; text-align: center; color: #9ca3af; border: 1px dashed #e5e7eb; border-radius: 8px;">Chart library failed to load. Please check your internet connection or reload the page.</div>';
+                    return;
+                }
+
                 var options = {
                     series: [{
                         name: 'Successful Items',
@@ -615,7 +617,7 @@
                     chart.updateOptions(options);
                     chart.updateSeries(options.series);
                 } else {
-                    chart = new ApexCharts(document.querySelector("#statusChart"), options);
+                    chart = new ApexCharts(chartElement, options);
                     chart.render();
                 }
             };

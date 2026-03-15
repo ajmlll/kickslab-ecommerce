@@ -7,8 +7,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof AdminModal !== 'undefined') {
         AdminModal.clearAll();
     }
+    
+    // Inject Responsive Navbar if not exists (for mobile/tablet)
+    injectResponsiveNavbar();
+    
     initSidebar();
 });
+
+function injectResponsiveNavbar() {
+    if (document.querySelector('.admin-responsive-navbar')) return;
+
+    const nav = document.createElement('div');
+    nav.className = 'admin-responsive-navbar';
+    nav.innerHTML = `
+        <button id="hamburger-btn" class="hamburger-menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-admin-badge">
+            <i class="fas fa-crown"></i> ADMIN
+        </div>
+    `;
+    document.body.prepend(nav);
+}
 
 async function initSidebar() {
     const currentPath = window.location.pathname.split('/').pop() || 'dashboard.html';
@@ -17,14 +37,21 @@ async function initSidebar() {
     try {
         const logoLink = document.querySelector('.sidebar .logo');
         if (logoLink) {
-            let badge = document.querySelector('.admin-role-badge');
-            if (!badge) {
-                badge = document.createElement('div');
-                logoLink.insertAdjacentElement('afterend', badge);
-            }
+            // Only show badge in sidebar on Desktop (width >= 1200px)
+            if (window.innerWidth >= 1200) {
+                let badge = document.querySelector('.admin-role-badge');
+                if (!badge) {
+                    badge = document.createElement('div');
+                    logoLink.insertAdjacentElement('afterend', badge);
+                }
 
-            badge.className = `admin-role-badge role-admin`;
-            badge.innerHTML = `<i class="fas fa-crown"></i> ADMIN`;
+                badge.className = `admin-role-badge role-admin`;
+                badge.innerHTML = `<i class="fas fa-crown"></i> ADMIN`;
+            } else {
+                // If it was already there (maybe from a resize or initial load), remove it on mobile
+                const existingBadge = document.querySelector('.admin-role-badge');
+                if (existingBadge) existingBadge.remove();
+            }
         }
     } catch (e) {
         // Silent fail for badge injection
@@ -80,8 +107,8 @@ async function initSidebar() {
         hamburger.addEventListener('click', () => {
             sidebar.classList.toggle('mobile-open');
             overlay.classList.toggle('active');
-
-            // If we use 'open' class in some files, toggle that too for compatibility
+            
+            // Compatibility
             sidebar.classList.toggle('open');
         });
     }

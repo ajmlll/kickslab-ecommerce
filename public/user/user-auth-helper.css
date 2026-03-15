@@ -327,6 +327,12 @@
 
 
 /* 5. Responsive Account Menu (New Side Drawer Design) */
+.account-drawer-toggle-wrapper,
+.account-side-drawer,
+.account-drawer-overlay {
+    display: none;
+}
+
 @media (max-width: 1023px) {
     /* Hide the static sidebar on account pages */
     .account-sidebar {
@@ -340,6 +346,7 @@
 
     /* Toggle Bar (Above Hello User) - Styled like a clean bar */
     .account-drawer-toggle-wrapper {
+        display: block; /* Explicitly restored for responsive */
         margin-bottom: 25px;
         width: 100%;
         padding: 0;
@@ -392,7 +399,7 @@
         z-index: 5000; /* Above navbar (3500) */
         transform: translateX(-100%);
         transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        display: flex;
+        display: flex; /* Enable on responsive */
         flex-direction: column;
         box-shadow: 10px 0 40px rgba(0,0,0,0.12);
     }
@@ -508,7 +515,7 @@
         text-decoration: none;
     }
 
-    /* Overlay Overlay */
+    /* Overlay overlay */
     .account-drawer-overlay {
         position: fixed;
         top: 0;
@@ -517,11 +524,11 @@
         height: 100%;
         background: rgba(0,0,0,0.5);
         z-index: 4999;
-        display: none;
         backdrop-filter: blur(4px);
     }
 
     .account-drawer-overlay.active {
-        display: block;
+        display: block; /* Shown only when active on responsive */
     }
+
 }

@@ -35,17 +35,11 @@
         body {
             background-color: var(--primary-bg);
             color: var(--text-dark);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
         /* Main Content */
         .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
             margin-left: 260px;
             padding: 2rem;
             transition: margin-left 0.3s;
@@ -85,7 +79,7 @@
             align-items: center;
             margin-bottom: 2rem;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 1.5rem;
         }
 
         .card-title {
@@ -103,30 +97,31 @@
 
         .search-container {
             position: relative;
-            width: 250px;
         }
 
         .search-input {
-            width: 100%;
             padding: 0.6rem 1rem;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 0.9rem;
             color: var(--text-dark);
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
+            background-color: var(--white);
+            width: 280px;
         }
 
         .search-input:focus {
             border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         .add-btn {
             background-color: var(--primary-blue);
             color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 6px;
-            font-weight: 500;
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
             font-size: 0.9rem;
             text-decoration: none;
             display: inline-flex;
@@ -134,11 +129,12 @@
             gap: 0.5rem;
             border: none;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
 
         .add-btn:hover {
             background-color: #2563eb;
+            transform: translateY(-1px);
         }
 
         /* Table */
@@ -156,17 +152,21 @@
         thead th {
             text-align: left;
             padding: 1rem;
-            color: var(--text-gray);
+            color: #9ca3af;
+            font-size: 0.85rem;
             font-weight: 600;
-            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #f3f4f6;
             white-space: nowrap;
         }
 
         tbody td {
-            padding: 1rem;
+            padding: 1.25rem 1rem;
             vertical-align: middle;
-            color: #374151;
+            color: #1f2937;
             font-weight: 500;
+            border-bottom: 1px solid #f3f4f6;
         }
 
         tbody tr {
@@ -258,14 +258,52 @@
         .modal-content {
             background-color: var(--white);
             border-radius: 12px;
-            width: 90%;
+            width: 95%;
             max-width: 600px;
             position: relative;
             transform: scale(0.95);
             transition: transform 0.3s ease;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
             padding-bottom: 1.5rem;
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1.25rem;
+            }
+
+            .card-actions {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+            }
+
+            .search-input {
+                width: 100% !important;
+            }
+
+            .add-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .modal-content {
+                padding: 1rem;
+                padding-top: 2rem;
+            }
+
+            .modal-body {
+                padding: 1rem;
+            }
         }
 
         .modal-overlay.active .modal-content {

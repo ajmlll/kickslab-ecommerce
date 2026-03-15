@@ -322,32 +322,64 @@
         display: block;
         opacity: 1;
     }
-}
 
-/* Ensure hamburger is visible on these screens (controlled by page CSS usually, but we can add utility here) */
-.d-md-none {
-    display: none;
-}
+    .admin-responsive-navbar {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        background: #ffffff;
+        border-bottom: 1px solid var(--sidebar-border);
+        z-index: 900; /* Below sidebar and overlay */
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1.5rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
 
-@media (max-width: 1199px) {
-    .d-md-block {
+    .admin-responsive-navbar .hamburger-menu {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #333;
+        cursor: pointer;
+        padding: 10px;
+        margin-left: -10px;
         display: block !important;
     }
 
-    .d-md-none {
-        display: none !important;
+    .admin-responsive-navbar .nav-title {
+        font-weight: 800;
+        font-size: 1.1rem;
+        color: #000;
+        letter-spacing: 1px;
+    }
+
+    .nav-admin-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: #ffffff;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    /* Adjust main content for fixed navbar */
+    .main-content {
+        padding-top: 90px !important;
     }
 }
 
 /* Explicit Hamburger Visibility */
 @media (min-width: 1200px) {
-    .hamburger-menu {
+    .hamburger-menu,
+    .admin-responsive-navbar {
         display: none !important;
-    }
-}
-
-@media (max-width: 1199px) {
-    .hamburger-menu {
-        display: block !important;
     }
 }

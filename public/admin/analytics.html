@@ -37,16 +37,10 @@
         body {
             background-color: var(--primary-bg);
             color: var(--text-dark);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
         .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
             margin-left: 260px;
             padding: 2rem;
         }
@@ -61,7 +55,7 @@
         .analytics-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 2rem;
         }
 
@@ -77,14 +71,31 @@
         }
 
         .date-select {
-            padding: 0.6rem 1rem;
+            padding: 0.6rem 2.5rem 0.6rem 1rem;
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            background: var(--white);
+            background-color: var(--white);
+            color: #374151;
             font-size: 0.9rem;
             font-weight: 500;
-            cursor: pointer;
             outline: none;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .date-select:hover {
+            border-color: #d1d5db;
+        }
+
+        .date-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         /* Metrics Grid */
@@ -217,20 +228,51 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 0.9rem;
         }
 
         th {
             text-align: left;
+            padding: 1rem;
+            color: #9ca3af;
             font-size: 0.85rem;
-            color: var(--text-gray);
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #f3f4f6;
+            white-space: nowrap;
         }
 
         td {
-            padding: 1rem 0;
-            border-bottom: 1px solid #f9fafb;
-            font-size: 0.9rem;
+            padding: 1.25rem 1rem;
+            vertical-align: middle;
+            color: #1f2937;
+            font-weight: 500;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        /* Generic Card for other sections */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Status Breakdown Column Chart */
@@ -333,21 +375,66 @@
             opacity: 0.9;
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1199px) {
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+
             .metrics-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
             }
 
             .charts-row,
             .tables-row,
-            .reports-grid {
+            .reports-insights-row {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
+            .analytics-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1.25rem;
+            }
+
+            .header-title h1 {
+                font-size: 1.25rem;
+            }
+
+            .date-select {
+                width: 100%;
+            }
+
+            .metric-card {
+                padding: 1.25rem;
+            }
+
+            .metric-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
             .metrics-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .metric-card[style*="grid-template-columns: repeat(2, 1fr)"] {
+                grid-template-columns: 1fr !important;
+            }
+
+            .report-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .pdf-btn {
+                width: 100%;
             }
         }
     </style>
@@ -586,16 +673,18 @@
                         <span class="section-title">Top Selling Products</span>
                         <a href="product-list.html" class="view-all">View All</a>
                     </div>
-                    <table id="productsTable">
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Units Sold</th>
-                                <th>Revenue</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Units Sold</th>
+                                    <th>Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="card">
                     <div class="card-header">
@@ -698,6 +787,15 @@
             const dateSelect = document.getElementById('dateRangeSelect');
 
             const initCharts = () => {
+                if (typeof ApexCharts === 'undefined') {
+                    const chartContainers = ['#salesChart', '#paymentChart', '#statusChart'];
+                    chartContainers.forEach(selector => {
+                        const el = document.querySelector(selector);
+                        if (el) el.innerHTML = '<div style="padding: 1rem; text-align: center; color: #9ca3af; border: 1px dashed #e5e7eb; border-radius: 8px; font-size: 0.8rem;">Chart library failed to load.</div>';
+                    });
+                    return;
+                }
+
                 // Sales Chart
                 salesChart = new ApexCharts(document.querySelector("#salesChart"), {
                     series: [{ name: 'Revenue', data: [] }, { name: 'Orders', data: [] }],

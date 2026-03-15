@@ -33,17 +33,11 @@
         body {
             background-color: var(--primary-bg);
             color: var(--text-dark);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
         /* Main Content */
         .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
             margin-left: 260px;
             padding: 2.5rem;
             transition: margin-left 0.3s;
@@ -62,11 +56,10 @@
         }
 
         .page-header-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 2.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
             color: var(--text-dark);
-            letter-spacing: -0.03em;
         }
 
 
@@ -82,18 +75,17 @@
         .card-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 2.5rem;
+            align-items: center;
+            margin-bottom: 2rem;
             flex-wrap: wrap;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         .card-title-group h2 {
-            font-size: 1.75rem;
-            font-weight: 900;
-            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
             color: var(--text-dark);
-            letter-spacing: -0.04em;
         }
 
         .card-title-group p {
@@ -144,12 +136,13 @@
         .add-btn {
             background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             color: white;
-            padding: 0.875rem 2rem;
-            border-radius: 14px;
+            padding: 0.875rem 1.5rem;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 0.9375rem;
+            font-size: 0.9rem;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.75rem;
             border: none;
             cursor: pointer;
@@ -172,12 +165,16 @@
         /* Table Styles */
         .table-responsive {
             border-radius: 12px;
-            overflow: hidden;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             border: 1px solid var(--border-color);
+            background: white;
+            margin-bottom: 1rem;
         }
 
         table {
             width: 100%;
+            min-width: 900px; /* Ensure horizontal scroll on small screens */
             border-collapse: collapse;
             background: white;
         }
@@ -597,6 +594,77 @@
             opacity: 0.5;
             cursor: not-allowed;
             pointer-events: none;
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1.25rem;
+            }
+
+            .card-actions {
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+            }
+
+            .search-container, .search-input {
+                width: 100% !important;
+            }
+
+            .add-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .modal-grid, .detail-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .detail-divider {
+                grid-column: span 1;
+            }
+
+            .detail-description {
+                grid-column: span 1;
+            }
+
+            .modal-content {
+                width: 95%;
+                max-height: 90vh;
+                border-radius: 16px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .modal-body {
+                flex: 1;
+                padding: 1.25rem;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .row-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 480px) {
+            .page-header-title {
+                font-size: 1.25rem;
+            }
+
+            .card-title-group h2 {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
