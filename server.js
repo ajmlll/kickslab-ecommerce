@@ -19,7 +19,7 @@ const bootstrap = async () => {
 
     // 3. Start Server
     server.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`🚀 Server running on:${PORT}`);
       console.log(`⚙ Environment: ${process.env.NODE_ENV || 'development'}`);
     });
 
