@@ -2169,7 +2169,7 @@
 
             // If no sizes apply (or purely accessories), just add default
             if (!product.rawSizes || product.rawSizes.length === 0) {
-                processAddToCart(id, 'Default', btn);
+                window.processAddToCart(id, 'Default', btn);
                 return;
             }
 
@@ -2252,7 +2252,7 @@
                     return;
                 }
                 overlay.classList.remove('active');
-                processAddToCart(id, selectedSize, btn);
+                window.processAddToCart(id, selectedSize, btn);
             });
 
             overlay.classList.add('active');

@@ -2318,7 +2318,7 @@
             if (!product) return alert("Product not found");
 
             if (!product.rawSizes || product.rawSizes.length === 0) {
-                processAddToCart(id, 'Default', btn);
+                window.processAddToCart(id, 'Default', btn);
                 return;
             }
 
@@ -2399,7 +2399,7 @@
             newConfirmBtn.addEventListener('click', () => {
                 if (!selectedSize) { document.getElementById('sizeErrorMsg').style.display = 'block'; return; }
                 overlay.classList.remove('active');
-                processAddToCart(id, selectedSize, btn);
+                window.processAddToCart(id, selectedSize, btn);
             });
 
             overlay.classList.add('active');

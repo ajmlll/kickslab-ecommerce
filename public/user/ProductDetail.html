@@ -2200,7 +2200,7 @@
             if (!product) return alert("Product not found");
 
             if (!product.rawSizes || product.rawSizes.length === 0) {
-                processAddToCartRelated(id, 'Default', btn);
+                window.processAddToCartRelated(id, 'Default', btn);
                 return;
             }
 
@@ -2264,7 +2264,7 @@
             newConfirmBtn.addEventListener('click', () => {
                 if (!currentSelectedSize) { document.getElementById('sizeErrorMsg').style.display = 'block'; return; }
                 overlay.classList.remove('active');
-                processAddToCartRelated(id, currentSelectedSize, btn);
+                window.processAddToCartRelated(id, currentSelectedSize, btn);
             });
 
             overlay.classList.add('active');
