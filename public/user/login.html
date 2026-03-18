@@ -663,7 +663,7 @@
                 });
             }
 
-            // Check for session expired parameter
+            // Check for session expired or blocked parameters
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('expired') === 'true') {
                 const errorBox = document.getElementById('loginError');
@@ -672,6 +672,14 @@
                     errorBox.style.display = 'block';
                 }
                 // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            if (urlParams.get('blocked') === 'true') {
+                const errorBox = document.getElementById('loginError');
+                if (errorBox) {
+                    errorBox.textContent = "Your account has been blocked by the admin. Please contact support.";
+                    errorBox.style.display = 'block';
+                }
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
         });

@@ -797,9 +797,28 @@ document.addEventListener('DOMContentLoaded', () => {
             method !== 'GET' &&
             (url.includes('/api/cart') || url.includes('/api/wishlist'))) {
 
-            // Delay slightly to ensure DB completed state change
             setTimeout(() => AuthSystem.refreshBadges(), 500);
         }
+
+        // ================= GLOBAL BLOCKED/AUTH INTERCEPTOR =================
+        if (response.status === 401 || response.status === 403) {
+            try {
+                const clone = response.clone();
+                const data = await clone.json();
+
+                if (data.blocked || response.status === 403) {
+                    console.warn("User has been blocked. Logging out...");
+                    localStorage.setItem('isLoggedIn', 'false');
+                    localStorage.removeItem('userData');
+                    
+                    // Force redirect to login page with blocked param
+                    window.location.href = '/user/Landingpage.html?action=login&blocked=true';
+                }
+            } catch (e) {
+                // Ignore parse errors on empty bodies
+            }
+        }
+        // ====================================================================
         return response;
     };
 });

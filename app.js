@@ -72,6 +72,7 @@ if (process.env.NODE_ENV === 'development') {
 // Specific UI Redirects (Legacy support)
 app.get("/", (req, res) => {
     res.redirect("/user/Landingpage.html");
+    
 });
 app.get("/verify-email", (req, res) => {
     res.sendFile(path.join(__dirname, "public/user/otp-verification.html"));
