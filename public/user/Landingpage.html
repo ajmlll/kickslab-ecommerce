@@ -2435,6 +2435,48 @@
             }, 3000);
         };
 
+        // Add to Cart Logic
+        window.processAddToCart = async function (id, sizeStr, btn) {
+            try {
+                const res = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ productId: id, quantity: 1, size: sizeStr })
+                });
+
+                if (res.ok) {
+                    window.showToast('Item added to cart!');
+                    if (btn) {
+                        if (btn.classList.contains('add-cart-btn') || btn.classList.contains('product-action')) {
+                            const originalText = btn.innerText;
+                            const originalBg = btn.style.background;
+                            const originalColor = btn.style.color;
+                            
+                            btn.innerText = 'ADDED!';
+                            btn.style.background = '#2ecc71';
+                            btn.style.color = 'white';
+                            setTimeout(() => {
+                                btn.innerText = originalText;
+                                btn.style.background = originalBg;
+                                btn.style.color = originalColor;
+                            }, 2000);
+                        }
+                    }
+                } else {
+                    const data = await res.json();
+                    if (data.limitReached && window.showStockLimitModal) {
+                        window.showStockLimitModal(data.message);
+                    } else {
+                        window.showToast(data.message || 'Error adding to cart.', 'error');
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+                window.showToast("Error connecting to server.", "error");
+            }
+        };
+
         // --- Offer Slider Logic ---
         async function loadActiveOffers() {
             try {
