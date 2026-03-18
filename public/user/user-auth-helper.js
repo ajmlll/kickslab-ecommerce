@@ -182,7 +182,7 @@ const AuthSystem = {
                 const dropdownHTML = `
                 <div class="account-dropdown" id="accountDropdown">
                     <ul>
-                        <li><a href="Account.html"><i class="fas fa-user-cog"></i> Manage Account</a></li>
+                        <li><a href="Account.html"><i class="fas fa-user-cog"></i> My Profile</a></li>
                         <li><a href="AddressBook.html"><i class="fas fa-map-marker-alt"></i> Address Book</a></li>
                         <li><a href="PaymentOptions.html"><i class="fas fa-wallet"></i> Payment Options</a></li>
                         <li><a href="MyCoupons.html"><i class="fas fa-ticket-alt"></i> My Coupons</a></li>
@@ -196,7 +196,12 @@ const AuthSystem = {
             link.onclick = (e) => {
                 e.preventDefault();
                 if (this.isLoggedIn()) {
-                    this.toggleDropdown(link.parentNode.querySelector('.account-dropdown'));
+                    // Redirect directly to Profile on mobile, show drop down on desktop
+                    if (window.innerWidth <= 1023) {
+                        window.location.href = "Account.html";
+                    } else {
+                        this.toggleDropdown(link.parentNode.querySelector('.account-dropdown'));
+                    }
                 } else {
                     this.showAuthModal();
                 }
@@ -733,6 +738,7 @@ const AuthSystem = {
                         top: 100% !important;
                         left: 0 !important;
                         width: 100% !important;
+                        max-width: none !important;
                         background: #ffffff !important;
                         padding: 15px 25px !important;
                         box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;

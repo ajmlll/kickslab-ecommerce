@@ -994,14 +994,34 @@
                 gap: 40px;
             }
 
-            .product-info {
-                position: relative;
-                top: 0;
+            .product-gallery {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .main-image-container {
+                min-height: 350px;
+                width: 100%;
             }
 
             .gallery-thumbnails {
-                display: grid;
-                /* Re-enable thumbnails for mobile grid layout */
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 10px;
+                justify-content: flex-start;
+                gap: 15px;
+            }
+
+            .thumbnail {
+                width: 70px;
+                flex-shrink: 0;
+            }
+
+            .product-info {
+                position: relative;
+                top: 0;
             }
         }
 
@@ -1701,8 +1721,6 @@
     </script>
 
     <!-- Shared Scripts -->
-    <script src="user-auth-helper.js"></script>
-
     <script>
 
         // --- STOCK LIMIT MODAL SYSTEM ---
