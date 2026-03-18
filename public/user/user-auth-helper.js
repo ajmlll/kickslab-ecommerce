@@ -622,7 +622,7 @@ const AuthSystem = {
                     /* TOGGLE (HAMBURGER) -> FAR LEFT */
                     .nav-left { 
                         order: 1 !important; 
-                        flex: 0 0 auto !important;
+                        flex: 1 !important;
                         justify-content: flex-start !important;
                     }
                     .mobile-menu-btn {
@@ -637,7 +637,7 @@ const AuthSystem = {
                     /* LOGO -> CENTER */
                     .nav-center { 
                         order: 2 !important; 
-                        flex: 1 !important;
+                        flex: 0 0 auto !important;
                         justify-content: center !important; 
                         min-width: 0 !important;
                     }
@@ -661,7 +661,7 @@ const AuthSystem = {
                     /* ICONS -> FAR RIGHT */
                     .nav-right { 
                         order: 3 !important; 
-                        flex: 0 0 auto !important;
+                        flex: 1 !important;
                         justify-content: flex-end !important;
                     }
                     .nav-icons {
