@@ -443,8 +443,8 @@ const AuthSystem = {
             const curPage = window.location.pathname.split('/').pop() || 'Landingpage.html';
             linksList.innerHTML = `
                 <li><a href="Landingpage.html" class="${curPage === 'Landingpage.html' ? 'active' : ''}">Home</a></li>
-                <li><a href="ProductListing.html" class="protected-link ${curPage === 'ProductListing.html' ? 'active' : ''}">Shop</a></li>
-                <li><a href="Contact.html" class="protected-link ${curPage === 'Contact.html' ? 'active' : ''}">Contact</a></li>
+                <li><a href="ProductListing.html" class="${curPage === 'ProductListing.html' ? 'active' : ''}">Shop</a></li>
+                <li><a href="Contact.html" class="${curPage === 'Contact.html' ? 'active' : ''}">Contact</a></li>
                 <li><a href="AboutPage.html" class="${curPage === 'AboutPage.html' ? 'active' : ''}">About</a></li>
             `;
 
