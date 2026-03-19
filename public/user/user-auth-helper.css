@@ -192,50 +192,6 @@
     background-color: #ffebee;
 }
 
-/* Mobile Account Dropdown (Bottom Sheet Style) */
-@media (max-width: 767px) {
-    .account-dropdown-wrapper {
-        position: static; /* Let it break out of relative constraints */
-    }
-    .account-dropdown {
-        position: fixed;
-        top: auto;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        border-radius: 20px 20px 0 0;
-        padding: 20px 0 30px 0;
-        transform: translateY(110%);
-        box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
-        z-index: 9999;
-    }
-    .account-dropdown.active {
-        transform: translateY(0);
-    }
-    .account-dropdown::before {
-        display: none;
-    }
-    .account-dropdown::after {
-        content: '';
-        position: absolute;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40px;
-        height: 4px;
-        background: #e0e0e0;
-        border-radius: 2px;
-    }
-    .account-dropdown li a {
-        padding: 16px 25px;
-        font-size: 16px;
-    }
-    .account-dropdown li a i {
-        font-size: 18px;
-        margin-right: 10px;
-    }
-}
-
 /* 3. Navbar Badge Styles */
 .nav-icons a {
     position: relative;

@@ -829,24 +829,21 @@
         /* Apply Filters Button */
         .btn-apply-filters {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             background: black;
             color: white;
             border: 1px solid black;
             border-radius: 4px;
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 14px;
-            margin-top: 20px;
+            transition: all 0.3s ease;
             cursor: pointer;
-            transition: 0.2s;
-            display: none;
-            /* Hidden on Desktop */
         }
 
         .btn-apply-filters:hover {
             background: #333;
             border-color: #333;
+            color: white;
         }
 
         /* =========================================
@@ -955,7 +952,7 @@
             }
         }
 
-        /* MOBILE (Max 767px) - Grid 1 Col, Sidebar Hidden Toggled */
+        /* MOBILE (Max 768px) - Grid 1 Col, Sidebar Hidden Toggled */
         @media (max-width: 768px) {
             .mobile-filter-trigger {
                 display: block;
@@ -963,20 +960,19 @@
 
             .layout-grid {
                 display: block;
-                /* Stack Filter & Grid */
             }
 
-            /* Reset Sidebar from layout flow -> Hidden Block */
             .sidebar {
                 position: fixed;
                 top: 0;
                 left: -100%;
                 width: 100%;
                 height: 100%;
-                background: white;
-                z-index: 2000;
-                padding: 30px 20px;
+                background: white !important;
+                z-index: 5000 !important;
+                padding: 100px 20px 100px 20px;
                 overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
                 scroll-behavior: smooth;
                 transition: left 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
                 display: block !important;
@@ -987,21 +983,68 @@
                 left: 0;
             }
 
-            .product-grid {
-                grid-template-columns: 1fr;
-            }
-
-            /* Cart Overlay Hidden */
-            .cart-btn-overlay {
-                display: none !important;
-            }
-
             .sidebar-header-mobile {
                 display: flex;
                 justify-content: space-between;
-                margin-bottom: 30px;
-                font-weight: 700;
-                font-size: 18px;
+                align-items: center;
+                margin-bottom: 25px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .sidebar-close-btn {
+                position: fixed;
+                top: 25px;
+                right: 25px;
+                width: 45px;
+                height: 45px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 26px;
+                background: #000;
+                border-radius: 50%;
+                color: #fff;
+                cursor: pointer;
+                transition: all 0.2s;
+                z-index: 10000 !important;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                border: 2px solid #fff;
+            }
+
+            .sidebar-close-btn:hover {
+                background: #333;
+                transform: rotate(90deg);
+            }
+
+            .sidebar-footer-mobile {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #eee;
+            }
+
+            .btn-apply-filters {
+                width: 100% !important;
+                margin-top: 0 !important;
+            }
+
+            .btn-cancel-filters {
+                width: 100%;
+                padding: 15px;
+                background: #f8f9fa;
+                color: #333;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-weight: 600;
+                text-transform: uppercase;
+                cursor: pointer;
+            }
+
+            .hide-mobile {
+                display: none !important;
             }
         }
 
@@ -1287,9 +1330,11 @@
             </button>
 
             <aside class="sidebar" id="sidebar">
+                <button class="sidebar-close-btn" onclick="toggleFilters()" aria-label="Close filters">
+                    <i class="fas fa-times"></i>
+                </button>
                 <div class="sidebar-header-mobile">
                     <span>FILTERS</span>
-                    <button onclick="toggleFilters()"><i class="fas fa-times"></i></button>
                 </div>
 
                 <!-- Filter: Offers & Deals -->
@@ -1299,8 +1344,7 @@
                     <ul class="filter-checkbox-group" id="offerFilterList">
                         <li>
                             <input type="checkbox" id="offer_all" onchange="updateFilter('offers', 'all')">
-                            <label for="offer_all" class="checkbox-label"><span class="custom-check"></span> View all
-                                offers</label>
+                            <label for="offer_all" class="checkbox-label"><span class="custom-check"></span> View all offers</label>
                         </li>
                         <li>
                             <input type="checkbox" id="offer_discounts" onchange="updateFilter('offers', 'discounts')">
@@ -1358,8 +1402,13 @@
                     </div>
                 </div>
 
-                <!-- Apply Button -->
-                <button class="btn-apply-filters" onclick="applyFilterChanges()">Apply Filters</button>
+                <!-- Apply Button Container (Updated for Mobile) -->
+                <div class="sidebar-footer-mobile">
+                    <button class="btn-apply-filters" onclick="applyFilterChanges()">Apply Filters</button>
+                    <button class="btn-cancel-filters" onclick="toggleFilters()">Cancel / Close</button>
+                </div>
+
+                <button class="btn-apply-filters hide-mobile" onclick="applyFilterChanges()" style="margin-top: 30px;">Apply Filters</button>
             </aside>
 
             <!-- GRID COMPONENT -->
@@ -1852,7 +1901,7 @@
 
             // On mobile, close sidebar after apply and scroll to results
             if (window.innerWidth <= 1024) {
-                document.getElementById('sidebar').classList.remove('active');
+                window.toggleFilters();
                 const grid = document.getElementById('grid');
                 if (grid) {
                     window.scrollTo({
@@ -1941,21 +1990,23 @@
 
         function renderOffers() {
             const offerList = document.getElementById('offerFilterList');
-            if (offerList && state.allOffers && state.allOffers.length > 0) {
-                // Keep the static "Show All" and add dynamic ones
-                const staticHTML = `
-                    <li>
-                        <input type="checkbox" id="offer_all" onchange="updateFilter('offers', 'all')" ${state.filters.offers.includes('all') ? 'checked' : ''}>
-                        <label for="offer_all" class="checkbox-label"><span class="custom-check"></span> View all offers</label>
-                    </li>
-                    <li>
-                        <input type="checkbox" id="offer_discounts" onchange="updateFilter('offers', 'discounts')" ${state.filters.offers.includes('discounts') ? 'checked' : ''}>
-                        <label for="offer_discounts" class="checkbox-label"><span class="custom-check"></span> Discounts</label>
-                    </li>
-                    <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
-                `;
+            if (!offerList) return;
 
-                const dynamicHTML = state.allOffers.map(offer => {
+            const staticHTML = `
+                <li>
+                    <input type="checkbox" id="offer_all" onchange="updateFilter('offers', 'all')" ${state.filters.offers.includes('all') ? 'checked' : ''}>
+                    <label for="offer_all" class="checkbox-label"><span class="custom-check"></span> View all offers</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="offer_discounts" onchange="updateFilter('offers', 'discounts')" ${state.filters.offers.includes('discounts') ? 'checked' : ''}>
+                    <label for="offer_discounts" class="checkbox-label"><span class="custom-check"></span> Discounts</label>
+                </li>
+                <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
+            `;
+
+            let dynamicHTML = '';
+            if (state.allOffers && state.allOffers.length > 0) {
+                dynamicHTML = state.allOffers.map(offer => {
                     const isChecked = state.filters.offers.includes(offer.title) ? 'checked' : '';
                     return `
                     <li>
@@ -1964,9 +2015,9 @@
                     </li>
                     `;
                 }).join('');
-
-                offerList.innerHTML = staticHTML + dynamicHTML;
             }
+
+            offerList.innerHTML = staticHTML + dynamicHTML;
         }
 
         // UI Toggles
@@ -1974,7 +2025,14 @@
         // Filter Drawer Toggle
         window.toggleFilters = function () {
             const sidebar = document.getElementById('sidebar');
-            if (sidebar) sidebar.classList.toggle('active');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+                if (sidebar.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                } else {
+                    document.body.style.overflow = '';
+                }
+            }
         };
 
 

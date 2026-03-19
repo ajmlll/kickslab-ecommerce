@@ -11,6 +11,7 @@ router.put("/user-cancel/:orderId", protect, orderController.userCancelOrder);
 
 // Order Management
 router.get("/admin/all", protect, adminOnly, orderController.getAllOrders);
+router.get("/admin/:orderId", protect, adminOnly, orderController.getOrderDetails);
 // Only Editor or higher can update status
 router.put("/admin/:orderId/status", protect, adminOnly, orderController.updateOrderStatus);
 // Only Manager or higher can refund

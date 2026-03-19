@@ -166,7 +166,7 @@ const AuthSystem = {
     // --- UI UPDATES ---
 
     setupAccountDropdown: function () {
-        const userIcons = document.querySelectorAll('.fa-user, .fa-user-circle');
+        const userIcons = document.querySelectorAll('.nav-icons .fa-user, .nav-icons .fa-user-circle');
         userIcons.forEach(icon => {
             const link = icon.closest('a');
             if (!link || link.dataset.dropdownInited) return;
@@ -196,9 +196,10 @@ const AuthSystem = {
             link.onclick = (e) => {
                 e.preventDefault();
                 if (this.isLoggedIn()) {
-                    // Redirect directly to Profile on mobile, show drop down on desktop
-                    if (window.innerWidth <= 1023) {
-                        window.location.href = "Account.html";
+                    const curPage = window.location.pathname.split('/').pop();
+                    if (window.innerWidth <= 1023 && curPage === 'Account.html') {
+                        // Keep dropdown closed if already on Account.html on mobile (just reload or do nothing)
+                        window.location.reload();
                     } else {
                         this.toggleDropdown(link.parentNode.querySelector('.account-dropdown'));
                     }

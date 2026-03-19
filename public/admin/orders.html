@@ -1185,7 +1185,6 @@
             // All updates now require confirmation as requested
             let confirmMsg = `Are you sure you want to change the status of this order from ${currentStatus} to ${newStatus}?`;
 
-            // Special warnings for sensitive changes
             if (newStatus === 'Delivered') {
                 confirmMsg = "Are you sure you want to mark this order as Delivered? This will set the payment status to 'Paid' and is usually final.";
             } else if (currentStatus === 'Delivered') {
@@ -1194,7 +1193,7 @@
 
             const confirmed = await AdminModal.confirm(confirmMsg);
             if (!confirmed) {
-                fetchAdminOrders(); // Revert selection
+                fetchAdminOrders(currentPage);
                 return;
             }
 
@@ -1202,9 +1201,7 @@
                 const res = await fetch(`/api/orders/admin/${orderId}/status`, {
                     method: 'PUT',
                     credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status: newStatus })
                 });
 
@@ -1212,33 +1209,32 @@
                 if (!res.ok) throw new Error(data.message || "Failed to update status");
 
                 await AdminModal.alert("Order status updated successfully.", "success");
-                fetchAdminOrders(); // Refresh table
-            } catch (err) {
-                console.error(err);
-                AdminModal.alert("Update Failed: " + err.message, "error");
-                fetchAdminOrders(); // Revert selection
+                fetchAdminOrders(currentPage);
+            } catch (error) {
+                console.error("Error updating status:", error);
+                AdminModal.alert(error.message || "Failed to update status", "error");
+                fetchAdminOrders(currentPage);
             }
         }
 
-        // refundToWallet function removed (logic moved to backend automation)
-
         async function viewOrderDetails(orderId) {
+            const container = document.getElementById('modal-details-container');
+            container.innerHTML = 'Loading...';
+
             try {
-                // Fetch fresh data from API to see latest status/returns
-                const res = await fetch(`/api/orders/${orderId}`, { credentials: 'include' });
+                const res = await fetch(`/api/orders/admin/${orderId}`, {
+                    credentials: 'include'
+                });
+
+                if (!res.ok) throw new Error("Failed to fetch details");
+
                 const data = await res.json();
+                const order = data.order || data.data;
+                if (!order) throw new Error("Order not found");
 
-                if (!data.success) {
-                    throw new Error(data.error || "Failed to fetch details");
-                }
-
-                const order = data.order;
-                const container = document.getElementById('modal-details-container');
-                if (!container) return;
-
+                const addr = order.shippingAddress || {};
                 const date = new Date(order.createdAt).toLocaleDateString("en-GB");
 
-                let addr = order.shippingAddress || {};
                 let itemsHtml = (order.items || []).map(item => `
                     <div class="order-item">
                         <img src="${item.productImage || 'https://placehold.co/60x60'}" alt="${item.productName}" class="item-img" onerror="this.src='https://placehold.co/60x60'">
@@ -1249,7 +1245,6 @@
                     </div>
                 `).join('');
 
-                const isCancelled = order.orderStatus === 'Cancelled';
                 const isRefunded = order.paymentStatus === 'Refunded';
 
                 // Get appropriate status badge class
