@@ -940,52 +940,6 @@
             color: #666;
         }
 
-        /* Newsletter */
-        .newsletter-section {
-            background-color: #f0f0f0;
-            padding: 80px 0;
-            text-align: center;
-        }
-
-        .newsletter-content {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .newsletter-title {
-            font-family: var(--font-heading);
-            font-size: 36px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
-        .newsletter-sub {
-            color: #666;
-            margin-bottom: 30px;
-        }
-
-        .newsletter-form {
-            display: flex;
-            gap: 10px;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .newsletter-input {
-            flex: 1;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .btn-subscribe {
-            background: var(--color-black);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 4px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
 
         /* Responsive */
         @media (max-width: 900px) {
@@ -1684,40 +1638,7 @@
     <!-- LOGIC -->
     <script>
         // --- DATA LAYER (Combined) ---
-        let productsDB = [
-            { id: 1, name: "Nike Air Zoom Pegasus", brand: "Nike", category: "Running", price: 120.00, image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=2012", rating: 210, badge: "NEW", color: "Black" },
-            { id: 2, name: "Adidas Ultraboost", brand: "Adidas", category: "Running", price: 180.00, image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=2574", rating: 154, badge: "HOT", color: "White" },
-            { id: 3, name: "Nike Air Max 270", brand: "Nike", category: "Sport", price: 150.00, image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1974", rating: 89, badge: null, color: "Blue" },
-            { id: 4, name: "NB Numeric 480", brand: "New Balance", category: "Casual", price: 160.00, image: "https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=2670", rating: 18, badge: "NEW", color: "Green" },
-            { id: 5, name: "Nike Free Run", brand: "Nike", category: "Running", price: 110.00, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2670", rating: 305, badge: null, color: "Red" },
-            { id: 6, name: "Adidas Ozelia", brand: "Adidas", category: "Casual", price: 125.00, image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=2400", rating: 67, badge: "SALE", color: "White" },
-            { id: 7, name: "Puma RS-X", brand: "Puma", category: "Sport", price: 110.00, image: "https://images.unsplash.com/photo-1588117260148-447585eb6a89?q=80&w=2574", rating: 120, badge: null, color: "Blue" },
-            { id: 8, name: "Jordan Retro High", brand: "Jordan", category: "Sport", price: 190.00, image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=2012&auto=format&fit=crop", rating: 450, badge: "HOT", color: "Red" },
-            { id: 9, name: "Vans Old Skool", brand: "Vans", category: "Casual", price: 75.00, image: "https://images.unsplash.com/photo-1525966222134-fcfa99d8ae77?q=80&w=2598", rating: 890, badge: null, color: "Black" },
-            { id: 10, name: "Converse Chuck 70", brand: "Converse", category: "Casual", price: 90.00, image: "https://images.unsplash.com/photo-1620619767323-b95a89183081?q=80&w=2670", rating: 520, badge: "SALE", color: "White" },
-            { id: 11, name: "New Balance 574", brand: "New Balance", category: "Casual", price: 95.00, image: "https://images.unsplash.com/photo-1539185441755-769473a23570?q=80&w=2671", rating: 145, badge: null, color: "Black" },
-            { id: 12, name: "Reebok Club C", brand: "Reebok", category: "Casual", price: 85.00, image: "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=2535", rating: 200, badge: null, color: "White" },
-            { id: 13, name: "Nike Dunk Low", brand: "Nike", category: "Sport", price: 115.00, image: "https://images.unsplash.com/photo-1597045566677-8cf032ed6634?q=80&w=2487", rating: 602, badge: "NEW", color: "Yellow" },
-            { id: 14, name: "Adidas Stan Smith", brand: "Adidas", category: "Casual", price: 100.00, image: "https://images.unsplash.com/photo-1587563871167-1ee9c731aef4?q=80&w=2631", rating: 410, badge: null, color: "White" },
-            { id: 15, name: "Asics Gel-Kayano", brand: "Asics", category: "Running", price: 160.00, image: "https://images.unsplash.com/photo-1584735175315-9d5df23860e6?q=80&w=2487", rating: 180, badge: "HOT", color: "Blue" },
-            { id: 16, name: "Yeezy Boost 350", brand: "Adidas", category: "Casual", price: 230.00, image: "https://images.unsplash.com/photo-1584735174965-48c48d7edfde?q=80&w=2487", rating: 999, badge: null, color: "Grey" },
-            { id: 17, name: "Nike Air Force 1", brand: "Nike", category: "Casual", price: 110.00, image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1974", rating: 540, badge: "NEW", color: "White" },
-            { id: 18, name: "Puma Suede", brand: "Puma", category: "Casual", price: 70.00, image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=2574", rating: 230, badge: null, color: "Red" },
-            { id: 19, name: "New Balance 990", brand: "New Balance", category: "Running", price: 185.00, image: "https://images.unsplash.com/photo-1539185441755-769473a23570?q=80&w=2671", rating: 412, badge: null, color: "Grey" },
-            { id: 20, name: "Adidas Forum Low", brand: "Adidas", category: "Sport", price: 100.00, image: "https://images.unsplash.com/photo-1588117260148-447585eb6a89?q=80&w=2574", rating: 88, badge: "SALE", color: "Blue" },
-            { id: 21, name: "Nike Blazer Mid", brand: "Nike", category: "Casual", price: 105.00, image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=2012&auto=format&fit=crop", rating: 320, badge: null, color: "White" },
-            { id: 22, name: "Vans Sk8-Hi", brand: "Vans", category: "Casual", price: 80.00, image: "https://images.unsplash.com/photo-1525966222134-fcfa99d8ae77?q=80&w=2598", rating: 450, badge: null, color: "Black" },
-            { id: 23, name: "Converse Run Star", brand: "Converse", category: "Casual", price: 110.00, image: "https://images.unsplash.com/photo-1620619767323-b95a89183081?q=80&w=2670", rating: 120, badge: "HOT", color: "Black" },
-            { id: 24, name: "Reebok Classic", brand: "Reebok", category: "Casual", price: 75.00, image: "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=2535", rating: 215, badge: null, color: "White" },
-            { id: 25, name: "Saucony Jazz", brand: "Saucony", category: "Running", price: 80.00, image: "https://images.unsplash.com/photo-1539185441755-769473a23570?q=80&w=2671", rating: 95, badge: null, color: "Blue" },
-            { id: 26, name: "Hoka Clifton 8", brand: "Hoka", category: "Running", price: 140.00, image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1974", rating: 310, badge: "NEW", color: "Blue" },
-            { id: 27, name: "Brooks Ghost 14", brand: "Brooks", category: "Running", price: 130.00, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2670", rating: 400, badge: null, color: "Black" },
-            { id: 28, name: "Under Armour HOVR", brand: "Under Armour", category: "Sport", price: 120.00, image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=2400", rating: 150, badge: null, color: "Red" },
-            { id: 29, name: "Fila Disruptor", brand: "Fila", category: "Casual", price: 65.00, image: "https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=2670", rating: 670, badge: "SALE", color: "White" },
-            { id: 30, name: "Timberland Boot", brand: "Timberland", category: "Hiking", price: 198.00, image: "https://images.unsplash.com/photo-1525966222134-fcfa99d8ae77?q=80&w=2598", rating: 890, badge: null, color: "Yellow" },
-            { id: 31, name: "Dr Martens 1460", brand: "Dr Martens", category: "Hiking", price: 170.00, image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=2574", rating: 1250, badge: null, color: "Black" },
-            { id: 32, name: "Salomon XT-6", brand: "Salomon", category: "Hiking", price: 190.00, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2670", rating: 45, badge: "HOT", color: "Black" }
-        ];
+        let productsDB = [];
     </script>
 
     <!-- Shared Scripts -->
