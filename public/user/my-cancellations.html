@@ -931,7 +931,10 @@
             const emptyState = document.getElementById('empty-state');
 
             try {
-                const res = await fetch('/api/orders/my-orders', { credentials: 'include' });
+                const res = await fetch('/api/orders/my-orders?t=' + new Date().getTime(), { 
+                    credentials: 'include',
+                    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+                });
 
                 if (res.status === 401) {
                     window.location.href = 'Landingpage.html?action=auth';

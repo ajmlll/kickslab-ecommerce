@@ -1,18 +1,27 @@
+// ============================================================================
+// 1. Imports
+// ============================================================================
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const passport = require("./config/passport.config");
+const jwt = require("jsonwebtoken");
+
+// Custom Middlewares & Error Handling
 const AppError = require("./utils/AppError");
 const globalErrorHandler = require("./controllers/error.controller");
 const { protectStatic } = require("./middlewares/staticAuth.middleware");
 
-const session = require("express-session");
-const passport = require("./config/passport.config");
-
+// ============================================================================
+// 2. App Initialization
+// ============================================================================
 const app = express();
 
-// --- 1. Global Middlewares ---
-
+// ============================================================================
+// 3. Security Middlewares
+// ============================================================================
 // Content Security Policy (Must be early to apply to static files)
 app.use((req, res, next) => {
     res.setHeader(
@@ -29,17 +38,22 @@ app.use((req, res, next) => {
     next();
 });
 
+// CORS Configuration
 app.use(cors({
     origin: true,
     credentials: true
 }));
 
-// Body parser
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// ============================================================================
+// 4. Body Parsers & Cookies
+// ============================================================================
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 
-// Session and Passport
+// ============================================================================
+// 5. Session & Passport Setup
+// ============================================================================
 app.use(session({
     secret: process.env.SESSION_SECRET || 'kickslab-secret',
     resave: false,
@@ -52,12 +66,18 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// ============================================================================
+// 6. Static Files & Protection
+// ============================================================================
 // Static Files Protection (After cookieParser, before static)
 app.use(protectStatic);
 
-// Static Files
+// Serve Static Files
 app.use(express.static(path.join(__dirname, "public")));
 
+// ============================================================================
+// 7. Development Tools
+// ============================================================================
 // Request Logging (Development Only)
 if (process.env.NODE_ENV === 'development') {
     app.use((req, res, next) => {
@@ -66,31 +86,27 @@ if (process.env.NODE_ENV === 'development') {
     });
 }
 
+// ============================================================================
+// 8. Routes
+// ============================================================================
 
-// --- 2. Routes ---
+// --- UI Redirects (Legacy support) ---
+app.get("/", (req, res) => res.redirect("/user/Landingpage.html"));
+app.get("/verify-email", (req, res) => res.sendFile(path.join(__dirname, "public/user/otp-verification.html")));
+app.get("/user", (req, res) => res.sendFile(path.join(__dirname, "public/user/Landingpage.html")));
+app.get("/default", (req, res) => res.redirect("/user/Landingpage.html"));
 
-// Specific UI Redirects (Legacy support)
-app.get("/", (req, res) => {
-    res.redirect("/user/Landingpage.html");
-    
-});
-app.get("/verify-email", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/user/otp-verification.html"));
-});
-app.get("/user", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/user/Landingpage.html"));
-});
-app.get("/default", (req, res) => {
-    res.redirect("/user/Landingpage.html");
-});
-
-// API Routes
+// --- User API Routes ---
 app.use("/api/users", require("./routes/userAuth.routes"));
 app.use("/api/users/profile", require("./routes/userProfile.routes"));
+
+// --- Admin API Routes ---
 app.use("/api/admin", require("./routes/category.routes"));
 app.use("/api/admin", require("./routes/brand.routes"));
 app.use("/api/admin", require("./routes/product.routes"));
 app.use("/api/admin", require("./routes/admin.routes"));
+
+// --- E-Commerce API Routes ---
 app.use("/api/cart", require("./routes/cart.routes"));
 app.use("/api/wishlist", require("./routes/wishlist.routes"));
 app.use("/api/orders", require("./routes/order.routes"));
@@ -103,7 +119,9 @@ app.use("/api/wallet", require("./routes/wallet.routes"));
 app.use("/api", require("./routes/offer.routes"));
 app.use("/api/contact", require("./routes/contact.routes"));
 
-// --- Google OAuth Routes ---
+// ============================================================================
+// 9. OAuth Routes (Google)
+// ============================================================================
 app.get("/auth/google", (req, res, next) => {
     if (req.query.remember) {
         req.session.googleRememberMe = req.query.remember === 'true';
@@ -114,12 +132,10 @@ app.get("/auth/google", (req, res, next) => {
 app.get("/auth/google/callback",
     passport.authenticate("google", { failureRedirect: "/user/login.html?error=google_failed" }),
     (req, res) => {
-        // Successful authentication
         const user = req.user;
         const rememberMe = req.session.googleRememberMe;
-
+        
         // Generate JWT (same as normal login)
-        const jwt = require("jsonwebtoken");
         const token = jwt.sign(
             { id: user._id, role: user.role },
             process.env.JWT_SECRET,
@@ -127,7 +143,6 @@ app.get("/auth/google/callback",
         );
 
         const cookieName = user.role === "admin" ? "adminToken" : "token";
-
         const cookieOptions = {
             httpOnly: true,
             sameSite: "lax",
@@ -149,8 +164,9 @@ app.get("/auth/google/callback",
     }
 );
 
-// --- 3. 404 Handlers ---
-
+// ============================================================================
+// 10. 404 Handlers
+// ============================================================================
 // Handle undefined API routes (Forward to global error handler)
 app.all('/api/*', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
@@ -161,7 +177,9 @@ app.all('*', (req, res) => {
     res.status(404).sendFile(path.join(__dirname, 'public/404.html'));
 });
 
-// --- 4. Global Error Handling Middleware ---
+// ============================================================================
+// 11. Global Error Handler
+// ============================================================================
 app.use(globalErrorHandler);
 
 module.exports = app;

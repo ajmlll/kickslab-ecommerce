@@ -202,11 +202,20 @@ const createReturnRequest = catchAsync(async (req, res, next) => {
         return next(new AppError('Order not found or access denied', 404));
     }
 
-    // Check 7-day return window
+    // Check 7-day return window from delivery date
+    if (!order.deliveredAt && order.orderStatus === 'Delivered') {
+        // Fallback if legacy order lacks deliveredAt but is delivered
+        order.deliveredAt = order.updatedAt;
+    }
+
+    if (!order.deliveredAt) {
+        return next(new AppError('Returns can only be requested after the order has been delivered.', 400));
+    }
+
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    if (new Date(order.createdAt) < sevenDaysAgo) {
-        return next(new AppError('Return policy exceeded: Returns are only allowed within 7 days of order placement.', 400));
+    if (new Date(order.deliveredAt) < sevenDaysAgo) {
+        return next(new AppError('Return policy exceeded: Returns are only allowed within 7 days of delivery.', 400));
     }
 
     // Create return request

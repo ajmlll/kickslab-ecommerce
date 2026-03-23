@@ -315,6 +315,9 @@ exports.updateOrderStatus = catchAsync(async (req, res, next) => {
 
     if (status === "Delivered") {
         order.paymentStatus = "Paid";
+        if (!order.deliveredAt) {
+            order.deliveredAt = new Date();
+        }
     }
 
     await order.save();

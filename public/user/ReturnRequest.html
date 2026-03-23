@@ -1211,6 +1211,24 @@
                 if (!res.ok) throw new Error(data.error || 'Failed to fetch order');
 
                 currentOrder = data.order;
+
+                const passDate = currentOrder.deliveredAt || currentOrder.updatedAt;
+                if (!passDate) {
+                    alert('Returns can only be requested after the order has been delivered.');
+                    window.location.href = 'MyOrders.html';
+                    return;
+                }
+
+                const deliveryDate = new Date(passDate);
+                const sevenDaysAgo = new Date();
+                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+                if (deliveryDate < sevenDaysAgo) {
+                    alert('Returns are only allowed within 7 days of delivery. This order has exceeded the return window.');
+                    window.location.href = 'MyOrders.html';
+                    return;
+                }
+
                 renderProductPreview(currentOrder, selectedProductId);
                 
                 // Pre-fill pickup address from shipping address
@@ -1227,28 +1245,57 @@
 
         function renderProductPreview(order, productId) {
             const previewContainer = document.querySelector('.product-card-preview');
-            // If productId is provided, show that specific item. Otherwise show the first item or allow selection (simplified: show first).
             const items = order.items;
-            const item = productId ? items.find(i => i.product === productId) : items[0];
+            let item = productId ? items.find(i => i.product.toString() === productId.toString()) : items[0];
+            if (!item) item = items[0];
 
             if (!item) {
                 previewContainer.innerHTML = '<p style="padding: 20px;">Item not found in this order.</p>';
                 return;
             }
 
+            selectedProductId = item.product;
+
+            let selectionHtml = '';
+            if (items.length > 1) {
+                selectionHtml = `
+                    <div style="width: 100%; margin-bottom: 20px; text-align: left;">
+                        <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px;">Select Product to Return</label>
+                        <select class="form-select" id="productSelector" onchange="changeProduct(this.value)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 14px; margin-bottom: 10px; background-color: #f9f9f9;">
+                            ${items.map(i => `
+                                <option value="${i.product}" ${i.product.toString() === selectedProductId.toString() ? 'selected' : ''}>
+                                    ${i.productName} (Size: ${i.size})
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+
+            previewContainer.style.flexDirection = 'column';
+            previewContainer.style.alignItems = 'flex-start';
+
             previewContainer.innerHTML = `
-        <div class="preview-img">
-            <img src="${item.productImage || 'https://via.placeholder.com/70'}" alt="${item.productName}" onerror="this.src='https://via.placeholder.com/70'">
-        </div>
-        <div class="preview-details">
-            <h4>${item.productName}</h4>
-            <p>Size: ${item.size}</p>
-            <p style="margin-top: 5px; font-weight: 600;">₹${item.price.toFixed(2)}</p>
+        ${selectionHtml}
+        <div style="display: flex; gap: 20px; align-items: center; width: 100%; text-align: left;">
+            <div class="preview-img" style="width: 80px; height: 80px; background: #f9f9f9; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid #eee;">
+                <img src="${item.productImage || 'https://via.placeholder.com/80'}" alt="${item.productName}" onerror="this.src='https://via.placeholder.com/80'" style="max-width: 100%; max-height: 100%; object-fit: cover;">
+            </div>
+            <div class="preview-details">
+                <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 5px;">${item.productName}</h4>
+                <p style="font-size: 13px; color: #666; margin-bottom: 4px;">Size: ${item.size}</p>
+                <p style="font-size: 14px; font-weight: 600; color: #000;">₹${item.price.toFixed(2)}</p>
+            </div>
         </div>
         `;
 
             // Store selected item for submission
             previewContainer.dataset.itemJson = JSON.stringify(item);
+        }
+
+        function changeProduct(newProductId) {
+            selectedProductId = newProductId;
+            renderProductPreview(currentOrder, selectedProductId);
         }
 
         async function submitReturn(e) {
@@ -1297,7 +1344,7 @@
                 });
 
                 const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Failed to submit return request');
+                if (!res.ok) throw new Error(data.message || data.error || 'Failed to submit return request');
 
                 // Show Success Modal
                 document.getElementById('successModal').classList.add('active');

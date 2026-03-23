@@ -1,72 +1,90 @@
-require("dotenv").config(); // ✅ Initialize environment variables FIRST
-
-const http = require("http");
+// ============================================================================
+// a) Imports
+// ============================================================================
+require("dotenv").config(); // Must be first to load env vars for other imports
 const connectDB = require("./config/db");
 const app = require("./app");
 
-/**
- * Main Server Entry Point
- */
-const bootstrap = async () => {
+// ============================================================================
+// b) Config
+// ============================================================================
+const PORT = process.env.PORT || 5000;
+const ENV = process.env.NODE_ENV || "development";
+let server;
+
+// ============================================================================
+// c) Start Server Function
+// ============================================================================
+const startServer = async () => {
   try {
-    // 1. Connect to MongoDB
+    // Connect to Database
     await connectDB();
-    console.log("✔ MongoDB Connected");
+    console.log("✔ Database connection established.");
 
-    // 2. Create HTTP Server
-    const server = http.createServer(app);
-    const PORT = process.env.PORT || 5000;
-
-    // 3. Start Server
-    server.listen(PORT, () => {
-      console.log(`🚀 Server running on:${PORT}`);
-      console.log(`⚙ Environment: ${process.env.NODE_ENV || 'development'}`);
+    // Start Express App
+    server = app.listen(PORT, () => {
+      console.log(`🚀 Server running on port: ${PORT} [${ENV}]`);
     });
 
-    // Handle port conflicts properly
+    // Handle Port Conflicts and Server Errors
     server.on("error", (error) => {
       if (error.code === "EADDRINUSE") {
-        console.error(`Port ${PORT} is already in use. Stop the other process or change the PORT.`);
+        console.error(`❌ Port ${PORT} is already in use. Please free the port and restart.`);
         process.exit(1);
+      } else {
+        console.error("❌ Server encountered an error:", error);
       }
     });
 
-    /**
-     * Graceful Shutdown Handlers
-     */
-    const shutdown = async (signal) => {
-      console.log(`\n${signal} received. Closing server...`);
-      server.close(() => {
-        console.log("✔ Server closed cleanly.");
-        process.exit(0);
-      });
-      // Force exit after 3s if server.close hangs
-      setTimeout(() => process.exit(1), 3000).unref();
-    };
-
-    process.on("SIGINT", () => shutdown("SIGINT"));
-    process.on("SIGTERM", () => shutdown("SIGTERM"));
-
   } catch (error) {
-    console.error("❌ Failed to start server:", error.message);
+    console.error("❌ Failed to start the server:", error.message);
     process.exit(1);
   }
 };
 
-/**
- * Global Error Guards
- */
+// Initialize the server
+startServer();
+
+// ============================================================================
+// d) Shutdown Logic
+// ============================================================================
+const shutdownServer = (signal, exitCode = 0) => {
+  console.log(`\n🛑 Received ${signal}. Initiating graceful shutdown...`);
+  
+  if (server) {
+    server.close(() => {
+      console.log("✔ HTTP server closed.");
+      process.exit(exitCode);
+    });
+  } else {
+    process.exit(exitCode);
+  }
+
+  // Force close after 5 seconds if connections linger
+  setTimeout(() => {
+    console.error("❌ Graceful shutdown timed out. Forcing exit.");
+    process.exit(1);
+  }, 5000).unref();
+};
+
+// ============================================================================
+// e) Process Handlers
+// ============================================================================
+
+// Graceful termination signals
+process.on("SIGINT", () => shutdownServer("SIGINT", 0));
+process.on("SIGTERM", () => shutdownServer("SIGTERM", 0));
+
+// Unhandled Promise Rejections
 process.on("unhandledRejection", (err) => {
   console.error("💥 UNHANDLED REJECTION! Shutting down...");
   console.error(err.name, err.message);
-  process.exit(1);
+  shutdownServer("UNHANDLED REJECTION", 1);
 });
 
+// Uncaught Exceptions
 process.on("uncaughtException", (err) => {
   console.error("💥 UNCAUGHT EXCEPTION! Shutting down...");
   console.error(err.name, err.message);
   process.exit(1);
 });
-
-// Run Bootstrap
-bootstrap();

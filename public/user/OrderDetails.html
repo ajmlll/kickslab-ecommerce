@@ -572,12 +572,13 @@
                 let reviewBtnHtml = '';
                 // Only show links if Delivered AND NO active return
                 if (order.orderStatus === 'Delivered' && !hasActiveReturn) {
+                    const passDate = order.deliveredAt || order.updatedAt;
                     reviewBtnHtml = `
                         <div style="margin-top: 10px; display: flex; gap: 15px;">
                             <a href="write-review.html?orderId=${order._id}&productId=${item.product}" style="font-size: 12px; color: var(--color-accent); text-decoration: underline; font-weight: 600;">
                                 Write a Review
                             </a>
-                            <a href="#" onclick="checkReturnPolicy(event, '${order.createdAt}', '${order._id}', '${item.product}')" style="font-size: 12px; color: #6c757d; text-decoration: underline; font-weight: 600;">
+                            <a href="#" onclick="checkReturnPolicy(event, '${passDate}', '${order._id}', '${item.product}')" style="font-size: 12px; color: #6c757d; text-decoration: underline; font-weight: 600;">
                                 Return Item
                             </a>
                         </div>
@@ -824,14 +825,22 @@
             document.getElementById('error-msg').textContent = msg;
         }
 
-        function checkReturnPolicy(e, createdAt, orderId, productId) {
+        function checkReturnPolicy(e, deliveryDateStr, orderId, productId) {
             e.preventDefault();
-            const orderDate = new Date(createdAt);
+            
+            if (!deliveryDateStr || deliveryDateStr === 'undefined') {
+                showPolicyModal();
+                document.getElementById('policyModalMsg').textContent = "Returns can only be requested after the order has been delivered.";
+                return;
+            }
+
+            const deliveryDate = new Date(deliveryDateStr);
             const sevenDaysAgo = new Date();
             sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-            if (orderDate < sevenDaysAgo) {
+            if (deliveryDate < sevenDaysAgo) {
                 showPolicyModal();
+                document.getElementById('policyModalMsg').textContent = "Returns are only allowed within 7 days of delivery. This order has exceeded the return window.";
                 return;
             }
             window.location.href = `ReturnRequest.html?orderId=${orderId}&productId=${productId}`;

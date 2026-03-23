@@ -1207,7 +1207,10 @@
             const container = document.getElementById('orders-container');
 
             try {
-                const res = await fetch('/api/orders/my-orders', { credentials: 'include' });
+                const res = await fetch('/api/orders/my-orders?t=' + new Date().getTime(), { 
+                    credentials: 'include',
+                    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+                });
 
                 if (res.status === 401) {
                     window.location.href = 'Landingpage.html?action=auth';
@@ -1306,7 +1309,7 @@
                     }
 
                     html += `
-                        <div class="order-card" id="order-${order._id}" data-created-at="${order.createdAt}">
+                        <div class="order-card" id="order-${order._id}" data-delivered-at="${order.deliveredAt || order.updatedAt || ''}">
                             <div class="order-header">
                                 <div class="order-info">
                                     <h4>Order #${displayId}</h4>
@@ -1359,15 +1362,19 @@
             const orderCard = document.getElementById(`order-${orderId}`);
             if (!orderCard) return;
 
-            const createdAtStr = orderCard.getAttribute('data-created-at');
-            const createdAt = new Date(createdAtStr);
+            const deliveredAtStr = orderCard.getAttribute('data-delivered-at');
+            if (!deliveredAtStr) {
+                showPolicyModal("Returns can only be requested after the order has been delivered.");
+                return;
+            }
 
+            const deliveredAt = new Date(deliveredAtStr);
             const now = new Date();
-            const diffTime = Math.abs(now - createdAt);
+            const diffTime = Math.abs(now - deliveredAt);
             const diffDays = diffTime / (1000 * 60 * 60 * 24);
 
             if (diffDays > 7) {
-                showPolicyModal("Returns are only allowed within 7 days of order placement. This order has exceeded our return policy window.");
+                showPolicyModal("Returns are only allowed within 7 days of delivery. This order has exceeded our return policy window.");
                 return;
             }
 

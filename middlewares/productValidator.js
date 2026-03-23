@@ -100,7 +100,15 @@ exports.validateProduct = async (req, res, next) => {
                 // If gallery is being updated, use the provided existingGallery list
                 if (galleryUpdate === 'true') {
                     if (existingGallery) {
-                        existingCount += Array.isArray(existingGallery) ? existingGallery.length : 1;
+                        let parsedGallery = existingGallery;
+                        if (typeof existingGallery === 'string') {
+                            try {
+                                parsedGallery = JSON.parse(existingGallery);
+                            } catch (e) {
+                                parsedGallery = [existingGallery];
+                            }
+                        }
+                        existingCount += Array.isArray(parsedGallery) ? parsedGallery.length : 1;
                     }
                 } else {
                     // If no explicit gallery update, assume all current gallery images are kept

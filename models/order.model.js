@@ -67,6 +67,9 @@ const orderSchema = new mongoose.Schema(
             enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
             default: "Pending",
         },
+        deliveredAt: {
+            type: Date,
+        },
         totalMRP: {
             type: Number,
         },

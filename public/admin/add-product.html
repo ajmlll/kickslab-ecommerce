@@ -575,7 +575,8 @@
                                 <div class="form-group">
                                     <label class="form-label">Discount</label>
                                     <select id="discountType" class="form-select">
-                                        <option value="percentage">Percent (%)</option>
+                                        <option value="none">None</option>
+                                        <option value="percent">Percent (%)</option>
                                         <option value="fixed">Fixed (₹)</option>
                                     </select>
                                 </div>
@@ -746,10 +747,12 @@
                 const discVal = parseFloat(discountValueInput.value) || 0;
                 let final = base;
 
-                if (discType === 'percentage') {
+                if (discType === 'percent') {
                     final = base - (base * (discVal / 100));
-                } else {
+                } else if (discType === 'fixed') {
                     final = base - discVal;
+                } else {
+                    final = base;
                 }
                 finalPriceInput.value = Math.max(0, final).toFixed(2);
             };
