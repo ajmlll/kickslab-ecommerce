@@ -212,10 +212,13 @@ exports.getUserOrders = catchAsync(async (req, res, next) => {
     const returns = await Return.find({ userId });
 
     const ordersWithReturns = orders.map(order => {
-        const returnReq = returns.find(r => r.orderId.toString() === order._id.toString());
+        const orderReturns = returns.filter(r => r.orderId.toString() === order._id.toString() && r.status !== 'Cancelled');
+        const returnReq = orderReturns.length > 0 ? orderReturns[0] : null;
+        const returnedProductIds = orderReturns.flatMap(r => r.items.map(i => i.product.toString()));
         return {
             ...order,
-            returnRequest: returnReq || null
+            returnRequest: returnReq || null,
+            returnedProductIds
         };
     });
 
@@ -416,8 +419,9 @@ exports.getOrderDetails = catchAsync(async (req, res, next) => {
         return next(new AppError("Order not found.", 404));
     }
 
-    const returnRequest = await Return.findOne({ orderId }).lean();
-    order.returnRequest = returnRequest || null;
+    const returnRequests = await Return.find({ orderId, status: { $ne: 'Cancelled' } }).lean();
+    order.returnRequest = returnRequests.length > 0 ? returnRequests[0] : null;
+    order.returnedProductIds = returnRequests.flatMap(r => r.items.map(item => item.product.toString()));
 
     res.status(200).json({ success: true, order });
 });

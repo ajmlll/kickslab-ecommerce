@@ -218,6 +218,16 @@ const createReturnRequest = catchAsync(async (req, res, next) => {
         return next(new AppError('Return policy exceeded: Returns are only allowed within 7 days of delivery.', 400));
     }
 
+    // Check if any item to be returned has already been returned
+    const existingReturns = await Return.find({ orderId, status: { $ne: 'Cancelled' } }).lean();
+    const returnedProductIds = existingReturns.flatMap(r => r.items.map(i => i.product.toString()));
+    
+    for (const item of items) {
+        if (returnedProductIds.includes(item.product.toString())) {
+             return next(new AppError('One or more of these products have already been returned or have a pending return request.', 400));
+        }
+    }
+
     // Create return request
     const returnReq = new Return({
         orderId,

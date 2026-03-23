@@ -1290,21 +1290,30 @@
                     let returnNoteHtml = '';
 
                     if (order.orderStatus === 'Delivered') {
-                        if (order.returnRequest && order.returnRequest.status !== 'Rejected') {
-                            // If return is submitted (Pending, Approved, Refunded), hide review/return and show note
+                        const returnedCount = order.returnedProductIds ? order.returnedProductIds.length : 0;
+                        if (returnedCount >= order.items.length) {
+                            postDeliveryActions = `
+                                <button class="btn-order-action btn-review" onclick="writeReview('${order._id}')" style="width: 100%;">Write Review</button>
+                            `;
                             returnNoteHtml = `
                                 <p style="color: #4285F4; font-size: 13px; font-weight: 600; margin-top: 10px; text-align: center;">
-                                    <i class="fas fa-info-circle"></i> The return request is processing. You can check status in my returns
+                                    <i class="fas fa-info-circle"></i> All Items Returned or Requested.
                                 </p>
                             `;
                         } else {
-                            // Show buttons if no return or if rejected
                             postDeliveryActions = `
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;">
                                     <button class="btn-order-action btn-review" onclick="writeReview('${order._id}')">Write Review</button>
                                     <button class="btn-order-action btn-return" onclick="returnOrder('${order._id}')">Return Order</button>
                                 </div>
                             `;
+                            if (returnedCount > 0) {
+                                returnNoteHtml = `
+                                    <p style="color: #4285F4; font-size: 13px; font-weight: 600; margin-top: 10px; text-align: center;">
+                                        <i class="fas fa-info-circle"></i> Partial Return Requested.
+                                    </p>
+                                `;
+                            }
                         }
                     }
 

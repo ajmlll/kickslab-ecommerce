@@ -1246,7 +1246,16 @@
         function renderProductPreview(order, productId) {
             const previewContainer = document.querySelector('.product-card-preview');
             const items = order.items;
-            let item = productId ? items.find(i => i.product.toString() === productId.toString()) : items[0];
+            const returnedIds = order.returnedProductIds || [];
+            
+            const unreturnedItems = items.filter(i => !returnedIds.includes(i.product.toString()));
+            
+            let item = productId ? items.find(i => i.product.toString() === productId.toString()) : unreturnedItems[0];
+            
+            // If selected item is already returned fallback to another
+            if (item && returnedIds.includes(item.product.toString()) && unreturnedItems.length > 0) {
+                item = unreturnedItems[0];
+            }
             if (!item) item = items[0];
 
             if (!item) {
@@ -1255,6 +1264,7 @@
             }
 
             selectedProductId = item.product;
+            const isItemReturned = returnedIds.includes(item.product.toString());
 
             let selectionHtml = '';
             if (items.length > 1) {
@@ -1262,11 +1272,13 @@
                     <div style="width: 100%; margin-bottom: 20px; text-align: left;">
                         <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px;">Select Product to Return</label>
                         <select class="form-select" id="productSelector" onchange="changeProduct(this.value)" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 14px; margin-bottom: 10px; background-color: #f9f9f9;">
-                            ${items.map(i => `
-                                <option value="${i.product}" ${i.product.toString() === selectedProductId.toString() ? 'selected' : ''}>
-                                    ${i.productName} (Size: ${i.size})
-                                </option>
-                            `).join('')}
+                            ${items.map(i => {
+                                const isRet = returnedIds.includes(i.product.toString());
+                                const sel = i.product.toString() === selectedProductId.toString() ? 'selected' : '';
+                                const dis = isRet ? 'disabled style="color:#aaa;"' : '';
+                                const txt = i.productName + ' (Size: ' + i.size + ')' + (isRet ? ' - Already Returned' : '');
+                                return '<option value="' + i.product + '" ' + sel + ' ' + dis + '>' + txt + '</option>';
+                            }).join('')}
                         </select>
                     </div>
                 `;
@@ -1277,7 +1289,7 @@
 
             previewContainer.innerHTML = `
         ${selectionHtml}
-        <div style="display: flex; gap: 20px; align-items: center; width: 100%; text-align: left;">
+        <div style="display: flex; gap: 20px; align-items: center; width: 100%; text-align: left; ${isItemReturned ? 'opacity: 0.5;' : ''}">
             <div class="preview-img" style="width: 80px; height: 80px; background: #f9f9f9; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid #eee;">
                 <img src="${item.productImage || 'https://via.placeholder.com/80'}" alt="${item.productName}" onerror="this.src='https://via.placeholder.com/80'" style="max-width: 100%; max-height: 100%; object-fit: cover;">
             </div>
@@ -1285,12 +1297,26 @@
                 <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 5px;">${item.productName}</h4>
                 <p style="font-size: 13px; color: #666; margin-bottom: 4px;">Size: ${item.size}</p>
                 <p style="font-size: 14px; font-weight: 600; color: #000;">₹${item.price.toFixed(2)}</p>
+                ${isItemReturned ? '<p style="font-size: 12px; color: #e74c3c; font-weight: bold; margin-top: 5px;">Item has already been returned.</p>' : ''}
             </div>
         </div>
         `;
 
-            // Store selected item for submission
             previewContainer.dataset.itemJson = JSON.stringify(item);
+
+            const submitBtn = document.querySelector('.btn-submit');
+            if (submitBtn) {
+               submitBtn.disabled = isItemReturned;
+               if (isItemReturned) {
+                   submitBtn.textContent = 'Already Returned';
+                   submitBtn.style.opacity = '0.5';
+                   submitBtn.style.cursor = 'not-allowed';
+               } else {
+                   submitBtn.textContent = 'Submit Return Request';
+                   submitBtn.style.opacity = '1';
+                   submitBtn.style.cursor = 'pointer';
+               }
+            }
         }
 
         function changeProduct(newProductId) {

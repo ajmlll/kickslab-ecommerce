@@ -550,7 +550,7 @@
         function renderOrder(order) {
             const isCancelled = order.orderStatus === 'Cancelled';
             const isInvoiceEligible = order.paymentStatus === 'Paid';
-            const hasActiveReturn = order.returnRequest && order.returnRequest.status !== 'Rejected';
+            const hasActiveReturn = order.returnedProductIds && order.returnedProductIds.length > 0;
 
             const content = document.getElementById('content');
             const date = new Date(order.createdAt).toLocaleDateString(undefined, {
@@ -562,7 +562,7 @@
                 topMessageHtml = `
                     <div style="background: #e3f2fd; color: #1976d2; padding: 15px; border-radius: 8px; margin-bottom: 25px; font-weight: 600; border-left: 4px solid #4285F4; display: flex; align-items: center; gap: 12px;">
                         <i class="fas fa-info-circle" style="font-size: 20px;"></i>
-                        <span>The return order is processing for updation, you can check the My Returns option</span>
+                        <span>A return has been requested for one or more items. You can check the status in My Returns.</span>
                     </div>
                 `;
             }
@@ -570,17 +570,29 @@
             let itemsHtml = '';
             order.items.forEach(item => {
                 let reviewBtnHtml = '';
-                // Only show links if Delivered AND NO active return
-                if (order.orderStatus === 'Delivered' && !hasActiveReturn) {
+                const isReturned = order.returnedProductIds && order.returnedProductIds.includes(item.product.toString());
+
+                // Only show links if Delivered
+                if (order.orderStatus === 'Delivered') {
                     const passDate = order.deliveredAt || order.updatedAt;
+                    
+                    let returnLink = '';
+                    if (!isReturned) {
+                        returnLink = `
+                            <a href="#" onclick="checkReturnPolicy(event, '${passDate}', '${order._id}', '${item.product}')" style="font-size: 12px; color: #6c757d; text-decoration: underline; font-weight: 600;">
+                                Return Item
+                            </a>
+                        `;
+                    } else {
+                        returnLink = `<span style="font-size: 12px; color: #999; font-weight: 600;"><i class="fas fa-check-circle"></i> Return Requested</span>`;
+                    }
+
                     reviewBtnHtml = `
                         <div style="margin-top: 10px; display: flex; gap: 15px;">
                             <a href="write-review.html?orderId=${order._id}&productId=${item.product}" style="font-size: 12px; color: var(--color-accent); text-decoration: underline; font-weight: 600;">
                                 Write a Review
                             </a>
-                            <a href="#" onclick="checkReturnPolicy(event, '${passDate}', '${order._id}', '${item.product}')" style="font-size: 12px; color: #6c757d; text-decoration: underline; font-weight: 600;">
-                                Return Item
-                            </a>
+                            ${returnLink}
                         </div>
                     `;
                 }
