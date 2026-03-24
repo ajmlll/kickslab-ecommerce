@@ -2,6 +2,20 @@
 <html lang="en">
 
 <head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            try {
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                if (userData.role === 'admin') {
+                    window.location.replace('/admin/dashboard.html');
+                } else {
+                    window.location.replace('/user/Landingpage.html');
+                }
+            } catch (e) {
+                window.location.replace('/user/Landingpage.html');
+            }
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - KICKSLAB</title>
