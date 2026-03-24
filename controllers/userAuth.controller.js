@@ -111,13 +111,15 @@ exports.login = catchAsync(async (req, res, next) => {
     return res.json({
       success: true,
       role: "admin",
+      token,
       user: {
         id: "env-admin",
         _id: "env-admin",
         name: "Admin",
         email: process.env.SUPERADMIN_EMAIL || "admin@kickslab.com",
         role: "admin",
-        isEnvAdmin: true
+        isEnvAdmin: true,
+        
       }
     });
   }
@@ -177,6 +179,7 @@ exports.login = catchAsync(async (req, res, next) => {
   res.json({
     success: true,
     role: user.role,
+    token,
     user: {
       id: user._id,
       name: user.name,
