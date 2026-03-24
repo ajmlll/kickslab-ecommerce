@@ -456,6 +456,67 @@
             background: #f0f4ff;
         }
 
+        /* Add/Edit Address Form Styles */
+        .address-form-container {
+            display: none;
+            margin-top: 20px;
+            background: #fff;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+
+        .address-form-container.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-input.input-error {
+            border-color: #ef4444 !important;
+            background-color: #fffbfa !important;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 11px;
+            margin-top: 4px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .form-actions-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .btn-save {
+            background: var(--color-accent);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
         /* Payment Methods (Card Style) */
         .payment-section-title {
             font-size: 13px;
@@ -1920,9 +1981,67 @@
 
                             <!-- Add New Button -->
                             <button type="button" class="btn-add-address"
-                                onclick="window.location.href='AddressBook.html'">
+                                onclick="toggleAddressForm()">
                                 <i class="fas fa-plus"></i> Add New Address
                             </button>
+
+                            <!-- Add/Edit Form -->
+                            <div class="address-form-container" id="address-form">
+                                <h3 id="form-title"
+                                    style="margin-bottom: 20px; font-family: var(--font-heading); text-transform: uppercase; font-size: 16px;">
+                                    Add New Address
+                                </h3>
+                                <div id="inner-addr-form">
+                                    <input type="hidden" id="addrId">
+                                    <div class="form-group">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" id="name" class="form-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Street Address</label>
+                                        <input type="text" id="address" class="form-input" required>
+                                    </div>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label class="form-label">City</label>
+                                            <input type="text" id="city" class="form-input" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">State / Region</label>
+                                            <select id="state" class="form-input" required style="background:white;">
+                                                <option value="" disabled selected>Select State</option>
+                                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                                <option value="Karnataka">Karnataka</option>
+                                                <option value="Kerala">Kerala</option>
+                                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                                <option value="Telangana">Telangana</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label class="form-label">Zip Code</label>
+                                            <input type="text" id="zip" class="form-input" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Phone Number</label>
+                                            <input type="tel" id="phone" class="form-input" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Address Type</label>
+                                        <select id="type" class="form-input" style="background:white;">
+                                            <option value="Home">Home</option>
+                                            <option value="Work">Work</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-actions-row">
+                                        <button type="button" class="btn-cancel" onclick="closeAddressForm()">Cancel</button>
+                                        <button type="button" class="btn-save" onclick="saveAddress(event)">Save Address</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Payment Method -->
@@ -2828,6 +2947,134 @@
     </script>
 
     <script>
+        // --- Address Form Logic ---
+        function toggleAddressForm() {
+            resetForm();
+            const form = document.getElementById('address-form');
+            form.style.display = 'block';
+            form.classList.add('active');
+            document.getElementById('form-title').innerText = 'Add New Address';
+        }
+
+        function closeAddressForm() {
+            const form = document.getElementById('address-form');
+            form.style.display = 'none';
+            form.classList.remove('active');
+        }
+
+        function resetForm() {
+            document.getElementById('addrId').value = '';
+            document.getElementById('name').value = '';
+            document.getElementById('address').value = '';
+            document.getElementById('city').value = '';
+            document.getElementById('state').value = '';
+            document.getElementById('zip').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('type').value = 'Home';
+            clearErrors();
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('#inner-addr-form .error-message').forEach(el => el.remove());
+            document.querySelectorAll('#inner-addr-form .input-error').forEach(el => el.classList.remove('input-error'));
+        }
+
+        function showError(inputId, message) {
+            const input = document.getElementById(inputId);
+            input.classList.add('input-error');
+            const error = document.createElement('span');
+            error.className = 'error-message';
+            error.innerText = message;
+            input.parentNode.appendChild(error);
+        }
+
+        async function saveAddress(e) {
+            e.preventDefault();
+            e.stopPropagation(); // prevent checkout form submission
+            
+            clearErrors();
+            let isValid = true;
+
+            const name = document.getElementById('name').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const state = document.getElementById('state').value;
+            const zipCode = document.getElementById('zip').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            const nameRegex = /^[a-zA-Z\s]+$/;
+            const zipRegex = /^\d{6}$/;
+            const phoneRegex = /^[6-9]\d{9}$/;
+
+            if (!name || name.length < 2 || !nameRegex.test(name)) {
+                showError('name', 'Required. Letters only.');
+                isValid = false;
+            }
+            if (!address || address.length < 5) {
+                showError('address', 'Please enter a complete street address.');
+                isValid = false;
+            }
+            if (!city || city.length < 2) {
+                showError('city', 'Please enter a valid city name.');
+                isValid = false;
+            }
+            if (!state) {
+                showError('state', 'Please select a state.');
+                isValid = false;
+            }
+            if (!zipRegex.test(zipCode)) {
+                showError('zip', 'Please enter a valid 6-digit zip code.');
+                isValid = false;
+            }
+            if (!phoneRegex.test(phone)) {
+                showError('phone', 'Please enter a valid 10-digit phone number.');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            const newAddr = {
+                name,
+                address,
+                city,
+                state,
+                zipCode,
+                phone,
+                type: document.getElementById('type').value
+            };
+
+            try {
+                showLoading('Saving Address...');
+                const res = await fetch('/api/addresses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(newAddr)
+                });
+                const data = await res.json();
+                hideLoading();
+
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Saved',
+                        text: 'Address added successfully!',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    closeAddressForm();
+                    // Refetch addresses for checkout and auto-select
+                    await loadCheckoutAddresses(); 
+                } else {
+                    Swal.fire('Error', data.error || 'Failed to save address.', 'error');
+                }
+            } catch (err) {
+                hideLoading();
+                console.error(err);
+                Swal.fire('Error', 'Something went wrong while saving.', 'error');
+            }
+        }
+
         function closePaymentModal() {
             document.getElementById('paymentValidationModal').classList.remove('active');
         }
