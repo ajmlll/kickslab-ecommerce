@@ -57,17 +57,19 @@ exports.protectStatic = async (req, res, next) => {
         return next();
     }
 
-    // 2. Whitelist (Public Pages - Check only filename)
-    if (PUBLIC_PAGES.includes(fileName)) {
-        console.log(`[PROTECT_STATIC] Allowed: Whitelisted public page -> ${fileName}`);
-        return next();
-    }
-
     const token = cookies.token;
     const adminToken = cookies.adminToken;
 
-    // 2.5 Auto-Redirect Logged-in Users away from Login/Signup
-    if (PUBLIC_PAGES.includes(fileName)) {
+    const GUEST_ONLY_PAGES = [
+        "login.html",
+        "signup.html",
+        "forgot-password.html",
+        "otp-verification.html",
+        "reset-password.html"
+    ];
+
+    // 2. Auto-Redirect Logged-in Users away from Login/Signup
+    if (GUEST_ONLY_PAGES.includes(fileName)) {
         // If they have an adminToken, they might be an admin
         if (adminToken) {
             try {
@@ -89,6 +91,12 @@ exports.protectStatic = async (req, res, next) => {
             } catch (e) { /* ignore */ }
         }
 
+        console.log(`[PROTECT_STATIC] Allowed: Guest page -> ${fileName}`);
+        return next();
+    }
+
+    // 2.5 Whitelist (Other Public Pages)
+    if (PUBLIC_PAGES.includes(fileName)) {
         console.log(`[PROTECT_STATIC] Allowed: Whitelisted public page -> ${fileName}`);
         return next();
     }
